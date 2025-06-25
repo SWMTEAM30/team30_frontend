@@ -181,6 +181,3 @@ export const colorSet = {
     },
   },
 } as const;
-export type ThemeName = keyof typeof colorSet;
-export type ColorName = keyof (typeof colorSet)['light'];
-export type ShadeName<T extends ColorName> = keyof (typeof colorSet)['light'][T];

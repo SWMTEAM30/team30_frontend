@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { MessageSquare, Plus, Settings, PanelLeftIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MessageSquare, Plus, Settings } from 'lucide-react';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 
@@ -53,7 +52,10 @@ export function AppSidebar({ currentChatId, onChatSelect, onNewChat }: AppSideba
               {chats.map((chat) => (
                 <button
                   key={chat.id}
-                  onClick={() => { onChatSelect(chat.id); setMobileOpen(false); }}
+                  onClick={() => {
+                    onChatSelect(chat.id);
+                    setMobileOpen(false);
+                  }}
                   className={`flex items-center w-full px-4 h-12 rounded-lg transition-all duration-200 ${currentChatId === chat.id ? 'bg-[#4993FA] text-white' : 'hover:bg-[#F1FAFB] text-[#4993FA]'}`}
                 >
                   <MessageSquare className="w-5 h-5" />
@@ -61,9 +63,7 @@ export function AppSidebar({ currentChatId, onChatSelect, onNewChat }: AppSideba
                 </button>
               ))}
             </div>
-            <button
-              className="flex items-center w-full px-4 h-12 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 mt-auto mb-2"
-            >
+            <button className="flex items-center w-full px-4 h-12 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 mt-auto mb-2">
               <Settings className="w-5 h-5" />
               <span className="ml-3 font-medium whitespace-nowrap">설정</span>
             </button>
