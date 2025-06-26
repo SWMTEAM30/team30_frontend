@@ -1,4 +1,4 @@
-import { ColorShadeFormat, parseColorSet } from '@/lib/color';
+import { parseColorSet } from '@/lib/color';
 import { cn } from '@/lib/utils';
 import { icons } from 'lucide-react'; // lucide import
 import { HTMLAttributes } from 'react';

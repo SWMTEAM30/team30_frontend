@@ -1,4 +1,4 @@
-import { requestAPI } from '@/shared/api/API';
+import { requestAPI } from '@/api/API';
 
 // GET
 export const getSessionStart = async () => requestAPI(`/api/flow/session-start`, 'GET');

@@ -1,6 +1,8 @@
 name: pnpm ci Workflow
+
 on:
   push:
+    branches: ['main']
 
 jobs:
   install-dependencies:

@@ -50,7 +50,7 @@ export const useChat = (chatId?: string) => {
       }
       return oldMessages;
     });
-  }, [queryResult, status, queryClient, accumulatedMessagesKey]);
+  }, [queryResult, status, queryClient, accumulatedMessagesKey, chatId]);
 
   // hook에 맞게 messages를 출력
   const allMessages = queryClient.getQueryData<Message[]>(accumulatedMessagesKey) || [];

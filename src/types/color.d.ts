@@ -1,6 +1,10 @@
-import { colorSet } from '@/styles/generated-colors';
+import { colorSet } from '@/styles/generated-palette';
 
-type ThemeName = keyof typeof colorSet;
-type ColorName = keyof (typeof colorSet)['light'];
-type ShadeName<T extends ColorName> = keyof (typeof colorSet)['light'][T];
-type ColorShadeFormat = `${ColorName}-${ShadeName<ColorName>}`;
+declare global {
+  type ThemeName = keyof typeof colorSet;
+  type ColorName = keyof (typeof colorSet)['light'];
+  type ShadeName<T extends ColorName> = keyof (typeof colorSet)['light'][T];
+  type ColorShadeFormat<T extends ColorName = ColorName> = `${T}-${ShadeName<T>}`;
+}
+
+export {};

@@ -2,7 +2,7 @@ import React from 'react';
 import * as icons from '@radix-ui/react-icons'; // Radix Icon 컴포넌트 import
 import { IconProps } from '@radix-ui/react-icons/dist/types';
 import { cn } from '@/lib/utils';
-import { ColorShadeFormat, parseColorSet } from '@/lib/color';
+import { parseColorSet } from '@/lib/color';
 
 export interface RadixIconProps extends IconProps {
   name: keyof typeof icons;

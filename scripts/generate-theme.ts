@@ -60,7 +60,7 @@ export const colorSet = ${JSON.stringify(finalPalette, null, 2)} as const;
 `;
 
 // `generated-palette.ts` 파일 생성
-const tsOutputPath = path.join(process.cwd(), 'src', 'lib', 'generated-palette.ts');
+const tsOutputPath = path.join(process.cwd(), 'src', 'styles', 'generated-palette.ts');
 fs.mkdirSync(path.dirname(tsOutputPath), { recursive: true });
 fs.writeFileSync(tsOutputPath, tsFileContent);
 console.log(`✅ TypeScript palette object generated at: ${tsOutputPath}`);
