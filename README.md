@@ -4,7 +4,6 @@
 
 - 소프트웨어 마에스트로 16기 연수생 프로젝트 (Software Maestro Project)
 
-### Feature-Sliced Design
+### Hybrid Colocation Pattern
 
-- 프론트엔드 애플리케이션 스캐폴딩을 위한 아키텍쳐 방법론
-- Next.js에서는 src/pages 도입이 어려우므로 pages -> views 네이밍 변경
+콜로케이션 패턴을 이용한 folder structure가 가장 유리할 것이라고 판단.

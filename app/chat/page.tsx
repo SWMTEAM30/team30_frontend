@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import ChatHeader from '@/components/ChatHeader';
 import ChatSubmit from '@/components/ChatSubmit';
 import ChatArea from '@/components/ChatArea';
-import { useChat } from '@/shared/hooks/useChat';
+import { useChat } from '@/hooks/use-chat';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState('');
@@ -16,7 +16,7 @@ export default function Chat() {
   const router = useRouter();
 
   /** chat */
-  const { messages, isLoading, error } = useChat();
+  const { messages, isLoading, error } = useChat('roomA');
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;

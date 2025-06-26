@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MessageSquare, Plus, Settings } from 'lucide-react';
-import { useIsMobile } from '@/shared/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 
 interface Chat {
