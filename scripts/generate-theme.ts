@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { ColorThemes } from '@/styles/color';
+import { ColorThemes } from '@/styles/theme';
 import { toneMap } from '@nextcss/color-tools';
 
 console.log('🎨 Generating theme files with light/dark modes for Tailwind CSS v4...');
@@ -38,7 +38,7 @@ const cssFilePath = path.join(process.cwd(), 'app', 'globals.css');
 try {
   const originalCssContent = fs.readFileSync(cssFilePath, 'utf-8');
   const markerRegex = /\/\* @theme-colors-start \*\/[\s\S]*?\/\* @theme-colors-end \*\//;
-  const replacementBlock = `/* @theme-colors-start */\n/* 🤖 ... */\n${cssBlocks.join('\n')}\n/* @theme-colors-end */`;
+  const replacementBlock = `/* @theme-colors-start */\n/* 🤖 이 구역은 스크립트로 만들어지는 CSS 속성입니다. */\n${cssBlocks.join('\n')}\n/* @theme-colors-end */`;
   fs.writeFileSync(cssFilePath, originalCssContent.replace(markerRegex, replacementBlock));
   console.log(`✅ Injected CSS variables into: ${cssFilePath}`);
 } catch (error) {
@@ -57,13 +57,10 @@ for (const [themeName, themeColors] of Object.entries(ColorThemes)) {
 
 const tsFileContent = `// Auto-generated file...
 export const colorSet = ${JSON.stringify(finalPalette, null, 2)} as const;
-export type ThemeName = keyof typeof colorSet;
-export type ColorName = keyof typeof colorSet['light'];
-export type ShadeName<T extends ColorName> = keyof typeof colorSet['light'][T];
 `;
 
 // `generated-palette.ts` 파일 생성
-const tsOutputPath = path.join(process.cwd(), 'src', 'lib', 'generated-palette.ts');
+const tsOutputPath = path.join(process.cwd(), 'src', 'styles', 'generated-palette.ts');
 fs.mkdirSync(path.dirname(tsOutputPath), { recursive: true });
 fs.writeFileSync(tsOutputPath, tsFileContent);
 console.log(`✅ TypeScript palette object generated at: ${tsOutputPath}`);

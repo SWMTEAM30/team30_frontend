@@ -1,6 +1,4 @@
-import { ColorName, colorSet, ShadeName } from '@/lib/generated-palette';
-
-export type ColorShadeFormat = `${ColorName}-${ShadeName<ColorName>}`;
+import { colorSet } from '@/styles/generated-palette';
 
 export const parseColorSet = (
   colorShade: ColorShadeFormat,

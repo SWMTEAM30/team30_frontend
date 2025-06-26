@@ -1,4 +1,4 @@
-export const requestAPI = async (url: string, method: Method, body?: any) => {
+export const requestAPI = async (url: string, method: Method, body?: any): Promise<[APIResponseType<any>, any]> => {
   let [data, error]: [APIResponseType<any>, any] = [undefined, undefined];
 
   try {

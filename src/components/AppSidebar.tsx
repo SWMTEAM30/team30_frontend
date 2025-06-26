@@ -1,127 +1,49 @@
-import { useState } from 'react';
-import { MessageSquare, Plus, Settings, PanelLeftIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useIsMobile } from '@/shared/hooks/use-mobile';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
-
-interface Chat {
-  id: string;
-  title: string;
-  lastMessage?: string;
-  timestamp: Date;
-}
+import SidebarContent from '@/components/SidebarContent';
+import { Menu } from 'lucide-react';
 
 interface AppSidebarProps {
+  chatRooms: ChatRoom[];
   currentChatId?: string;
   onChatSelect: (chatId: string) => void;
   onNewChat: () => void;
 }
 
-export function AppSidebar({ currentChatId, onChatSelect, onNewChat }: AppSidebarProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const isMobile = useIsMobile();
-  const [chats] = useState<Chat[]>([
-    {
-      id: '1',
-      title: '패션 추천 채팅',
-      lastMessage: '안녕하세요! 패션 아이템 추천을 도와드릴게요.',
-      timestamp: new Date(),
-    },
-  ]);
-
-  // 모바일: 상단바의 햄버거 버튼 클릭 시만 Sheet 오픈 (오른쪽에서 나옴)
-  if (isMobile) {
-    if (typeof window !== 'undefined') {
-      const trigger = document.getElementById('mobile-sidebar-trigger');
-      if (trigger && !trigger.onclick) {
-        trigger.onclick = () => setMobileOpen(true);
-      }
-    }
-    return (
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="p-0 w-80 max-w-full pt-16">
-          <div className="flex flex-col items-start py-6 h-full">
-            <button
-              onClick={onNewChat}
-              className="flex items-center w-full px-4 mb-4 h-12 rounded-lg bg-[#4993FA] text-white"
-            >
-              <Plus className="w-5 h-5" />
-              <span className="ml-3 font-medium whitespace-nowrap">새 채팅</span>
-            </button>
-            <div className="flex-1 flex flex-col gap-2 w-full">
-              {chats.map((chat) => (
-                <button
-                  key={chat.id}
-                  onClick={() => { onChatSelect(chat.id); setMobileOpen(false); }}
-                  className={`flex items-center w-full px-4 h-12 rounded-lg transition-all duration-200 ${currentChatId === chat.id ? 'bg-[#4993FA] text-white' : 'hover:bg-[#F1FAFB] text-[#4993FA]'}`}
-                >
-                  <MessageSquare className="w-5 h-5" />
-                  <span className="ml-3 font-medium whitespace-nowrap">{chat.title}</span>
-                </button>
-              ))}
-            </div>
-            <button
-              className="flex items-center w-full px-4 h-12 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 mt-auto mb-2"
-            >
-              <Settings className="w-5 h-5" />
-              <span className="ml-3 font-medium whitespace-nowrap">설정</span>
-            </button>
-          </div>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
-  // 데스크탑: 왼쪽에 오버레이 사이드바, 호버 시 오버레이
+export function AppSidebar({ chatRooms, currentChatId, onChatSelect, onNewChat }: AppSidebarProps) {
   return (
-    <div
-      className={`fixed top-0 left-0 h-screen z-50 transition-all duration-300 ease-in-out shadow-lg bg-white
-        ${isExpanded ? 'w-80' : 'w-16'}
-        flex flex-col items-start py-4
-      `}
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
-      style={{ pointerEvents: 'auto' }}
-    >
-      {/* + 새 채팅 버튼 */}
-      <button
-        onClick={onNewChat}
-        className={`flex items-center w-full px-2 mb-4 h-12 rounded-lg transition-all duration-200
-          bg-[#4993FA] text-white ${isExpanded ? 'pl-4 pr-4' : 'pl-4 pr-4'}
-        `}
+    <>
+      {/* 모바일: 햄버거 버튼 + 체크박스 해킹 */}
+      <input type="checkbox" id="sidebar-mobile-toggle" className="hidden peer" />
+      <label
+        htmlFor="sidebar-mobile-toggle"
+        className="fixed top-4 left-4 z-50 md:hidden bg-beige rounded-full p-2 shadow-md cursor-pointer"
       >
-        <Plus className="w-5 h-5" />
-        {isExpanded && <span className="ml-3 font-medium whitespace-nowrap">새 채팅</span>}
-      </button>
-
-      {/* 채팅방 버튼들 */}
-      <div className="flex-1 flex flex-col gap-2 w-full">
-        {chats.map((chat) => (
-          <button
-            key={chat.id}
-            onClick={() => onChatSelect(chat.id)}
-            className={`flex items-center w-full px-2 h-12 rounded-lg transition-all duration-200
-              ${currentChatId === chat.id ? 'bg-[#4993FA] text-white' : 'hover:bg-[#F1FAFB] text-[#4993FA]'}
-              ${isExpanded ? 'pl-4 pr-4' : 'pl-4 pr-4'}
-            `}
-          >
-            <MessageSquare className="w-5 h-5" />
-            {isExpanded && <span className="ml-3 font-medium whitespace-nowrap">{chat.title}</span>}
-          </button>
-        ))}
-      </div>
-
-      {/* 설정 버튼 */}
-      <button
-        className={`flex items-center w-full px-2 h-12 rounded-lg transition-all duration-200 mt-auto mb-2
-          text-gray-600 hover:text-gray-800 hover:bg-gray-100
-          ${isExpanded ? 'pl-4 pr-4' : 'pl-4 pr-4'}
-        `}
-      >
-        <Settings className="w-5 h-5" />
-        {isExpanded && <span className="ml-3 font-medium whitespace-nowrap">설정</span>}
-      </button>
-    </div>
+        <Menu className="w-6 h-6 text-blue" />
+      </label>
+      {/* 모바일 오버레이 */}
+      <label
+        htmlFor="sidebar-mobile-toggle"
+        className="fixed inset-0 z-40 bg-black opacity-40 transition-opacity duration-200 hidden peer-checked:block md:hidden"
+      />
+      {/* 모바일 사이드바 */}
+      <aside className="fixed top-0 left-0 h-full w-[80%] max-w-full z-50 bg-beige shadow-lg transform transition-transform duration-300 -translate-x-full peer-checked:translate-x-0 md:hidden">
+        <SidebarContent
+          chatRooms={chatRooms}
+          currentChatId={currentChatId}
+          onChatSelect={onChatSelect}
+          onNewChat={onNewChat}
+          className="py-6"
+        />
+      </aside>
+      {/* 데스크탑: 호버 오버레이 */}
+      <aside className="hidden md:block group fixed top-0 left-0 h-screen z-50 bg-beige transition-all duration-300 ease-in-out shadow-lg group-hover:shadow-2xl w-32 hover:w-92 group-hover:w-80 overflow-x-hidden">
+        <SidebarContent
+          chatRooms={chatRooms}
+          currentChatId={currentChatId}
+          onChatSelect={onChatSelect}
+          onNewChat={onNewChat}
+          className="w-full"
+        />
+      </aside>
+    </>
   );
 }
