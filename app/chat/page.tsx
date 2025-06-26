@@ -1,22 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppSidebar } from '@/components/AppSidebar';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { useRouter } from 'next/navigation';
 import ChatHeader from '@/components/ChatHeader';
 import ChatSubmit from '@/components/ChatSubmit';
 import ChatArea from '@/components/ChatArea';
-import { useChat } from '@/hooks/use-chat';
+import { useChat } from '@/hooks/useChat';
+import { useChatRooms } from '@/hooks/useChatRoom';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState('');
-  const [currentChatId, setCurrentChatId] = useState('1');
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const router = useRouter();
+  const [currentChatId, setCurrentChatId] = useState<string | undefined>(undefined);
 
-  /** chat */
-  const { messages, isLoading, error } = useChat('roomA');
+  /** chat state 관리하는 hook */
+  const { messages, isLoading: isChatLoading, error: chatError } = useChat(currentChatId);
+  const { rooms: chatRooms, isLoading: isRoomsLoading, createChat, isCreating } = useChatRooms();
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
@@ -35,23 +34,43 @@ export default function Chat() {
     setCurrentChatId(chatId);
   };
 
+  // const handleNewChat = () => {
+  //   const newChatId = Date.now().toString();
+  //   setCurrentChatId(newChatId);
+  // };
+
+  // 첫 로딩 시, 첫 번째 채팅방을 기본으로 선택합니다.
+  useEffect(() => {
+    if (!currentChatId && chatRooms.length > 0) {
+      setCurrentChatId(chatRooms[0].id);
+    }
+  }, [chatRooms, currentChatId]);
+
   const handleNewChat = () => {
-    const newChatId = Date.now().toString();
-    setCurrentChatId(newChatId);
+    // 채팅방 생성 뮤테이션을 실행합니다.
+    createChat(undefined, {
+      onSuccess: (newRoom) => {
+        // 성공 시, 새로 만들어진 채팅방으로 바로 이동합니다.
+        setCurrentChatId(newRoom.id);
+      },
+    });
   };
 
   return (
     <SidebarProvider>
       <div className="min-h-screen w-full relative">
-        <ChatHeader />
-        <AppSidebar currentChatId={currentChatId} onChatSelect={handleChatSelect} onNewChat={handleNewChat} />
-        <SidebarInset className="flex flex-col pt-16 md:pl-16 md:transition-all md:duration-300">
-          <div className="flex-1">
-            {isLoading && messages.length === 0 ? (
-              <div>대화 내용을 불러오는 중...</div>
-            ) : (
-              <ChatArea messages={messages} />
-            )}
+        <AppSidebar
+          currentChatId={currentChatId}
+          onChatSelect={handleChatSelect}
+          onNewChat={handleNewChat}
+          chatRooms={chatRooms}
+        />
+        <SidebarInset className="flex flex-col h-[100dvh] md:pl-16 md:transition-all md:duration-300">
+          <div className="flex flex-col h-full">
+            <ChatHeader chatId={currentChatId} />
+            <div className="flex-1 min-h-0">
+              <ChatArea messages={messages} isLoading={isChatLoading && messages.length === 0} />
+            </div>
             <ChatSubmit inputValue={inputValue} setInputValue={setInputValue} handleSendMessage={handleSendMessage} />
           </div>
         </SidebarInset>
@@ -59,26 +78,3 @@ export default function Chat() {
     </SidebarProvider>
   );
 }
-
-// setTimeout(() => {
-
-//   const aiMessage: Message = {
-//     id: (Date.now() + 1).toString(),
-//     text: getAIResponse(inputValue),
-//     user: { user_id: 'asdf', username: 'mindul' },
-//     timestamp: new Date(),
-//     images: inputValue.includes('추천') ? [`/cloth1.jpg`, `/cloth2.jpg`] : undefined,
-//   };
-//   setMessages((prev) => [...prev, aiMessage]);
-
-//   // 새로운 사진이 추천되면 photos 배열에 추가
-//   if (aiMessage.images) {
-//     const newPhotos = aiMessage.images.map((url, index) => ({
-//       id: `new-${Date.now()}-${index}`,
-//       url,
-//       description: `추천 아이템 ${index + 1}`,
-//       tags: ['추천', '패션'],
-//     }));
-//     setPhotos((prev) => [...prev, ...newPhotos]);
-//   }
-// }, 1000);

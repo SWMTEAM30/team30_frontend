@@ -2,34 +2,35 @@ import { getChatReceive } from '@/api/chatAPI';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-export const useChat = (chatId: string | null) => {
-  // 1. 훅 내부에서 queryClient를 직접 가져옵니다.
+export const useChat = (chatId?: string) => {
   const queryClient = useQueryClient();
 
-  const accumulatedMessagesKey = ['chatMessages', chatId];
-  const newChatMessageFetcherKey = ['newChatMessageFetcher', chatId];
+  const accumulatedMessagesKey = ['chatMessages', chatId]; // 채팅방 별로 데이터 저장하는 키
+  const newChatMessageFetcherKey = ['newChatMessageFetcher', chatId]; // 채팅방 별로 API 받아오는 키
 
-  // 3. useQuery는 '새로운' 메시지를 가져오는 역할에만 집중합니다.
-  const {
-    data: queryResult,
-    status,
-    error,
-  } = useQuery({
-    queryKey: newChatMessageFetcherKey,
+  const { data: queryResult, status } = useQuery({
+    queryKey: newChatMessageFetcherKey, // 여기서는 API를 받아서 가공할 예정
     queryFn: getChatReceive,
     refetchInterval: 3000,
     refetchIntervalInBackground: true,
   });
 
-  console.log('useChat Hook Render:', { chatId, status, error, queryResult });
-
   useEffect(() => {
-    console.log('useEffect Triggered:', { chatId, status, queryResult });
+    /**
+     * newChatMessageFetcherKey로부터 접근한 state data는
+     * [data, error] 형식으로 된 API response를 queryResult로 저장함.
+     *
+     * queryResult를 적절히 formatting한 후에 accumulatedMessagesKey로 state data를 접근함
+     *
+     * state를 refresh하여 chat data를 누적함
+     */
 
+    // response가 없으면 ignore
     if (!chatId || status !== 'success' || !queryResult?.[0]?.data) {
       return;
     }
 
+    // API response를 Message format에 맞게 formatting
     const newMessage = {
       id: queryResult[0].data,
       text: queryResult[0].data,
@@ -40,8 +41,8 @@ export const useChat = (chatId: string | null) => {
       timestamp: new Date(),
     };
 
+    // chat message accumulating
     queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (oldMessages = []) => {
-      console.log(oldMessages);
       const existingIds = new Set(oldMessages.map((msg) => msg.id));
 
       if (!existingIds.has(newMessage.id)) {
@@ -51,6 +52,7 @@ export const useChat = (chatId: string | null) => {
     });
   }, [queryResult, status, queryClient, accumulatedMessagesKey]);
 
+  // hook에 맞게 messages를 출력
   const allMessages = queryClient.getQueryData<Message[]>(accumulatedMessagesKey) || [];
 
   return {

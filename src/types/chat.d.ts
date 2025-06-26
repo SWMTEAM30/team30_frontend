@@ -15,3 +15,9 @@ interface Photo {
   description: string;
   tags: string[];
 }
+
+type ChatRoom = {
+  id: string;
+  title: string;
+  timestamp: Date;
+};
