@@ -11,8 +11,13 @@ export default function ChatArea({ messages, isLoading }: { messages: Message[];
         ) : (
           <>
             {messages.map((message) => (
-              <div key={message.id} className={`flex ${message.user ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[70%] p-6 rounded-lg ${messageColor[0]}`}>
+              <div
+                key={message.id}
+                className={`flex ${message.user.user_id == 'asdf' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[70%] p-6 rounded-lg ${message.user.user_id == 'asdf' ? messageColor[0] : messageColor[1]}`}
+                >
                   <p className="text-lg md:text-2xl">{message.text}</p>
                   {message.images && (
                     <div className="grid grid-cols-2 gap-2 mt-3">

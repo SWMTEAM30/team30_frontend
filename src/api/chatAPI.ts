@@ -1,14 +1,20 @@
 import { requestAPI } from '@/api/API';
-import { timeStamp } from 'console';
 
 // GET
-export const getChatReceive = async (): Promise<[APIResponseType<string>, any]> => {
+export const getChatReceive = async (): Promise<[APIResponseType<Message[]>, any]> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   return [
     {
       status: '200',
       message: 'ok',
-      data: `옷은 이렇게 입는 겁니다. ${new Date().getTime()}`,
+      data: [
+        {
+          id: Date.now().toString(),
+          text: `옷은 이렇게 입는 겁니다. ${new Date().getTime()}`,
+          user: { user_id: 'qwer', username: 'mendul' },
+          timestamp: new Date(),
+        },
+      ],
     },
     undefined,
   ];
@@ -16,7 +22,7 @@ export const getChatReceive = async (): Promise<[APIResponseType<string>, any]> 
 };
 
 // POST
-export const postChatSend = async (chat: { content: string }) => requestAPI(`/api/chat/send`, 'POST', chat);
+export const postChatSend = async (message: Message) => requestAPI(`/api/chat/send`, 'POST', message);
 
 /**
  *

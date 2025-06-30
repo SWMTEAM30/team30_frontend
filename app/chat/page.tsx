@@ -11,10 +11,10 @@ import { useChatRooms } from '@/hooks/useChatRoom';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState('');
-  const [currentChatId, setCurrentChatId] = useState<string | undefined>(undefined);
+  const [currentChatId, setCurrentChatId] = useState<string>('');
 
   /** chat state 관리하는 hook */
-  const { messages, isLoading: isChatLoading, error: chatError } = useChat(currentChatId);
+  const { messages, isLoading: isChatLoading, sendMessage } = useChat(currentChatId);
   const { rooms: chatRooms, isLoading: isRoomsLoading, createChat, isCreating } = useChatRooms();
 
   const handleSendMessage = () => {
@@ -23,23 +23,18 @@ export default function Chat() {
     const userMessage: Message = {
       id: Date.now().toString(),
       text: inputValue,
-      user: { user_id: 'qwer', username: 'mendul' },
+      user: { user_id: 'asdf', username: 'mindul' },
       timestamp: new Date(),
     };
+
+    sendMessage(userMessage);
     setInputValue('');
   };
 
-  /** chat Channel */
   const handleChatSelect = (chatId: string) => {
     setCurrentChatId(chatId);
   };
 
-  // const handleNewChat = () => {
-  //   const newChatId = Date.now().toString();
-  //   setCurrentChatId(newChatId);
-  // };
-
-  // 첫 로딩 시, 첫 번째 채팅방을 기본으로 선택합니다.
   useEffect(() => {
     if (!currentChatId && chatRooms.length > 0) {
       setCurrentChatId(chatRooms[0].id);
@@ -47,10 +42,8 @@ export default function Chat() {
   }, [chatRooms, currentChatId]);
 
   const handleNewChat = () => {
-    // 채팅방 생성 뮤테이션을 실행합니다.
     createChat(undefined, {
       onSuccess: (newRoom) => {
-        // 성공 시, 새로 만들어진 채팅방으로 바로 이동합니다.
         setCurrentChatId(newRoom.id);
       },
     });
