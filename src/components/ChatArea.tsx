@@ -20,10 +20,10 @@ export default function ChatArea({
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.user.user_id == userID ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${message.user.userId == userID ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[70%] p-6 rounded-lg ${message.user.user_id == 'asdf' ? messageColor[0] : messageColor[1]}`}
+                  className={`max-w-[70%] p-6 rounded-lg ${message.user.userId == 'asdf' ? messageColor[0] : messageColor[1]}`}
                 >
                   <p className="text-lg md:text-2xl">{message.text}</p>
                   <p className="text-xs opacity-70 mt-2">{message.timestamp.toLocaleTimeString()}</p>
