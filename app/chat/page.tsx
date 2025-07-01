@@ -10,12 +10,29 @@ import { useChat } from '@/hooks/useChat';
 import { useChatRooms } from '@/hooks/useChatRoom';
 
 export default function Chat() {
-  const [inputValue, setInputValue] = useState('');
-  const [currentChatId, setCurrentChatId] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>('');
+  const [currentChatId, setCurrentChatId] = useState<number>(-1);
 
   /** chat state 관리하는 hook */
   const { messages, isLoading: isChatLoading, sendMessage } = useChat(currentChatId);
-  const { rooms: chatRooms, isLoading: isRoomsLoading, createChat, isCreating } = useChatRooms();
+  const { rooms: chatRooms, createChat, error: chatRoomError } = useChatRooms();
+
+  /// 가장 최근 채팅방 지정
+  useEffect(() => {
+    if (currentChatId < 0 && chatRooms) {
+      setCurrentChatId(chatRooms[0].id);
+    }
+  }, [chatRooms, currentChatId]);
+
+  const handleNewChat = () => {
+    if (chatRoomError) return;
+    createChat(undefined, {
+      onSuccess: (newRoom) => {
+        if (!newRoom.ok) return;
+        setCurrentChatId(newRoom.data.data || -1);
+      },
+    });
+  };
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
@@ -23,30 +40,16 @@ export default function Chat() {
     const userMessage: Message = {
       id: Date.now().toString(),
       text: inputValue,
-      user: { user_id: 'asdf', username: 'mindul' },
+      user: { userId: 'asdf', username: 'mindul' },
       timestamp: new Date(),
     };
 
-    sendMessage(userMessage);
+    sendMessage({ roomId: 1, newMessage: userMessage });
     setInputValue('');
   };
 
-  const handleChatSelect = (chatId: string) => {
+  const handleChatSelect = (chatId: number) => {
     setCurrentChatId(chatId);
-  };
-
-  useEffect(() => {
-    if (!currentChatId && chatRooms.length > 0) {
-      setCurrentChatId(chatRooms[0].id);
-    }
-  }, [chatRooms, currentChatId]);
-
-  const handleNewChat = () => {
-    createChat(undefined, {
-      onSuccess: (newRoom) => {
-        setCurrentChatId(newRoom.id);
-      },
-    });
   };
 
   return (
@@ -62,7 +65,7 @@ export default function Chat() {
           <div className="flex flex-col h-full">
             <ChatHeader chatId={currentChatId} />
             <div className="flex-1 min-h-0">
-              <ChatArea messages={messages} isLoading={isChatLoading && messages.length === 0} />
+              <ChatArea userID={'asdf'} messages={messages} isLoading={isChatLoading && messages.length === 0} />
             </div>
             <ChatSubmit inputValue={inputValue} setInputValue={setInputValue} handleSendMessage={handleSendMessage} />
           </div>

@@ -9,19 +9,19 @@ export const queryKeys = {
   // 채팅방 관련 키
   chatRooms: {
     all: () => ['chatRooms'] as const, // 모든 채팅방 목록
-    detail: (roomId: string) => ['chatRooms', 'detail', roomId] as const, // 특정 채팅방 상세 정보
+    detail: (roomId: number) => ['chatRooms', 'detail', roomId] as const, // 특정 채팅방 상세 정보
   },
 
   // 채팅 메시지 관련 키
   chatMessages: {
-    list: (chatId: string) => ['chatMessages', chatId] as const, // 특정 채팅방의 누적 메시지 목록
-    fetcher: (chatId: string) => ['chatMessages', 'fetcher', chatId] as const, // 새 메시지를 가져오는 폴링용
+    list: (chatId: number) => ['chatMessages', chatId] as const, // 특정 채팅방의 누적 메시지 목록
+    fetcher: (chatId: number) => ['chatMessages', 'fetcher', chatId] as const, // 새 메시지를 가져오는 폴링용
   },
 
   // 사용자 관련 키
   users: {
     all: () => ['users'] as const,
     me: () => ['users', 'me'] as const, // 현재 로그인한 사용자 정보
-    detail: (userId: string) => ['users', 'detail', userId] as const,
+    detail: (userId: number) => ['users', 'detail', userId] as const,
   },
 };

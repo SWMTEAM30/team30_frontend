@@ -9,8 +9,8 @@ export default function SidebarContent({
   className = '',
 }: {
   chatRooms: ChatRoom[];
-  currentChatId?: string;
-  onChatSelect: (chatId: string) => void;
+  currentChatId: number;
+  onChatSelect: (chatId: number) => void;
   onNewChat: () => void;
   className?: string;
 }) {

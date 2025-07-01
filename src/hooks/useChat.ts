@@ -3,7 +3,7 @@ import { queryKeys } from '@/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-export const useChat = (chatId: string) => {
+export const useChat = (chatId: number) => {
   const queryClient = useQueryClient();
 
   const accumulatedMessagesKey = queryKeys.chatMessages.list(chatId); // 채팅방 별로 데이터 저장하는 키
@@ -27,16 +27,14 @@ export const useChat = (chatId: string) => {
      */
 
     // response가 없으면 ignore
-    if (!chatId || status !== 'success' || !queryResult?.[0]?.data) return;
+    if (!chatId || status !== 'success' || !queryResult.ok) return;
 
     // chat message accumulating
     queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (oldMessages = []) => {
       const existingIds = new Set(oldMessages.map((msg) => msg.id));
       const res: Message[] = [...oldMessages];
 
-      if (!queryResult[0]?.data) return res;
-
-      for (const newMessage of queryResult[0].data) {
+      for (const newMessage of queryResult.data.data) {
         if (!existingIds.has(newMessage.id)) res.push(newMessage);
       }
 
@@ -45,18 +43,19 @@ export const useChat = (chatId: string) => {
   }, [queryResult, status, queryClient, accumulatedMessagesKey, chatId]);
 
   // ✨ '메시지 보내기'를 위한 useMutation 로직 수정
-  const { mutate: sendMessage, isPending: isSending } = useMutation({
-    mutationFn: (newMessage: Message) => postChatSend(newMessage),
-    onMutate: async (newMessageData: Message) => {
+  const { mutate: sendMessage } = useMutation({
+    mutationFn: (variables: { roomId: number; newMessage: Message }) =>
+      postChatSend(variables.roomId, variables.newMessage),
+    onMutate: async (newMessageData) => {
       await queryClient.cancelQueries({ queryKey: newChatMessageFetcherKey });
       const previousMessages = queryClient.getQueryData<Message[]>(accumulatedMessagesKey) || [];
-      queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (old = []) => [...old, newMessageData]);
+      queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (old = []) => [...old, newMessageData.newMessage]);
 
-      // 에러 발생 시 롤백에 사용할 스냅샷을 context로 반환합니다.
+      // 에러 발생 시 롤백에 사용할 스냅샷을 context로 반환
       return { previousMessages };
     },
 
-    // 3. onError: 뮤테이션이 실패했을 때 실행됩니다.
+    // 3. onError: 뮤테이션이 실패했을 때 실행
     onError: (err, newMessage, context) => {
       console.error('메시지 전송 실패:', err);
       if (context?.previousMessages) {
@@ -64,8 +63,8 @@ export const useChat = (chatId: string) => {
       }
     },
     onSettled: () => {
-      // 최신 서버 상태와 동기화하기 위해 메시지 목록 쿼리를 무효화합니다.
-      // 이렇게 하면 임시 ID가 실제 서버 ID로 교체되는 등의 작업을 할 수 있습니다.
+      // 최신 서버 상태와 동기화하기 위해 메시지 목록 쿼리를 무효화
+      // 이렇게 하면 임시 ID가 실제 서버 ID로 교체되는 등의 작업 가능
       queryClient.invalidateQueries({ queryKey: accumulatedMessagesKey });
       queryClient.invalidateQueries({ queryKey: newChatMessageFetcherKey }); // 폴링 쿼리도 동기화
     },
