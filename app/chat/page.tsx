@@ -19,7 +19,8 @@ export default function Chat() {
 
   /// 가장 최근 채팅방 지정
   useEffect(() => {
-    if (currentChatId < 0 && chatRooms) {
+    if (currentChatId < 0 && chatRooms.length > 0) {
+      console.log(chatRooms);
       setCurrentChatId(chatRooms[0].id);
     }
   }, [chatRooms, currentChatId]);

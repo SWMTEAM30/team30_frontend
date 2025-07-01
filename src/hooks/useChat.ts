@@ -11,7 +11,7 @@ export const useChat = (chatId: number) => {
 
   const { data: queryResult, status } = useQuery({
     queryKey: newChatMessageFetcherKey, // 여기서는 API를 받아서 가공할 예정
-    queryFn: getChatReceive,
+    queryFn: () => getChatReceive(chatId),
     refetchInterval: 3000,
     refetchIntervalInBackground: true,
   });

@@ -1,8 +1,8 @@
 import { requestAPI } from '@/api/API';
 
 // GET
-export const getChatReceive = async () => {
-  const response = await requestAPI<string[]>(`/api/chat/receive`, 'GET');
+export const getChatReceive = async (roomId: number) => {
+  const response = await requestAPI<string[]>(`/api/chat/receive?roomId=${roomId}`, 'GET');
   if (response.ok === true) {
     return {
       ok: response.ok,

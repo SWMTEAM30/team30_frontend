@@ -61,9 +61,9 @@ export default function Home() {
                 href="/chat"
                 className="dark inline-flex items-center px-12 py-5 bg-blue text-beige-50 font-bold rounded-2xl hover:bg-navy-600 transition-all transform hover:scale-105 shadow-lg text-xl"
               >
-                <LucideIcon name={'Wand'} className="mr-4 w-6 h-6" />
+                <LucideIcon name={'Wand'} color="beige-50" className="mr-4 w-6 h-6 " />
                 AI가 딱 한 벌 골라주기
-                <LucideIcon name={'ArrowRight'} className="ml-4 w-6 h-6" />
+                <LucideIcon name={'ArrowRight'} color="beige-50" className="ml-4 w-6 h-6" />
               </Link>
               <p className="text-gray-500 mt-4 text-lg">⏱️ 30초면 완성! 복잡한 설문 없어요</p>
             </div>
