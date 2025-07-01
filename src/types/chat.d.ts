@@ -15,6 +15,10 @@ type ChatRoom = {
 };
 
 interface RoomStart {
-  newChat: number;
-  chatRooms: number[];
+  new_room_id: number;
+  all_rooms: {
+    id: number;
+    title: string;
+    created_at: string;
+  }[];
 }

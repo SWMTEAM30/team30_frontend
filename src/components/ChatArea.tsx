@@ -17,13 +17,10 @@ export default function ChatArea({
           <div>대화 내용을 불러오는 중...</div>
         ) : (
           <>
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.user.user_id == userID ? 'justify-end' : 'justify-start'}`}
-              >
+            {messages.map((message, i) => (
+              <div key={i} className={`flex ${message.user.userId == userID ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-[70%] p-6 rounded-lg ${message.user.user_id == 'asdf' ? messageColor[0] : messageColor[1]}`}
+                  className={`max-w-[70%] p-6 rounded-lg ${message.user.userId == 'asdf' ? messageColor[0] : messageColor[1]}`}
                 >
                   <p className="text-lg md:text-2xl">{message.text}</p>
                   <p className="text-xs opacity-70 mt-2">{message.timestamp.toLocaleTimeString()}</p>

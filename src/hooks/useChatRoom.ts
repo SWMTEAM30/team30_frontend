@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getChatRoomsNew, getChatRoomsStart } from '@/api/chatAPI';
+import { postChatRoomsNew, postChatRoomsStart } from '@/api/chatAPI';
 import { queryKeys } from '@/lib/queryKeys';
+import { moveItemToFront } from '@/lib/utils';
 
 export const useChatRooms = () => {
   const queryClient = useQueryClient();
@@ -14,32 +15,32 @@ export const useChatRooms = () => {
   } = useQuery<ChatRoom[]>({
     queryKey: queryKey,
     queryFn: async (): Promise<ChatRoom[]> => {
-      // getChatRoomsStart는 { ok, data, error } 객체를 포함한 Promise를 반환합니다.
-      const result = await getChatRoomsStart();
+      const result = await postChatRoomsStart();
 
-      // 성공했고 데이터가 존재할 때만 data를 반환합니다.
       if (result.ok && result.data) {
-        // 🚨 중요: 여기서 result.data의 타입이 ChatRoom[]이어야 합니다.
-        // 아래 추가 설명을 확인해주세요.
-        return [result.data.data.newChat, ...result.data.data.chatRooms].map((chatRoomId) => ({
-          id: chatRoomId,
-          title: '새 채팅',
-          timestamp: new Date(),
-        }));
+        // api 받아온 거를 ChatRoom[] 모양에 맞게 formatting 해줘야 함.
+        return moveItemToFront(
+          result.data.data.all_rooms.map((chatRoom) => ({
+            id: chatRoom.id,
+            title: chatRoom.title,
+            timestamp: new Date(chatRoom.created_at),
+          })),
+          result.data.data.new_room_id,
+        );
       }
 
-      // 실패했거나 데이터가 없으면 에러를 발생시켜 error 상태로 만듭니다.
+      // 만약 error가 있다면 에러를 표기
       throw new Error(result.error || '채팅방 목록을 가져오는 데 실패했습니다.');
     },
   });
 
   // 새로운 채팅방을 만드는 useMutation
   const { mutate: createChat, isPending: isCreating } = useMutation({
-    mutationFn: getChatRoomsNew,
-    onSuccess: (getChatRoomsNewResponse) => {
-      if (!getChatRoomsNewResponse.ok) throw Error('no new room');
+    mutationFn: postChatRoomsNew,
+    onSuccess: (postChatRoomsNewResponse) => {
+      if (!postChatRoomsNewResponse.ok) throw Error('no new room');
       queryClient.invalidateQueries({ queryKey: queryKey });
-      queryClient.setQueryData(['chatMessages', getChatRoomsNewResponse.data.data], []);
+      queryClient.setQueryData(['chatMessages', postChatRoomsNewResponse.data.data], []);
     },
   });
 

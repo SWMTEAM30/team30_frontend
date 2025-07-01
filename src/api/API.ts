@@ -2,10 +2,10 @@ export const requestAPI = async <T>(url: string, method: Method, body?: any): Pr
   try {
     const option: RequestInit = {
       method: method,
-      headers: {},
+      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     };
-    if (body) option['body'] = body;
+    if (body) option['body'] = JSON.stringify(body);
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_TFT_BACKEND_URL}${url}`, option);
     return {

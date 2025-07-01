@@ -45,7 +45,7 @@ export const useChat = (chatId: number) => {
   // ✨ '메시지 보내기'를 위한 useMutation 로직 수정
   const { mutate: sendMessage } = useMutation({
     mutationFn: (variables: { roomId: number; newMessage: Message }) =>
-      postChatSend(variables.roomId, variables.newMessage),
+      postChatSend(variables.roomId, { content: variables.newMessage.text }),
     onMutate: async (newMessageData) => {
       await queryClient.cancelQueries({ queryKey: newChatMessageFetcherKey });
       const previousMessages = queryClient.getQueryData<Message[]>(accumulatedMessagesKey) || [];

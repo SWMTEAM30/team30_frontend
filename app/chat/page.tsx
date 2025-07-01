@@ -45,7 +45,7 @@ export default function Chat() {
       timestamp: new Date(),
     };
 
-    sendMessage({ roomId: 1, newMessage: userMessage });
+    sendMessage({ roomId: currentChatId, newMessage: userMessage });
     setInputValue('');
   };
 

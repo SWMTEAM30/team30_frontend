@@ -23,10 +23,10 @@ export const getChatReceive = async (roomId: number) => {
   }
 };
 
-export const getChatRoomsStart = async () => requestAPI<RoomStart>(`/api/chat/rooms/start`, 'GET');
-
-export const getChatRoomsNew = async () => requestAPI<number>(`/api/chat/rooms/new`, 'GET');
-
 // POST
-export const postChatSend = async (roomId: number, message: Message) =>
-  requestAPI(`/api/chat/send?roomId=${roomId}`, 'POST', message.text);
+export const postChatSend = async (roomId: number, message: { content: string }) =>
+  requestAPI(`/api/chat/send?roomId=${roomId}`, 'POST', message);
+
+export const postChatRoomsStart = async () => requestAPI<RoomStart>(`/api/chat/rooms/start`, 'POST');
+
+export const postChatRoomsNew = async () => requestAPI<number>(`/api/chat/rooms/new`, 'POST');
