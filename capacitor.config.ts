@@ -1,9 +1,12 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.example.app',
+  appId: 'com.thefirsttake.app',
   appName: 'thefirsttake_frontend',
-  webDir: 'out'
+  server: {
+    hostname: 'the-first-take-frontend.vercel.app',
+    androidScheme: 'https',
+  },
 };
 
 export default config;

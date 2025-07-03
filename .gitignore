@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+*storybook.log
 
 # next.js
 /.next/
@@ -23,6 +24,11 @@
 # misc
 .DS_Store
 *.pem
+Thumbs.db
+.idea/
+*.iml
+*.keystore
+*.jks
 
 # debug
 npm-debug.log*
@@ -40,4 +46,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-*storybook.log
+# Capacitor
+# (android/ 는 커밋을 하기!)
+android/app/build/
+android/.gradle/
+android/gradle/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/public/
