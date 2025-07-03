@@ -2,22 +2,23 @@ type Message = {
   id: string;
   text: string;
   user: {
-    user_id: string;
+    userId: string;
     username: string;
   };
   timestamp: Date;
-  images?: string[];
 };
 
-interface Photo {
-  id: string;
-  url: string;
-  description: string;
-  tags: string[];
-}
-
 type ChatRoom = {
-  id: string;
+  id: number;
   title: string;
   timestamp: Date;
 };
+
+interface RoomStart {
+  new_room_id: number;
+  all_rooms: {
+    id: number;
+    title: string;
+    created_at: string;
+  }[];
+}

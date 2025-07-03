@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">thefirsttake_frontend</string>
+    <string name="title_activity_main">thefirsttake_frontend</string>
+    <string name="package_name">com.thefirsttake.app</string>
+    <string name="custom_url_scheme">com.thefirsttake.app</string>
+</resources>

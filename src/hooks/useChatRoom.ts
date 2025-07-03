@@ -1,33 +1,46 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getChatRoomList, createNewChatRoom } from '@/api/chatAPI';
+import { postChatRoomsNew, postChatRoomsStart } from '@/api/chatAPI';
+import { queryKeys } from '@/lib/queryKeys';
+import { moveItemToFront } from '@/lib/utils';
 
 export const useChatRooms = () => {
   const queryClient = useQueryClient();
-  const queryKey = ['chatRooms'];
+  const queryKey = queryKeys.chatRooms.all();
 
-  // 1. 채팅방 목록을 가져오는 useQuery
+  // 가장 최근의 채팅방을 가져오는 useQuery
   const {
     data: rooms,
     isLoading,
     error,
   } = useQuery<ChatRoom[]>({
     queryKey: queryKey,
-    queryFn: getChatRoomList,
+    queryFn: async (): Promise<ChatRoom[]> => {
+      const result = await postChatRoomsStart();
+
+      if (result.ok && result.data) {
+        // api 받아온 거를 ChatRoom[] 모양에 맞게 formatting 해줘야 함.
+        return moveItemToFront(
+          result.data.data.all_rooms.map((chatRoom) => ({
+            id: chatRoom.id,
+            title: chatRoom.title,
+            timestamp: new Date(chatRoom.created_at),
+          })),
+          result.data.data.new_room_id,
+        );
+      }
+
+      // 만약 error가 있다면 에러를 표기
+      throw new Error(result.error || '채팅방 목록을 가져오는 데 실패했습니다.');
+    },
   });
 
-  // 2. 새로운 채팅방을 만드는 useMutation
+  // 새로운 채팅방을 만드는 useMutation
   const { mutate: createChat, isPending: isCreating } = useMutation({
-    mutationFn: createNewChatRoom,
-
-    // ✨ 핵심: 뮤테이션 성공 시 실행될 로직
-    onSuccess: (newlyCreatedRoom) => {
-      console.log('새 채팅방 생성 성공!', newlyCreatedRoom);
-
-      // 채팅방 목록 쿼리를 '무효화' 시켜서 최신 데이터로 다시 불러오게 만듭니다.
+    mutationFn: postChatRoomsNew,
+    onSuccess: (postChatRoomsNewResponse) => {
+      if (!postChatRoomsNewResponse.ok) throw Error('no new room');
       queryClient.invalidateQueries({ queryKey: queryKey });
-
-      // (선택사항) 새로 만든 채팅방의 메시지 캐시를 빈 배열로 초기화할 수도 있습니다.
-      queryClient.setQueryData(['chatMessages', newlyCreatedRoom.id], []);
+      queryClient.setQueryData(['chatMessages', postChatRoomsNewResponse.data.data], []);
     },
   });
 

@@ -1,4 +1,4 @@
-export default function ChatHeader({ chatId }: { chatId?: string }) {
+export default function ChatHeader({ chatId }: { chatId: number }) {
   return (
     <div className="flex items-center justify-between px-4 py-6 bg-white w-full max-w-[1024px] mx-auto">
       <div className="flex items-center gap-2">
@@ -9,7 +9,7 @@ export default function ChatHeader({ chatId }: { chatId?: string }) {
             <path d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button> */}
-        <span className="font-bold text-3xl text-blue">The First Take {chatId || ''}</span>
+        <span className="font-bold text-3xl text-blue">The First Take {chatId.toString() || ''}</span>
       </div>
       <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
         U

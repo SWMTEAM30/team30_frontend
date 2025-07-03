@@ -9,7 +9,7 @@ export default function Home() {
       <div className="max-w-5xl mx-auto px-4 py-16">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center px-6 py-3 bg-white/80 text-[#27548A] rounded-full text-lg font-medium mb-8 shadow-sm">
+          <div className="inline-flex items-center px-6 py-3 bg-white/80 text-blue rounded-full text-lg font-medium mb-8 shadow-sm">
             <LucideIcon name={'AlarmClock'} color={'blue-500'} className="w-5 h-5 mr-2 dark" />
             패션을 잘 모르겠다면?
           </div>
@@ -17,7 +17,7 @@ export default function Home() {
           <h2 className="text-6xl font-bold text-gray-900 mb-8 leading-tight">
             고민 없이
             <br />
-            <span className="text-[#27548A]">딱 한 벌</span>만 추천
+            <span className="text-blue">딱 한 벌</span>만 추천
           </h2>
 
           <p className="text-2xl text-gray-700 max-w-3xl mx-auto mb-4">"뭘 입어야 할지 모르겠어요..." 걱정 끝!</p>
@@ -32,7 +32,7 @@ export default function Home() {
           <div className="bg-gray-50 px-8 py-6 border-b border-gray-100">
             <div className="flex items-center justify-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-[#27548A] text-white rounded-full flex items-center justify-center text-sm font-bold">
+                <div className="w-8 h-8 bg-blue text-white rounded-full flex items-center justify-center text-sm font-bold">
                   1
                 </div>
                 <span className="text-gray-900 font-medium">상황 설명</span>
@@ -59,11 +59,11 @@ export default function Home() {
             <div className="text-center">
               <Link
                 href="/chat"
-                className="dark inline-flex items-center px-12 py-5 bg-blue text-blue font-bold rounded-2xl hover:bg-[#1e4068] transition-all transform hover:scale-105 shadow-lg text-xl"
+                className="dark inline-flex items-center px-12 py-5 bg-blue text-beige-50 font-bold rounded-2xl hover:bg-navy-600 transition-all transform hover:scale-105 shadow-lg text-xl"
               >
-                <LucideIcon name={'Wand'} className="mr-4 w-6 h-6" />
+                <LucideIcon name={'Wand'} color="beige-50" className="mr-4 w-6 h-6 " />
                 AI가 딱 한 벌 골라주기
-                <LucideIcon name={'ArrowRight'} className="ml-4 w-6 h-6" />
+                <LucideIcon name={'ArrowRight'} color="beige-50" className="ml-4 w-6 h-6" />
               </Link>
               <p className="text-gray-500 mt-4 text-lg">⏱️ 30초면 완성! 복잡한 설문 없어요</p>
             </div>
@@ -74,7 +74,7 @@ export default function Home() {
         <div className="mt-16 grid md:grid-cols-3 gap-6">
           <div className="bg-white/80 p-6 rounded-2xl border border-gray-200">
             <div className="flex items-center mb-4">
-              <LucideIcon name={'User'} className="w-8 h-8 text-[#27548A] mr-3" />
+              <LucideIcon name={'User'} className="w-8 h-8 text-blue mr-3" />
               <div>
                 <div className="font-semibold text-gray-900">김○○ (25세)</div>
                 <div className="text-sm text-gray-500">패션 완전 초보</div>
@@ -84,7 +84,7 @@ export default function Home() {
           </div>
           <div className="bg-white/80 p-6 rounded-2xl border border-gray-200">
             <div className="flex items-center mb-4">
-              <LucideIcon name={'User'} className="w-8 h-8 text-[#27548A] mr-3" />
+              <LucideIcon name={'User'} className="w-8 h-8 text-blue mr-3" />
               <div>
                 <div className="font-semibold text-gray-900">이○○ (30세)</div>
                 <div className="text-sm text-gray-500">직장인</div>
@@ -94,7 +94,7 @@ export default function Home() {
           </div>
           <div className="bg-white/80 p-6 rounded-2xl border border-gray-200">
             <div className="flex items-center mb-4">
-              <LucideIcon name={'User'} className="w-8 h-8 text-[#27548A] mr-3" />
+              <LucideIcon name={'User'} className="w-8 h-8 text-blue mr-3" />
               <div>
                 <div className="font-semibold text-gray-900">박○○ (22세)</div>
                 <div className="text-sm text-gray-500">대학생</div>

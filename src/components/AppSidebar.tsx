@@ -3,8 +3,8 @@ import { Menu } from 'lucide-react';
 
 interface AppSidebarProps {
   chatRooms: ChatRoom[];
-  currentChatId?: string;
-  onChatSelect: (chatId: string) => void;
+  currentChatId: number;
+  onChatSelect: (chatId: number) => void;
   onNewChat: () => void;
 }
 

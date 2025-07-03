@@ -1,19 +1,23 @@
-export const requestAPI = async (url: string, method: Method, body?: any): Promise<[APIResponseType<any>, any]> => {
-  let [data, error]: [APIResponseType<any>, any] = [undefined, undefined];
-
+export const requestAPI = async <T>(url: string, method: Method, body?: any): Promise<APIResponse<T>> => {
   try {
     const option: RequestInit = {
       method: method,
-      headers: {},
+      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     };
-    if (body) option['body'] = body;
+    if (body) option['body'] = JSON.stringify(body);
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_TFT_BACKEND_URL}${url}`, option);
-    data = await response.json();
+    return {
+      ok: true,
+      data: await response.json(),
+      error: undefined,
+    };
   } catch (apiErr) {
-    error = apiErr;
+    return {
+      ok: false,
+      data: undefined,
+      error: apiErr,
+    };
   }
-
-  return [data, error];
 };

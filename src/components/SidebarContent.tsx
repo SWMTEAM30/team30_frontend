@@ -9,8 +9,8 @@ export default function SidebarContent({
   className = '',
 }: {
   chatRooms: ChatRoom[];
-  currentChatId?: string;
-  onChatSelect: (chatId: string) => void;
+  currentChatId: number;
+  onChatSelect: (chatId: number) => void;
   onNewChat: () => void;
   className?: string;
 }) {
@@ -25,9 +25,9 @@ export default function SidebarContent({
         <span className="ml-3 font-medium whitespace-nowrap hidden group-hover:inline">새 채팅</span>
       </button>
       <div className="flex-1 flex flex-col gap-2 w-full">
-        {chatRooms.map((room) => (
+        {chatRooms.map((room, i) => (
           <button
-            key={room.id}
+            key={i}
             onClick={() => onChatSelect(room.id)}
             className={`flex items-center w-full px-4 h-12 rounded-lg transition-all duration-200 ${
               currentChatId === room.id ? 'bg-yellow-300 text-blue' : 'hover:bg-yellow-200 text-blue'
