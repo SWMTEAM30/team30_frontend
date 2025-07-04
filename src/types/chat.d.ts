@@ -14,11 +14,10 @@ type ChatRoom = {
   timestamp: Date;
 };
 
-interface RoomStart {
-  new_room_id: number;
+interface RoomHistory {
   all_rooms: {
     id: number;
     title: string;
-    created_at: string;
+    createdAt: string;
   }[];
 }

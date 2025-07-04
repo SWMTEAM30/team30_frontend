@@ -11,28 +11,21 @@ import { useChatRooms } from '@/hooks/useChatRoom';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState<string>('');
-  const [currentChatId, setCurrentChatId] = useState<number>(-1);
+  const [currentChatId, setCurrentChatId] = useState<number | null>(null);
 
   /** chat state 관리하는 hook */
   const { messages, isLoading: isChatLoading, sendMessage } = useChat(currentChatId);
-  const { rooms: chatRooms, createChat, error: chatRoomError } = useChatRooms();
+  const { rooms: chatRooms, error: chatRoomError } = useChatRooms();
 
-  /// 가장 최근 채팅방 지정
   useEffect(() => {
-    if (currentChatId < 0 && chatRooms.length > 0) {
+    if (currentChatId && chatRooms.length > 0) {
       console.log(chatRooms);
-      setCurrentChatId(chatRooms[0].id);
     }
   }, [chatRooms, currentChatId]);
 
   const handleNewChat = () => {
     if (chatRoomError) return;
-    createChat(undefined, {
-      onSuccess: (newRoom) => {
-        if (!newRoom.ok) return;
-        setCurrentChatId(newRoom.data.data || -1);
-      },
-    });
+    setCurrentChatId(null);
   };
 
   const handleSendMessage = () => {
@@ -45,7 +38,16 @@ export default function Chat() {
       timestamp: new Date(),
     };
 
-    sendMessage({ roomId: currentChatId, newMessage: userMessage });
+    sendMessage(
+      { roomId: currentChatId, newMessage: userMessage },
+      {
+        onSuccess: (responseFromServer) => {
+          if (!currentChatId && responseFromServer.ok) {
+            setCurrentChatId(responseFromServer.data);
+          }
+        },
+      },
+    );
     setInputValue('');
   };
 

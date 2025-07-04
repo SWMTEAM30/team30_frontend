@@ -6,17 +6,15 @@ export const requestAPI = async <T>(url: string, method: Method, body?: any): Pr
       credentials: 'include',
     };
     if (body) option['body'] = JSON.stringify(body);
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_TFT_BACKEND_URL}${url}`, option);
+    console.log(option);
+    const response = await fetch(`${url}`, option);
     return {
       ok: true,
-      data: await response.json(),
-      error: undefined,
+      ...(await response.json()),
     };
   } catch (apiErr) {
     return {
       ok: false,
-      data: undefined,
       error: apiErr,
     };
   }

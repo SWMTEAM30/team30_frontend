@@ -9,7 +9,7 @@ export default function SidebarContent({
   className = '',
 }: {
   chatRooms: ChatRoom[];
-  currentChatId: number;
+  currentChatId: number | null;
   onChatSelect: (chatId: number) => void;
   onNewChat: () => void;
   className?: string;
@@ -17,8 +17,9 @@ export default function SidebarContent({
   return (
     <div className={cn('flex flex-col space-y-4 p-4 items-start h-full', className)}>
       <button
+        disabled={!currentChatId}
         onClick={onNewChat}
-        className="flex items-center w-full p-4 h-12 rounded-lg hover:bg-yellow-200 text-blue"
+        className={`flex items-center w-full p-4 h-12 rounded-lg hover:bg-yellow-200 text-blue disabled:text-gray-400 disabled:hover:bg-beige`}
       >
         <Plus className="w-5 h-5" />
         <span className="ml-3 font-medium whitespace-nowrap block md:hidden">새 채팅</span>
