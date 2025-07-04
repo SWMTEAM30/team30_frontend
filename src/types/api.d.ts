@@ -11,18 +11,16 @@ type QuestionAPIType = {
 // 성공 시의 반환 타입
 type APISuccessResponse<T> = {
   ok: true;
-  data: {
-    status: string;
-    message: string;
-    data: T;
-  };
-  error?: never;
+  status: string;
+  message: string;
+  data: T;
 };
 
 // 실패 시의 반환 타입
 type APIErrorResponse = {
   ok: false;
-  data?: never;
+  status?: string;
+  message?: string;
   error: any;
 };
 
