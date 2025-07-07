@@ -17,6 +17,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            export FNM_DIR="$HOME/.fnm"
+            [ -s "$FNM_DIR/fnm.sh" ] && \. "$FNM_DIR/fnm.sh" --use-on-cd
             cd ${{ secrets.EC2_PROJECT_PATH }}
             git pull origin main
             pnpm install
