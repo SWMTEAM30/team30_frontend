@@ -23,9 +23,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm' # 2. 의존성 캐싱을 위해 pnpm으로 변경
+          cache: 'pnpm'
 
-      # 3. 모든 npm 명령어를 pnpm으로 변경
+      # 3. pnpm으로 의존성 설치 후 빌드
       - name: Install dependencies and build
         run: |
           pnpm install
@@ -51,5 +51,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: | # EC2 서버에서 실행할 명령어들
             cd ${{ secrets.EC2_PROJECT_PATH }}
-            npm install --production
-            pm2 reload the-first-take || pm2 start "npm start" --name the-first-take
+            pnpm install --production
+            pm2 reload the-first-take || pm2 start "pnpm run start" --name the-first-take
