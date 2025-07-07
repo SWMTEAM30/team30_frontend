@@ -7,49 +7,17 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest # 작업이 실행될 가상 환경
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      # 1. pnpm 설치 및 설정 Actions 추가
-      - name: Use pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8 # 사용하시는 pnpm 버전에 맞게 설정
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      # 3. pnpm으로 의존성 설치 후 빌드
-      - name: Install dependencies and build
-        run: |
-          pnpm install
-          pnpm run build
-
-      # 4. SCP를 사용해 빌드된 파일들을 EC2로 복사
-      - name: Transfer build files to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: '.next/, public/, package.json, next.config.mjs' # 복사할 파일 및 폴더
-          target: ${{ secrets.EC2_PROJECT_PATH }}
-          strip_components: 1 # source의 하위 파일/폴더만 복사
-
-      # 5. SSH를 사용해 EC2에 접속하여 배포 스크립트 실행
-      - name: Deploy on EC2
+      - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script: | # EC2 서버에서 실행할 명령어들
+          script: | # EC2 서버에서 직접 실행할 명령어들
             cd ${{ secrets.EC2_PROJECT_PATH }}
-            pnpm install --production
-            pm2 reload the-first-take || pm2 start "pnpm run start" --name the-first-take
+            git pull origin main
+            pnpm install --prod
+            pnpm run build
+            pm2 startOrRestart ecosystem.config.js --update-env
