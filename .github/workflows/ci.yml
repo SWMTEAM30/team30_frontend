@@ -1,71 +1,50 @@
-name: pnpm ci Workflow
+name: Deploy to EC2
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - main # main 브랜치에 푸시될 때 실행
 
 jobs:
-  install-dependencies:
-    runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [22.x]
+  deploy:
+    runs-on: ubuntu-latest # 작업이 실행될 가상 환경
 
     steps:
-      - name: Cheeckout Repository
+      # 1. 소스 코드 체크아웃
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      # 2. Node.js 환경 설정
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20' # 프로젝트에 맞는 Node.js 버전
 
-      - name: Restore node_modules from Cache
-        id: restore-node-modules
-        uses: actions/cache@v4
+      # 3. 의존성 설치 및 Next.js 앱 빌드
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+
+      # 4. SCP를 사용해 빌드된 파일들을 EC2로 복사
+      - name: Transfer build files to EC2
+        uses: appleboy/scp-action@v0.1.7
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: '.next/, public/, package.json, next.config.mjs' # 복사할 파일 및 폴더
+          target: ${{ secrets.EC2_PROJECT_PATH }}
+          strip_components: 1 # source의 하위 파일/폴더만 복사
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install
-
-  build:
-    runs-on: ubuntu-latest
-    needs: [install-dependencies] # lint, test 단계가 모두 실행되어야 함
-    strategy:
-      matrix:
-        node-version: [22.x]
-    steps:
-      - name: Cheeckout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      # 5. SSH를 사용해 EC2에 접속하여 배포 스크립트 실행
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Restore node_modules from Cache
-        id: restore-node-modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node
-
-      - name: Install Pnpm
-        if: steps.restore-node-nodules.outputs.cache-hit != 'true'
-        run: npm install -g pnpm
-
-      - name: Install Dependencies
-        if: steps.restore-node-nodules.outputs.cache-hit != 'true'
-        run: pnpm install
-
-      - name: Run Build
-        run: pnpm run build
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: | # EC2 서버에서 실행할 명령어들
+            cd ${{ secrets.EC2_PROJECT_PATH }}
+            npm install --production
+            pm2 reload the-first-take || pm2 start "npm start" --name the-first-take
