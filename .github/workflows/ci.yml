@@ -9,15 +9,22 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to EC2 instance
+      # ...
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script: | # EC2 서버에서 직접 실행할 명령어들
+          script: |
+            source ~/.bashrc
+
             cd ${{ secrets.EC2_PROJECT_PATH }}
+
             git pull origin main
+
             pnpm install --prod
+
             pnpm run build
-            pm2 startOrRestart ecosystem.config.js --update-env
+
+            pm2 reload the-first-take || pm2 start "pnpm run start" --name the-first-take
