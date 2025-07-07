@@ -19,7 +19,18 @@ jobs:
           script: |
             cd ${{ secrets.EC2_PROJECT_PATH }}
             git pull origin main
+            node -v
+            npm -v
+            sudo apt-get install -y unzip
+            sudo apt-get install -y curl
+            curl -o- https://fnm.vercel.app/install | bash
+            fnm install 22
+            node -v
+            npm -v
+            source ~/.bashrc
+            corepack enable pnpm
             npm install -g pnpm
+            source ~/.bashrc
             pnpm install
             pnpm run build
             pm2 reload the-first-take || pm2 start "pnpm run start" --name the-first-take
