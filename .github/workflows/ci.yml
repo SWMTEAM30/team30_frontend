@@ -10,21 +10,26 @@ jobs:
     runs-on: ubuntu-latest # 작업이 실행될 가상 환경
 
     steps:
-      # 1. 소스 코드 체크아웃
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # 2. Node.js 환경 설정
+      # 1. pnpm 설치 및 설정 Actions 추가
+      - name: Use pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8 # 사용하시는 pnpm 버전에 맞게 설정
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 프로젝트에 맞는 Node.js 버전
+          node-version: '20'
+          cache: 'pnpm' # 2. 의존성 캐싱을 위해 pnpm으로 변경
 
-      # 3. 의존성 설치 및 Next.js 앱 빌드
+      # 3. 모든 npm 명령어를 pnpm으로 변경
       - name: Install dependencies and build
         run: |
-          npm install
-          npm run build
+          pnpm install
+          pnpm run build
 
       # 4. SCP를 사용해 빌드된 파일들을 EC2로 복사
       - name: Transfer build files to EC2
