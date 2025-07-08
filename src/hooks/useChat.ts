@@ -32,37 +32,23 @@ export const useChat = (chatId: number | null) => {
 
     // chat message accumulating
     queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (oldMessages = []) => {
+      const newMessages = queryResult.data;
       const existingIds = new Set(oldMessages.map((msg) => msg.id));
-      const res: Message[] = [...oldMessages];
-      for (const newMessage of queryResult.data) {
-        if (!existingIds.has(newMessage.id)) res.push(newMessage);
-      }
-
-      return res;
+      const uniqueNewMessages = newMessages.filter((msg) => !existingIds.has(msg.id));
+      if (uniqueNewMessages.length === 0) return oldMessages;
+      return [...oldMessages, ...uniqueNewMessages];
     });
   }, [queryResult, status, queryClient, accumulatedMessagesKey, chatId]);
 
   // 메시지 보내기 mutation
-  const { mutate: sendMessage, isPending: isSending } = useMutation({
+  const { mutate: sendMessageMutation, isPending: isSending } = useMutation({
     mutationFn: (variables: { roomId: number | null; newMessage: Message }) =>
       postChatSend(variables.roomId, { content: variables.newMessage.text }),
-    onMutate: async (newMessageData) => {
-      await queryClient.cancelQueries({ queryKey: newChatMessageFetcherKey });
-      const previousMessages = queryClient.getQueryData<Message[]>(accumulatedMessagesKey) || [];
-      queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (old = []) => [...old, newMessageData.newMessage]);
-      return { previousMessages };
-    },
     onSuccess: (responseFromServer) => {
       if (!responseFromServer.ok) return;
       const newChatId = responseFromServer.data;
       if (!chatId && newChatId) {
         queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.all() });
-      }
-    },
-    onError: (err, newMessage, context) => {
-      console.error('메시지 전송 실패:', err);
-      if (context?.previousMessages) {
-        queryClient.setQueryData(accumulatedMessagesKey, context.previousMessages);
       }
     },
     onSettled: () => {
@@ -73,6 +59,29 @@ export const useChat = (chatId: number | null) => {
     },
   });
 
+  // sendMessage 함수를 래핑하여 콜백을 지원하도록 수정
+  const sendMessage = (
+    variables: { roomId: number | null; newMessage: Message },
+    callbacks?: { onSuccess?: (response: any) => void; onError?: (error: any) => void },
+  ) => {
+    sendMessageMutation(variables, {
+      onSuccess: (response) => {
+        callbacks?.onSuccess?.(response);
+      },
+      onError: (error) => {
+        callbacks?.onError?.(error);
+      },
+    });
+  };
+
+  const addMessageToCache = (newMessage: Message, targetChatId: number) => {
+    const cacheKey = queryKeys.chatMessages.list(targetChatId);
+    queryClient.setQueryData<Message[]>(cacheKey, (oldMessages = []) => {
+      if (oldMessages.some((msg) => msg.id === newMessage.id)) return oldMessages; // 이거 종북임
+      return [...oldMessages, newMessage];
+    });
+  };
+
   if (!chatId) {
     return {
       messages: [],
@@ -80,6 +89,7 @@ export const useChat = (chatId: number | null) => {
       error: false,
       sendMessage: sendMessage,
       isSending: isSending,
+      addMessageToCache: addMessageToCache,
     };
   }
 
@@ -92,5 +102,6 @@ export const useChat = (chatId: number | null) => {
     error: status === 'error',
     sendMessage: sendMessage,
     isSending: isSending,
+    addMessageToCache: addMessageToCache,
   };
 };

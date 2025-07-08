@@ -14,7 +14,6 @@ export const useChatRooms = () => {
     queryKey: queryKey,
     queryFn: async (): Promise<ChatRoom[]> => {
       const result = await getChatRoomsHistory();
-      console.log(result);
       if (result.ok) {
         // api 받아온 거를 ChatRoom[] 모양에 맞게 formatting 해줘야 함.
         return result.data.all_rooms.map((chatRoom) => ({

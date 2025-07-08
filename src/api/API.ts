@@ -6,7 +6,6 @@ export const requestAPI = async <T>(url: string, method: Method, body?: any): Pr
       credentials: 'include',
     };
     if (body) option['body'] = JSON.stringify(body);
-    console.log(option);
     const response = await fetch(`${url}`, option);
     return {
       ok: true,
