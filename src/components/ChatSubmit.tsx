@@ -29,7 +29,6 @@ export default function ChatSubmit({
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="패션에 대해 마음대로 물어보세요!"
         onKeyDown={(event) => {
-          console.log(event.key == 'Enter');
           if (event.key == 'Enter' && !event.shiftKey && inputValue.trim() != '') {
             event.preventDefault();
             handleSendMessage();

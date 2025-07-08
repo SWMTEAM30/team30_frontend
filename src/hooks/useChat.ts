@@ -32,13 +32,11 @@ export const useChat = (chatId: number | null) => {
 
     // chat message accumulating
     queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (oldMessages = []) => {
+      const newMessages = queryResult.data;
       const existingIds = new Set(oldMessages.map((msg) => msg.id));
-      const res: Message[] = [...oldMessages];
-      for (const newMessage of queryResult.data) {
-        if (!existingIds.has(newMessage.id)) res.push(newMessage);
-      }
-
-      return res;
+      const uniqueNewMessages = newMessages.filter((msg) => !existingIds.has(msg.id));
+      if (uniqueNewMessages.length === 0) return oldMessages;
+      return [...oldMessages, ...uniqueNewMessages];
     });
   }, [queryResult, status, queryClient, accumulatedMessagesKey, chatId]);
 
@@ -46,23 +44,11 @@ export const useChat = (chatId: number | null) => {
   const { mutate: sendMessage, isPending: isSending } = useMutation({
     mutationFn: (variables: { roomId: number | null; newMessage: Message }) =>
       postChatSend(variables.roomId, { content: variables.newMessage.text }),
-    onMutate: async (newMessageData) => {
-      await queryClient.cancelQueries({ queryKey: newChatMessageFetcherKey });
-      const previousMessages = queryClient.getQueryData<Message[]>(accumulatedMessagesKey) || [];
-      queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (old = []) => [...old, newMessageData.newMessage]);
-      return { previousMessages };
-    },
     onSuccess: (responseFromServer) => {
       if (!responseFromServer.ok) return;
       const newChatId = responseFromServer.data;
       if (!chatId && newChatId) {
         queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.all() });
-      }
-    },
-    onError: (err, newMessage, context) => {
-      console.error('메시지 전송 실패:', err);
-      if (context?.previousMessages) {
-        queryClient.setQueryData(accumulatedMessagesKey, context.previousMessages);
       }
     },
     onSettled: () => {
@@ -73,6 +59,17 @@ export const useChat = (chatId: number | null) => {
     },
   });
 
+  const addMessageToCache = (newMessage: Message, targetChatId: number) => {
+    const cacheKey = queryKeys.chatMessages.list(targetChatId);
+    queryClient.setQueryData<Message[]>(cacheKey, (oldMessages = []) => {
+      // 중복 확인 후 메시지 추가
+      if (oldMessages.some((msg) => msg.id === newMessage.id)) {
+        return oldMessages;
+      }
+      return [...oldMessages, newMessage];
+    });
+  };
+
   if (!chatId) {
     return {
       messages: [],
@@ -80,6 +77,7 @@ export const useChat = (chatId: number | null) => {
       error: false,
       sendMessage: sendMessage,
       isSending: isSending,
+      addMessageToCache: addMessageToCache,
     };
   }
 
@@ -92,5 +90,6 @@ export const useChat = (chatId: number | null) => {
     error: status === 'error',
     sendMessage: sendMessage,
     isSending: isSending,
+    addMessageToCache: addMessageToCache,
   };
 };

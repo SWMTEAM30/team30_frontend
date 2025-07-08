@@ -14,7 +14,7 @@ export default function Chat() {
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
 
   /** chat state 관리하는 hook */
-  const { messages, isLoading: isChatLoading, sendMessage } = useChat(currentChatId);
+  const { messages, isLoading: isChatLoading, sendMessage, addMessageToCache } = useChat(currentChatId);
   const { rooms: chatRooms, error: chatRoomError } = useChatRooms();
 
   useEffect(() => {
@@ -42,8 +42,9 @@ export default function Chat() {
       { roomId: currentChatId, newMessage: userMessage },
       {
         onSuccess: (responseFromServer) => {
-          if (!currentChatId && responseFromServer.ok) {
-            setCurrentChatId(responseFromServer.data);
+          if (responseFromServer.ok) {
+            if (currentChatId == null) setCurrentChatId(responseFromServer.data);
+            addMessageToCache(userMessage, responseFromServer.data);
           }
         },
       },
