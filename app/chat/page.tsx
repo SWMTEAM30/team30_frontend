@@ -37,6 +37,38 @@ export default function Chat() {
     setHasUserSentMessage(false);
   };
 
+  // 예시 선택지 클릭 시 처리
+  const handleExampleSelect = (exampleText: string) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: exampleText,
+      user: { userId: 'asdf', username: 'mindul' },
+      timestamp: new Date(),
+    };
+
+    // 사용자가 메시지를 보냈다고 표시
+    setHasUserSentMessage(true);
+
+    // AI 응답 준비 중 상태로 설정
+    setIsAIResponding(true);
+
+    sendMessage(
+      { roomId: currentChatId, newMessage: userMessage },
+      {
+        onSuccess: (responseFromServer) => {
+          if (responseFromServer.ok) {
+            addMessageToCache(userMessage, responseFromServer.data);
+            if (currentChatId == null) setCurrentChatId(responseFromServer.data);
+          }
+        },
+        onError: () => {
+          // 에러 발생 시에도 스피너 숨김
+          setIsAIResponding(false);
+        },
+      },
+    );
+  };
+
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
 
@@ -49,8 +81,6 @@ export default function Chat() {
 
     // 사용자가 메시지를 보냈다고 표시
     setHasUserSentMessage(true);
-
-    // 사용자 메시지를 즉시 캐시에 추가
 
     // AI 응답 준비 중 상태로 설정
     setIsAIResponding(true);
@@ -92,11 +122,12 @@ export default function Chat() {
           <div className="flex flex-col h-full">
             <ChatHeader chatId={currentChatId} />
             <div className="flex-1 min-h-0">
-              <ChatArea
-                userID={'asdf'}
-                messages={messages}
+              <ChatArea 
+                userID={'asdf'} 
+                messages={messages} 
                 isLoading={isChatLoading && messages.length === 0}
                 isAIResponding={isAIResponding && hasUserSentMessage}
+                onExampleSelect={handleExampleSelect}
               />
             </div>
             <ChatSubmit inputValue={inputValue} setInputValue={setInputValue} handleSendMessage={handleSendMessage} />
