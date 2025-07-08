@@ -12,20 +12,29 @@ import { useChatRooms } from '@/hooks/useChatRoom';
 export default function Chat() {
   const [inputValue, setInputValue] = useState<string>('');
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
+  const [isAIResponding, setIsAIResponding] = useState<boolean>(false);
+  const [hasUserSentMessage, setHasUserSentMessage] = useState<boolean>(false);
 
   /** chat state 관리하는 hook */
   const { messages, isLoading: isChatLoading, sendMessage, addMessageToCache } = useChat(currentChatId);
   const { rooms: chatRooms, error: chatRoomError } = useChatRooms();
 
+  // AI 응답이 오면 스피너를 숨기는 효과
   useEffect(() => {
-    if (currentChatId && chatRooms.length > 0) {
-      console.log(chatRooms);
+    if (messages.length > 0 && hasUserSentMessage) {
+      const lastMessage = messages[messages.length - 1];
+      // 마지막 메시지가 AI 응답이면 스피너 숨김
+      if (lastMessage && lastMessage.user.userId !== 'asdf') {
+        setIsAIResponding(false);
+      }
     }
-  }, [chatRooms, currentChatId]);
+  }, [messages, hasUserSentMessage]);
 
   const handleNewChat = () => {
     if (chatRoomError) return;
     setCurrentChatId(null);
+    setIsAIResponding(false);
+    setHasUserSentMessage(false);
   };
 
   const handleSendMessage = () => {
@@ -38,14 +47,26 @@ export default function Chat() {
       timestamp: new Date(),
     };
 
+    // 사용자가 메시지를 보냈다고 표시
+    setHasUserSentMessage(true);
+
+    // 사용자 메시지를 즉시 캐시에 추가
+
+    // AI 응답 준비 중 상태로 설정
+    setIsAIResponding(true);
+
     sendMessage(
       { roomId: currentChatId, newMessage: userMessage },
       {
         onSuccess: (responseFromServer) => {
           if (responseFromServer.ok) {
-            if (currentChatId == null) setCurrentChatId(responseFromServer.data);
             addMessageToCache(userMessage, responseFromServer.data);
+            if (currentChatId == null) setCurrentChatId(responseFromServer.data);
           }
+        },
+        onError: () => {
+          // 에러 발생 시에도 스피너 숨김
+          setIsAIResponding(false);
         },
       },
     );
@@ -54,6 +75,8 @@ export default function Chat() {
 
   const handleChatSelect = (chatId: number) => {
     setCurrentChatId(chatId);
+    setIsAIResponding(false);
+    setHasUserSentMessage(false);
   };
 
   return (
@@ -69,7 +92,12 @@ export default function Chat() {
           <div className="flex flex-col h-full">
             <ChatHeader chatId={currentChatId} />
             <div className="flex-1 min-h-0">
-              <ChatArea userID={'asdf'} messages={messages} isLoading={isChatLoading && messages.length === 0} />
+              <ChatArea
+                userID={'asdf'}
+                messages={messages}
+                isLoading={isChatLoading && messages.length === 0}
+                isAIResponding={isAIResponding && hasUserSentMessage}
+              />
             </div>
             <ChatSubmit inputValue={inputValue} setInputValue={setInputValue} handleSendMessage={handleSendMessage} />
           </div>

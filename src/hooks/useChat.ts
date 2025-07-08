@@ -41,7 +41,7 @@ export const useChat = (chatId: number | null) => {
   }, [queryResult, status, queryClient, accumulatedMessagesKey, chatId]);
 
   // 메시지 보내기 mutation
-  const { mutate: sendMessage, isPending: isSending } = useMutation({
+  const { mutate: sendMessageMutation, isPending: isSending } = useMutation({
     mutationFn: (variables: { roomId: number | null; newMessage: Message }) =>
       postChatSend(variables.roomId, { content: variables.newMessage.text }),
     onSuccess: (responseFromServer) => {
@@ -59,13 +59,25 @@ export const useChat = (chatId: number | null) => {
     },
   });
 
+  // sendMessage 함수를 래핑하여 콜백을 지원하도록 수정
+  const sendMessage = (
+    variables: { roomId: number | null; newMessage: Message },
+    callbacks?: { onSuccess?: (response: any) => void; onError?: (error: any) => void },
+  ) => {
+    sendMessageMutation(variables, {
+      onSuccess: (response) => {
+        callbacks?.onSuccess?.(response);
+      },
+      onError: (error) => {
+        callbacks?.onError?.(error);
+      },
+    });
+  };
+
   const addMessageToCache = (newMessage: Message, targetChatId: number) => {
     const cacheKey = queryKeys.chatMessages.list(targetChatId);
     queryClient.setQueryData<Message[]>(cacheKey, (oldMessages = []) => {
-      // 중복 확인 후 메시지 추가
-      if (oldMessages.some((msg) => msg.id === newMessage.id)) {
-        return oldMessages;
-      }
+      if (oldMessages.some((msg) => msg.id === newMessage.id)) return oldMessages; // 이거 종북임
       return [...oldMessages, newMessage];
     });
   };
