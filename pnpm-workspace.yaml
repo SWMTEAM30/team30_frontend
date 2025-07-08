@@ -1,11 +1,10 @@
+packages:
+  - .
+  - packages/*
 ignoredBuiltDependencies:
   - esbuild
+  - protobufjs
   - sharp
   - unrs-resolver
 onlyBuiltDependencies:
   - vue-demi
-packages:
-  # 현재 루트 폴더 자체를 패키지로 인식
-  - '.'
-  # 'packages' 폴더 안의 모든 하위 폴더를 인식
-  - 'packages/*'

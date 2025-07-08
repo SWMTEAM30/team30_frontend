@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { plus_jakarta_sans, noto_sans_kr } from 'app/fonts';
 import QueryProvider from 'app/providers';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 // const geistSans = Geist({
 //   variable: '--font-geist-sans',
@@ -29,6 +30,7 @@ export default function RootLayout({
         <main className="flex-grow">
           <QueryProvider>{children}</QueryProvider>
         </main>
+        <GoogleAnalytics gaId="G-LS5SN8G0F6" />
       </body>
     </html>
   );
