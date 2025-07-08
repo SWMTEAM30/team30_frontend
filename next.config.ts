@@ -3,7 +3,9 @@ import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  experimental: {},
+  experimental: {
+    clientInstrumentationHook: true,
+  },
   //output: 'export',
   images: {
     unoptimized: true,
