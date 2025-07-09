@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { X } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ImageDetailPanel({
   imageData,
@@ -61,6 +62,12 @@ export default function ImageDetailPanel({
               </div>
             </div>
           )}
+        </div>
+
+        <div className="pt-auto mt-8">
+          <Link href={'https://github.com/MindulMendul'} target="_blank">
+            <button className="w-full btn rounded-2xl p-5 bg-blue text-white text-2xl">사이트로 이동하기</button>{' '}
+          </Link>
         </div>
       </div>
     </div>
