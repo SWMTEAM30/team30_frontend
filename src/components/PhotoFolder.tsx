@@ -33,7 +33,13 @@ export const PhotoFolder = ({ photos }: PhotoFolderProps) => {
             >
               {thumbnails.map((t, index) => (
                 <div key={index} className="bg-white rounded border overflow-hidden">
-                  <Image src={t.url} alt={t.description} className="w-full h-full object-cover" />
+                  <Image
+                    width={300}
+                    height={300}
+                    src={t.url}
+                    alt={t.description}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               ))}
             </div>

@@ -6,6 +6,14 @@ type Message = {
     username: string;
   };
   timestamp: Date;
+  images?: MessageImage[]; // AI 메시지에 포함될 이미지 URL 배열
+};
+
+type MessageImage = {
+  src: string;
+  name: string;
+  description: string;
+  tags: string[];
 };
 
 type ChatRoom = {

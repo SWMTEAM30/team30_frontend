@@ -17,7 +17,13 @@ export const PhotoNode = ({ data }: PhotoNodeProps) => {
       <Handle type="target" position={Position.Top} className="bg-[#4993FA]" />
 
       <div className="p-2">
-        <Image src={data.imageUrl} alt={data.label} className="w-full h-24 object-cover rounded" />
+        <Image
+          width={300}
+          height={300}
+          src={data.imageUrl}
+          alt={data.label}
+          className="w-full h-24 object-cover rounded"
+        />
 
         <div className="mt-2">
           <h3 className="font-medium text-sm text-gray-800 truncate">{data.label}</h3>

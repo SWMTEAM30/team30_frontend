@@ -170,53 +170,40 @@ export default function GraphPage() {
     const groupNodes = nodes.filter((node) => node.type === 'group');
     const photoNodes = nodes.filter((node) => node.type === 'photo');
 
-    const newGroupModels = { ...groupModels };
-    const newGroupSizes = { ...groupInitialSizes };
+    const newGroupModels: Record<
+      string,
+      {
+        modelImage: string;
+        wornItems: string[];
+      }
+    > = {};
+    const newGroupSizes: Record<string, { width: number; height: number }> = {};
 
     groupNodes.forEach((groupNode) => {
       // 그룹의 초기 크기 저장
-      if (!newGroupSizes[groupNode.id]) {
+      if (!groupInitialSizes[groupNode.id]) {
         newGroupSizes[groupNode.id] = {
           width: (groupNode.style?.width as number) || 300,
           height: (groupNode.style?.height as number) || 200,
         };
+      } else {
+        newGroupSizes[groupNode.id] = groupInitialSizes[groupNode.id];
       }
 
       // 그룹 영역 내에 있는 사진 노드들 찾기
       const photosInGroup = photoNodes.filter((photoNode) => isNodeInsideGroup(photoNode, groupNode));
 
-      if (!newGroupModels[groupNode.id]) {
-        newGroupModels[groupNode.id] = {
-          modelImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop',
-          wornItems: [],
-        };
-      }
-
-      newGroupModels[groupNode.id].wornItems = photosInGroup.map((photo) => (photo.data?.label as string) || '아이템');
-
-      // 옷 노드가 없어지면 그룹 크기를 초기 크기로 복원
-      if (photosInGroup.length === 0) {
-        setNodes((currentNodes) =>
-          currentNodes.map((n) => {
-            if (n.id === groupNode.id) {
-              return {
-                ...n,
-                style: {
-                  ...n.style,
-                  width: newGroupSizes[groupNode.id].width,
-                  height: newGroupSizes[groupNode.id].height,
-                },
-              };
-            }
-            return n;
-          }),
-        );
-      }
+      newGroupModels[groupNode.id] = {
+        modelImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop',
+        wornItems: photosInGroup.map((photo) => (photo.data?.label as string) || '아이템'),
+      };
     });
 
     setGroupModels(newGroupModels);
     setGroupInitialSizes(newGroupSizes);
-  }, [nodes, groupInitialSizes, groupModels, setNodes]);
+  }, [nodes]);
+
+  // 그룹 크기 복원은 별도로 처리하지 않고, 그룹 모델 업데이트만 처리
 
   // 드래그 시작 핸들러
   const onNodeDragStart = useCallback(
@@ -528,7 +515,13 @@ export default function GraphPage() {
 
                   {/* 모델 이미지 */}
                   <div className="relative mb-3">
-                    <Image src={modelData.modelImage} alt="모델" className="w-full h-48 object-cover rounded-lg" />
+                    <Image
+                      width={300}
+                      height={300}
+                      src={modelData.modelImage}
+                      alt="모델"
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
                   </div>
 
                   {/* 착용 아이템 목록 */}
