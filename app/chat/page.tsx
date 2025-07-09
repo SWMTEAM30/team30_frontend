@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AppSidebar } from '@/components/AppSidebar';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import ChatHeader from '@/components/ChatHeader';
@@ -16,95 +16,67 @@ export default function Chat() {
   const [hasUserSentMessage, setHasUserSentMessage] = useState<boolean>(false);
 
   /** chat state 관리하는 hook */
-  const { messages, isLoading: isChatLoading, sendMessage, addMessageToCache } = useChat(currentChatId);
+  const { messages, examples, isLoading: isChatLoading, sendMessage, addMessageToCache } = useChat(currentChatId);
   const { rooms: chatRooms, error: chatRoomError } = useChatRooms();
 
   // AI 응답이 오면 스피너를 숨기는 효과
   useEffect(() => {
     if (messages.length > 0 && hasUserSentMessage) {
       const lastMessage = messages[messages.length - 1];
-      // 마지막 메시지가 AI 응답이면 스피너 숨김
-      if (lastMessage && lastMessage.user.userId !== 'asdf') {
-        setIsAIResponding(false);
-      }
+      if (lastMessage && lastMessage.user.userId !== 'asdf') setIsAIResponding(false);
     }
   }, [messages, hasUserSentMessage]);
 
-  const handleNewChat = () => {
-    if (chatRoomError) return;
-    setCurrentChatId(null);
-    setIsAIResponding(false);
-    setHasUserSentMessage(false);
-  };
+  const sendMsg = useCallback(
+    (inputValue: string) => {
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        text: inputValue,
+        user: { userId: 'asdf', username: 'mindul' },
+        timestamp: new Date(),
+      };
 
-  // 예시 선택지 클릭 시 처리
+      sendMessage(
+        { roomId: currentChatId, newMessage: userMessage },
+        {
+          onSuccess: (responseFromServer) => {
+            if (responseFromServer.ok) {
+              addMessageToCache(userMessage, responseFromServer.data);
+              if (currentChatId == null) setCurrentChatId(responseFromServer.data);
+            }
+          },
+          onError: () => {
+            setIsAIResponding(false); // 에러 발생 시에도 스피너 숨김
+          },
+        },
+      );
+    },
+    [inputValue],
+  );
+
   const handleExampleSelect = (exampleText: string) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: exampleText,
-      user: { userId: 'asdf', username: 'mindul' },
-      timestamp: new Date(),
-    };
-
-    // 사용자가 메시지를 보냈다고 표시
     setHasUserSentMessage(true);
-
-    // AI 응답 준비 중 상태로 설정
     setIsAIResponding(true);
-
-    sendMessage(
-      { roomId: currentChatId, newMessage: userMessage },
-      {
-        onSuccess: (responseFromServer) => {
-          if (responseFromServer.ok) {
-            addMessageToCache(userMessage, responseFromServer.data);
-            if (currentChatId == null) setCurrentChatId(responseFromServer.data);
-          }
-        },
-        onError: () => {
-          // 에러 발생 시에도 스피너 숨김
-          setIsAIResponding(false);
-        },
-      },
-    );
+    sendMsg(exampleText);
   };
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputValue,
-      user: { userId: 'asdf', username: 'mindul' },
-      timestamp: new Date(),
-    };
-
-    // 사용자가 메시지를 보냈다고 표시
     setHasUserSentMessage(true);
-
-    // AI 응답 준비 중 상태로 설정
     setIsAIResponding(true);
-
-    sendMessage(
-      { roomId: currentChatId, newMessage: userMessage },
-      {
-        onSuccess: (responseFromServer) => {
-          if (responseFromServer.ok) {
-            addMessageToCache(userMessage, responseFromServer.data);
-            if (currentChatId == null) setCurrentChatId(responseFromServer.data);
-          }
-        },
-        onError: () => {
-          // 에러 발생 시에도 스피너 숨김
-          setIsAIResponding(false);
-        },
-      },
-    );
+    sendMsg(inputValue);
     setInputValue('');
   };
 
   const handleChatSelect = (chatId: number) => {
+    setIsAIResponding(false);
+    setHasUserSentMessage(false);
     setCurrentChatId(chatId);
+  };
+
+  const handleNewChat = () => {
+    if (chatRoomError) return;
+    setCurrentChatId(null);
     setIsAIResponding(false);
     setHasUserSentMessage(false);
   };
@@ -122,11 +94,12 @@ export default function Chat() {
           <div className="flex flex-col h-full">
             <ChatHeader chatId={currentChatId} />
             <div className="flex-1 min-h-0">
-              <ChatArea 
-                userID={'asdf'} 
-                messages={messages} 
+              <ChatArea
+                userID={'asdf'}
+                messages={messages}
                 isLoading={isChatLoading && messages.length === 0}
                 isAIResponding={isAIResponding && hasUserSentMessage}
+                examples={examples}
                 onExampleSelect={handleExampleSelect}
               />
             </div>
