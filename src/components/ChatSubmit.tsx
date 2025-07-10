@@ -1,16 +1,47 @@
 import { Button } from '@/components/ui/button';
-import { Send } from 'lucide-react';
+import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { useRef, ChangeEvent } from 'react';
+import { postChatUpload } from '@/api/chatAPI';
 
 export default function ChatSubmit({
   inputValue,
   setInputValue,
+  inputImage,
+  setInputImage,
   handleSendMessage,
 }: {
   inputValue: any;
   setInputValue: any;
+  inputImage: any;
+  setInputImage: any;
   handleSendMessage: any;
 }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleButtonClick = () => fileInputRef.current?.click();
+
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const selectedFile = files[0];
+      const response = await postChatUpload(selectedFile);
+
+      if (!response.ok) {
+        console.error(response.error);
+        return;
+      }
+
+      const newMessageImage: MessageImage = {
+        src: response.data,
+        name: response.data,
+        description: '사진s',
+        tags: ['미니멀', '응애'],
+      };
+      console.log(newMessageImage);
+      setInputImage((prev: MessageImage[]) => [...prev, newMessageImage]);
+    }
+  };
+
   return (
     <div
       // 1. 부모 컨테이너를 Flexbox로 만듭니다.
@@ -44,10 +75,11 @@ export default function ChatSubmit({
     "
         rows={1}
       />
-      <Button
-        onClick={handleSendMessage}
-        disabled={inputValue.trim() === ''}
-        className="
+      <div className="flex space-x-5">
+        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+        <Button
+          onClick={handleButtonClick}
+          className="
       flex-shrink-0 /* 3. 버튼은 공간이 부족해도 찌그러지지 않습니다. */
       flex items-center justify-center
       w-16 h-16 rounded-full
@@ -57,9 +89,26 @@ export default function ChatSubmit({
       transition-all duration-200
       mb-1 /* 세로 정렬 미세 조정 */
     "
-      >
-        <Send className="w-5 h-5" />
-      </Button>
+        >
+          <Plus className="w-12 h-12" />
+        </Button>
+        <Button
+          onClick={handleSendMessage}
+          disabled={inputValue.trim() === ''}
+          className="
+      flex-shrink-0 /* 3. 버튼은 공간이 부족해도 찌그러지지 않습니다. */
+      flex items-center justify-center
+      w-16 h-16 rounded-full
+      bg-blue-500 text-white 
+      hover:bg-blue-600
+      disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
+      transition-all duration-200
+      mb-1 /* 세로 정렬 미세 조정 */
+    "
+        >
+          <Send className="w-5 h-5" />
+        </Button>
+      </div>
     </div>
   );
 }
