@@ -96,3 +96,5 @@ export const getChatRoomsHistory = async () => requestAPI<RoomHistory>(`/api/cha
 // POST
 export const postChatSend = async (roomId: number | null, message: { content: string }) =>
   requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', message);
+
+export const postChatUpload = async (file: File) => requestAPI<string>(`/api/chat/upload`, 'POST', file);

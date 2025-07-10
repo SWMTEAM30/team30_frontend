@@ -11,6 +11,7 @@ import { useChatRooms } from '@/hooks/useChatRoom';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState<string>('');
+  const [inputImage, setInputImage] = useState<MessageImage[]>([]);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const [isAIResponding, setIsAIResponding] = useState<boolean>(false);
   const [hasUserSentMessage, setHasUserSentMessage] = useState<boolean>(false);
@@ -28,11 +29,12 @@ export default function Chat() {
   }, [messages, hasUserSentMessage]);
 
   const sendMsg = useCallback(
-    (inputValue: string) => {
+    (inputValue: string, inputImage?: MessageImage[]) => {
       const userMessage: Message = {
         id: Date.now().toString(),
         text: inputValue,
         user: { userId: 'asdf', username: 'mindul' },
+        images: inputImage,
         timestamp: new Date(),
       };
 
@@ -64,7 +66,7 @@ export default function Chat() {
     if (!inputValue.trim()) return;
     setHasUserSentMessage(true);
     setIsAIResponding(true);
-    sendMsg(inputValue);
+    sendMsg(inputValue, inputImage);
     setInputValue('');
   };
 
@@ -103,7 +105,13 @@ export default function Chat() {
                 onExampleSelect={handleExampleSelect}
               />
             </div>
-            <ChatSubmit inputValue={inputValue} setInputValue={setInputValue} handleSendMessage={handleSendMessage} />
+            <ChatSubmit
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+              inputImage={inputImage}
+              setInputImage={setInputImage}
+              handleSendMessage={handleSendMessage}
+            />
           </div>
         </SidebarInset>
       </div>
