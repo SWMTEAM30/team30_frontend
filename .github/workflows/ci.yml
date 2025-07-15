@@ -10,14 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to EC2
-        env:
-          NEXT_PUBLIC_TFT_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_TFT_BACKEND_URL }}
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            export NEXT_PUBLIC_TFT_BACKEND_URL=${{ secrets.NEXT_PUBLIC_TFT_BACKEND_URL }}
             set -e
             cd ${{ secrets.EC2_PROJECT_PATH }}
             git pull origin main
