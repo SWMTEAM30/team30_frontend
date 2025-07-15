@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { AppSidebar } from '@/components/AppSidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { SidebarInset } from '@/components/ui/sidebar';
 import ChatHeader from '@/components/ChatHeader';
 import ChatSubmit from '@/components/ChatSubmit';
 import ChatArea from '@/components/ChatArea';
 import { useChat } from '@/hooks/useChat';
 import { useChatRooms } from '@/hooks/useChatRoom';
-import { Menu } from 'lucide-react';
+import ImageDetailPanel from '@/components/ImageDetailPanel';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState<string>('');
@@ -16,6 +16,7 @@ export default function Chat() {
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const [isAIResponding, setIsAIResponding] = useState<boolean>(false);
   const [hasUserSentMessage, setHasUserSentMessage] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<MessageImage | null>(null);
 
   /** chat state 관리하는 hook */
   const { messages, examples, isLoading: isChatLoading, sendMessage, addMessageToCache } = useChat(currentChatId);
@@ -112,6 +113,7 @@ export default function Chat() {
               isAIResponding={isAIResponding && hasUserSentMessage}
               examples={examples}
               onExampleSelect={handleExampleSelect}
+              setSelectedImage={setSelectedImage}
             />
           </div>
           <ChatSubmit
@@ -123,6 +125,16 @@ export default function Chat() {
           />
         </div>
       </SidebarInset>
+      <div className="flex h-[100vh] overflow-hidden">
+        <div
+          className={`h-full ${selectedImage ? 'w-96' : 'w-0'} bg-beige border-l border-gray-200 transition-all duration-500 ease-in-out
+            ${selectedImage ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}
+          `}
+          style={{ minWidth: 0 }}
+        >
+          {selectedImage && <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />}
+        </div>
+      </div>
     </div>
   );
 }

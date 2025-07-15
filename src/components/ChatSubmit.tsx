@@ -92,7 +92,7 @@ export default function ChatSubmit({
       mb-1 /* 세로 정렬 미세 조정 */
     "
         >
-          <Plus className="w-12 h-12" />
+          <Plus />
         </Button>
         <Button
           onClick={handleSendMessage}

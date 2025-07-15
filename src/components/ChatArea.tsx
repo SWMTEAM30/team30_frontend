@@ -1,10 +1,9 @@
 import AILoadingSpinner from '@/components/AILoadingSpinner';
 import EmptyChatStart from '@/components/EmptyChatStart';
 import ExampleSuggestions from '@/components/ExampleSuggestion';
-import ImageDetailPanel from '@/components/ImageDetailPanel';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function ChatArea({
   userID,
@@ -13,6 +12,7 @@ export default function ChatArea({
   isAIResponding,
   examples,
   onExampleSelect,
+  setSelectedImage,
 }: {
   userID: string;
   messages: Message[];
@@ -20,9 +20,9 @@ export default function ChatArea({
   isAIResponding?: boolean;
   examples: string[];
   onExampleSelect?: (text: string) => void;
+  setSelectedImage: (img: MessageImage | null) => void;
 }) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const [selectedImage, setSelectedImage] = useState<MessageImage | null>(null);
 
   // 스크롤을 맨 아래로 이동시키는 함수
   const scrollToBottom = () => {
@@ -51,7 +51,7 @@ export default function ChatArea({
   return (
     <div className="flex h-[calc(100vh-200px)] overflow-hidden">
       {/* 채팅 영역 */}
-      <div className={`flex flex-col transition-all duration-500 ease-in-out ${selectedImage ? 'w-2/3' : 'w-full'}`}>
+      <div className={`flex flex-col transition-all duration-500 ease-in-out flex-1`}>
         <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-4 mx-auto max-w-[960px]">
             {isLoading ? (
@@ -97,24 +97,6 @@ export default function ChatArea({
           </div>
         </div>
       </div>
-
-      {/* 오른쪽 세션 패널 */}
-      {selectedImage && (
-        <div className="w-1/3 border-l border-gray-200 bg-white">
-          <div className="p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">패션 아이템 상세</h3>
-              <button
-                onClick={() => setSelectedImage(null)}
-                className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
-              >
-                ✕
-              </button>
-            </div>
-            <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
