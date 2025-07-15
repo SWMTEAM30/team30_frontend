@@ -11,7 +11,7 @@ import { useChatRooms } from '@/hooks/useChatRoom';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState<string>('');
-  const [inputImage, setInputImage] = useState<MessageImage[]>([]);
+  const [inputImage, setInputImage] = useState<MessageImage | undefined>(undefined);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const [isAIResponding, setIsAIResponding] = useState<boolean>(false);
   const [hasUserSentMessage, setHasUserSentMessage] = useState<boolean>(false);
@@ -29,12 +29,12 @@ export default function Chat() {
   }, [messages, hasUserSentMessage]);
 
   const sendMsg = useCallback(
-    (inputValue: string, inputImage?: MessageImage[]) => {
+    (inputValue: string, inputImage?: MessageImage) => {
       const userMessage: Message = {
         id: Date.now().toString(),
         text: inputValue,
         user: { userId: 'asdf', username: 'mindul' },
-        images: inputImage,
+        images: inputImage && [inputImage],
         timestamp: new Date(),
       };
 
@@ -60,6 +60,7 @@ export default function Chat() {
     setHasUserSentMessage(true);
     setIsAIResponding(true);
     sendMsg(exampleText);
+    setInputImage(undefined);
   };
 
   const handleSendMessage = () => {
@@ -68,12 +69,14 @@ export default function Chat() {
     setIsAIResponding(true);
     sendMsg(inputValue, inputImage);
     setInputValue('');
+    setInputImage(undefined);
   };
 
   const handleChatSelect = (chatId: number) => {
     setIsAIResponding(false);
     setHasUserSentMessage(false);
     setCurrentChatId(chatId);
+    setInputImage(undefined);
   };
 
   const handleNewChat = () => {
@@ -81,6 +84,7 @@ export default function Chat() {
     setCurrentChatId(null);
     setIsAIResponding(false);
     setHasUserSentMessage(false);
+    setInputImage(undefined);
   };
 
   return (

@@ -94,7 +94,8 @@ export const getChatReceive = async (roomId: number | null) => {
 export const getChatRoomsHistory = async () => requestAPI<RoomHistory>(`/api/chat/rooms/history`, 'GET');
 
 // POST
-export const postChatSend = async (roomId: number | null, message: { content: string }) =>
-  requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', message);
-
-export const postChatUpload = async (file: File) => requestAPI<string>(`/api/chat/upload`, 'POST', file);
+export const postChatSend = async (roomId: number | null, message: { content: string; imageUrl?: string }) => {
+  console.log(message);
+  return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', message);
+};
+export const postChatUpload = async (file: any) => requestAPI<string>(`/api/chat/upload`, 'POST', file, {});

@@ -51,9 +51,9 @@ export default function ChatArea({
   return (
     <div className="flex h-[calc(100vh-200px)] overflow-hidden">
       {/* 채팅 영역 */}
-      <div className={`flex flex-col transition-all duration-500 ease-in-out ${selectedImage ? 'flex-1' : 'w-full'}`}>
+      <div className={`flex flex-col transition-all duration-500 ease-in-out ${selectedImage ? 'w-full' : 'w-full'}`}>
         <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto">
-          <div className="space-y-4 max-w-[1024px] mx-auto">
+          <div className={`space-y-4 mx-auto ${selectedImage ? 'w-full max-w-none' : 'max-w-[1024px]'}`}>
             {isLoading ? (
               <div>대화 내용을 불러오는 중...</div>
             ) : (
@@ -76,7 +76,7 @@ export default function ChatArea({
                                 height={400}
                                 src={image.src}
                                 alt={image.name}
-                                className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                                className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
                                 onClick={() => setSelectedImage(image)}
                               />
                             ))}
@@ -98,8 +98,25 @@ export default function ChatArea({
         </div>
       </div>
 
-      {/* 오른쪽 상세 정보 패널 - transform 애니메이션 */}
-      {selectedImage && <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />}
+      {/* 오버레이 상세 정보 패널 */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setSelectedImage(null);
+            }
+          }}
+        >
+          {/* 배경 오버레이 */}
+          <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out animate-in fade-in" />
+          
+          {/* 패널 */}
+          <div className="relative animate-in zoom-in-95">
+            <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

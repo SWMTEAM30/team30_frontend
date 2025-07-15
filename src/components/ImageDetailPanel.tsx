@@ -17,7 +17,7 @@ export default function ImageDetailPanel({
   if (!imageData) return null;
 
   return (
-    <div className="w-80 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 overflow-y-auto">
+    <div className="w-96 max-h-[90vh] bg-white dark:bg-gray-800 rounded-lg shadow-2xl overflow-y-auto transform transition-all duration-300 ease-out">
       {/* 헤더 */}
       <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">패션 아이템 상세 정보</h2>
