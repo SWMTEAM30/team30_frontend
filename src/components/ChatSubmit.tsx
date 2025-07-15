@@ -11,12 +11,14 @@ export default function ChatSubmit({
   inputImage,
   setInputImage,
   handleSendMessage,
+  isAIResponding = false,
 }: {
   inputValue: any;
   setInputValue: any;
   inputImage: any;
   setInputImage: any;
   handleSendMessage: any;
+  isAIResponding?: boolean;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleButtonClick = () => fileInputRef.current?.click();
@@ -62,7 +64,7 @@ export default function ChatSubmit({
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="패션에 대해 마음대로 물어보세요!"
         onKeyDown={(event) => {
-          if (event.key == 'Enter' && !event.shiftKey && inputValue.trim() != '') {
+          if (event.key == 'Enter' && !event.shiftKey && inputValue.trim() != '' && !isAIResponding) {
             event.preventDefault();
             handleSendMessage();
           }
@@ -76,9 +78,10 @@ export default function ChatSubmit({
       dark:text-white
     "
         rows={1}
+        disabled={isAIResponding}
       />
       <div className="flex space-x-5">
-        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" disabled={isAIResponding} />
         <Button
           onClick={handleButtonClick}
           className="
@@ -91,12 +94,13 @@ export default function ChatSubmit({
       transition-all duration-200
       mb-1 /* 세로 정렬 미세 조정 */
     "
+          disabled={isAIResponding}
         >
           <Plus />
         </Button>
         <Button
           onClick={handleSendMessage}
-          disabled={inputValue.trim() === ''}
+          disabled={inputValue.trim() === '' || isAIResponding}
           className="
       flex-shrink-0 /* 3. 버튼은 공간이 부족해도 찌그러지지 않습니다. */
       flex items-center justify-center
