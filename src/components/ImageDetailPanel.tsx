@@ -17,7 +17,7 @@ export default function ImageDetailPanel({
   if (!imageData) return null;
 
   return (
-    <div className="w-80 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 overflow-y-auto">
+    <div className="max-h-full bg-beige dark:bg-gray-800">
       {/* 헤더 */}
       <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">패션 아이템 상세 정보</h2>
@@ -29,18 +29,18 @@ export default function ImageDetailPanel({
       {/* 내용 */}
       <div className="p-4">
         {/* 이미지 */}
-        <div className="mb-4">
+        <div className="mb-4 flex items-center justify-center min-h-[200px]">
           <Image
             src={imageData.src}
             alt={imageData.name}
-            width={300}
-            height={400}
-            className="w-full h-64 object-cover rounded-lg"
+            width={288}
+            height={384}
+            className="w-72 h-96 object-cover rounded-lg"
           />
         </div>
 
         {/* 정보 */}
-        <div className="space-y-4">
+        <div className="space-y-4 w-72 max-w-[288px] mx-auto">
           <div>
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{imageData.name}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{imageData.description}</p>

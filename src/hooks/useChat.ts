@@ -44,8 +44,12 @@ export const useChat = (chatId: number | null) => {
   // 메시지 보내기 mutation
   const { mutate: sendMessageMutation, isPending: isSending } = useMutation({
     mutationFn: (variables: { roomId: number | null; newMessage: Message }) =>
-      postChatSend(variables.roomId, { content: variables.newMessage.text }),
+      postChatSend(variables.roomId, {
+        content: variables.newMessage.text,
+        imageUrl: variables.newMessage.images?.[0].src,
+      }),
     onSuccess: (responseFromServer) => {
+      console.log(responseFromServer);
       if (!responseFromServer.ok) return;
       const newChatId = responseFromServer.data;
       if (!chatId && newChatId) {

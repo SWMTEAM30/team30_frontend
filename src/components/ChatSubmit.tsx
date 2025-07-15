@@ -3,6 +3,7 @@ import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useRef, ChangeEvent } from 'react';
 import { postChatUpload } from '@/api/chatAPI';
+import Image from 'next/image';
 
 export default function ChatSubmit({
   inputValue,
@@ -19,18 +20,16 @@ export default function ChatSubmit({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleButtonClick = () => fileInputRef.current?.click();
-
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      const selectedFile = files[0];
-      const response = await postChatUpload(selectedFile);
-
+      const formData = new FormData();
+      formData.append('file', files[0]);
+      const response = await postChatUpload(formData);
       if (!response.ok) {
         console.error(response.error);
         return;
       }
-
       const newMessageImage: MessageImage = {
         src: response.data,
         name: response.data,
@@ -38,7 +37,7 @@ export default function ChatSubmit({
         tags: ['미니멀', '응애'],
       };
       console.log(newMessageImage);
-      setInputImage((prev: MessageImage[]) => [...prev, newMessageImage]);
+      setInputImage(newMessageImage);
     }
   };
 
@@ -47,7 +46,7 @@ export default function ChatSubmit({
       // 1. 부모 컨테이너를 Flexbox로 만듭니다.
       className="
     shrink-0
-    flex flex-col items-end gap-2 w-full max-w-[1024px] mx-auto 
+    flex flex-col items-end gap-2 w-full max-w-7xl mx-auto 
     bg-white dark:bg-blue-800 
     rounded-2xl border border-blue-500 dark:border-blue-800 
     focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-800
@@ -55,6 +54,9 @@ export default function ChatSubmit({
     p-2
   "
     >
+      <div className="flex space-x-5 items-start">
+        {inputImage && <Image src={inputImage.src} alt={''} width={100} height={100} />}
+      </div>
       <Textarea
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
@@ -90,7 +92,7 @@ export default function ChatSubmit({
       mb-1 /* 세로 정렬 미세 조정 */
     "
         >
-          <Plus className="w-12 h-12" />
+          <Plus />
         </Button>
         <Button
           onClick={handleSendMessage}

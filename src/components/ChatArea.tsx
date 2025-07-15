@@ -1,10 +1,9 @@
 import AILoadingSpinner from '@/components/AILoadingSpinner';
 import EmptyChatStart from '@/components/EmptyChatStart';
 import ExampleSuggestions from '@/components/ExampleSuggestion';
-import ImageDetailPanel from '@/components/ImageDetailPanel';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function ChatArea({
   userID,
@@ -13,6 +12,7 @@ export default function ChatArea({
   isAIResponding,
   examples,
   onExampleSelect,
+  setSelectedImage,
 }: {
   userID: string;
   messages: Message[];
@@ -20,9 +20,9 @@ export default function ChatArea({
   isAIResponding?: boolean;
   examples: string[];
   onExampleSelect?: (text: string) => void;
+  setSelectedImage: (img: MessageImage | null) => void;
 }) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const [selectedImage, setSelectedImage] = useState<MessageImage | null>(null);
 
   // 스크롤을 맨 아래로 이동시키는 함수
   const scrollToBottom = () => {
@@ -51,9 +51,9 @@ export default function ChatArea({
   return (
     <div className="flex h-[calc(100vh-200px)] overflow-hidden">
       {/* 채팅 영역 */}
-      <div className={`flex flex-col transition-all duration-500 ease-in-out ${selectedImage ? 'flex-1' : 'w-full'}`}>
+      <div className={`flex flex-col transition-all duration-500 ease-in-out flex-1`}>
         <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto">
-          <div className="space-y-4 max-w-[1024px] mx-auto">
+          <div className="space-y-4 mx-auto max-w-[960px]">
             {isLoading ? (
               <div>대화 내용을 불러오는 중...</div>
             ) : (
@@ -76,7 +76,7 @@ export default function ChatArea({
                                 height={400}
                                 src={image.src}
                                 alt={image.name}
-                                className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                                className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
                                 onClick={() => setSelectedImage(image)}
                               />
                             ))}
@@ -97,9 +97,6 @@ export default function ChatArea({
           </div>
         </div>
       </div>
-
-      {/* 오른쪽 상세 정보 패널 - transform 애니메이션 */}
-      {selectedImage && <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />}
     </div>
   );
 }
