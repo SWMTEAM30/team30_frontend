@@ -91,12 +91,14 @@ export default function Chat() {
 
   return (
     <div className="flex min-h-screen w-full relative">
-      <AppSidebar
-        currentChatId={currentChatId}
-        onChatSelect={handleChatSelect}
-        onNewChat={handleNewChat}
-        chatRooms={chatRooms}
-      />
+      <div className="hidden lg:block">
+        <AppSidebar
+          currentChatId={currentChatId}
+          onChatSelect={handleChatSelect}
+          onNewChat={handleNewChat}
+          chatRooms={chatRooms}
+        />
+      </div>
       <SidebarInset className="flex flex-col h-[100dvh] lg:transition-all lg:duration-300">
         <div className="flex flex-col h-full">
           <ChatHeader
@@ -126,13 +128,15 @@ export default function Chat() {
         </div>
       </SidebarInset>
       <div className="flex h-[100vh] overflow-hidden">
-        <div
-          className={`h-full ${selectedImage ? 'w-96' : 'w-0'} bg-beige border-l border-gray-200 transition-all duration-500 ease-in-out
-            ${selectedImage ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}
-          `}
-          style={{ minWidth: 0 }}
-        >
-          {selectedImage && <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />}
+        <div className="hidden lg:block h-full">
+          <div
+            className={`h-full ${selectedImage ? 'w-96' : 'w-0'} bg-beige border-l border-gray-200 transition-all duration-500 ease-in-out
+              ${selectedImage ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}
+            `}
+            style={{ minWidth: 0 }}
+          >
+            {selectedImage && <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />}
+          </div>
         </div>
       </div>
     </div>

@@ -14,12 +14,11 @@ export function AppSidebar({ chatRooms, currentChatId, onChatSelect, onNewChat }
 
   return (
     <aside
-      className={`h-screen bg-beige transition-all duration-300 ease-in-out shadow-lg flex flex-col
+      className={`h-screen bg-beige transition-all duration-300 ease-in-out flex flex-col
         ${openSidebar ? 'w-80' : 'w-32'}
         overflow-x-hidden
       `}
     >
-      {/* 햄버거 아이콘을 완전히 가운데 정렬, 클릭 시 사이드바 토글 */}
       <div className="flex items-center w-full h-20">
         <button
           type="button"
