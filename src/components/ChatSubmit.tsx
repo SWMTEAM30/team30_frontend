@@ -46,7 +46,7 @@ export default function ChatSubmit({
       // 1. 부모 컨테이너를 Flexbox로 만듭니다.
       className="
     shrink-0
-    flex flex-col items-end gap-2 w-full max-w-[1024px] mx-auto 
+    flex flex-col items-end gap-2 w-full max-w-7xl mx-auto 
     bg-white dark:bg-blue-800 
     rounded-2xl border border-blue-500 dark:border-blue-800 
     focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-800

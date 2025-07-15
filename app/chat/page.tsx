@@ -8,6 +8,7 @@ import ChatSubmit from '@/components/ChatSubmit';
 import ChatArea from '@/components/ChatArea';
 import { useChat } from '@/hooks/useChat';
 import { useChatRooms } from '@/hooks/useChatRoom';
+import { Menu } from 'lucide-react';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState<string>('');
@@ -88,37 +89,40 @@ export default function Chat() {
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen w-full relative">
-        <AppSidebar
-          currentChatId={currentChatId}
-          onChatSelect={handleChatSelect}
-          onNewChat={handleNewChat}
-          chatRooms={chatRooms}
-        />
-        <SidebarInset className="flex flex-col h-[100dvh] md:pl-16 md:transition-all md:duration-300">
-          <div className="flex flex-col h-full">
-            <ChatHeader chatId={currentChatId} />
-            <div className="flex-1 min-h-0">
-              <ChatArea
-                userID={'asdf'}
-                messages={messages}
-                isLoading={isChatLoading && messages.length === 0}
-                isAIResponding={isAIResponding && hasUserSentMessage}
-                examples={examples}
-                onExampleSelect={handleExampleSelect}
-              />
-            </div>
-            <ChatSubmit
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              inputImage={inputImage}
-              setInputImage={setInputImage}
-              handleSendMessage={handleSendMessage}
+    <div className="flex min-h-screen w-full relative">
+      <AppSidebar
+        currentChatId={currentChatId}
+        onChatSelect={handleChatSelect}
+        onNewChat={handleNewChat}
+        chatRooms={chatRooms}
+      />
+      <SidebarInset className="flex flex-col h-[100dvh] lg:transition-all lg:duration-300">
+        <div className="flex flex-col h-full">
+          <ChatHeader
+            currentChatId={currentChatId}
+            onChatSelect={handleChatSelect}
+            onNewChat={handleNewChat}
+            chatRooms={chatRooms}
+          />
+          <div className="flex-1 min-h-0">
+            <ChatArea
+              userID={'asdf'}
+              messages={messages}
+              isLoading={isChatLoading && messages.length === 0}
+              isAIResponding={isAIResponding && hasUserSentMessage}
+              examples={examples}
+              onExampleSelect={handleExampleSelect}
             />
           </div>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+          <ChatSubmit
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            inputImage={inputImage}
+            setInputImage={setInputImage}
+            handleSendMessage={handleSendMessage}
+          />
+        </div>
+      </SidebarInset>
+    </div>
   );
 }

@@ -51,9 +51,9 @@ export default function ChatArea({
   return (
     <div className="flex h-[calc(100vh-200px)] overflow-hidden">
       {/* 채팅 영역 */}
-      <div className={`flex flex-col transition-all duration-500 ease-in-out ${selectedImage ? 'w-full' : 'w-full'}`}>
+      <div className={`flex flex-col transition-all duration-500 ease-in-out ${selectedImage ? 'w-2/3' : 'w-full'}`}>
         <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto">
-          <div className={`space-y-4 mx-auto ${selectedImage ? 'w-full max-w-none' : 'max-w-[1024px]'}`}>
+          <div className="space-y-4 mx-auto max-w-[960px]">
             {isLoading ? (
               <div>대화 내용을 불러오는 중...</div>
             ) : (
@@ -98,21 +98,19 @@ export default function ChatArea({
         </div>
       </div>
 
-      {/* 오버레이 상세 정보 패널 */}
+      {/* 오른쪽 세션 패널 */}
       {selectedImage && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setSelectedImage(null);
-            }
-          }}
-        >
-          {/* 배경 오버레이 */}
-          <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out animate-in fade-in" />
-          
-          {/* 패널 */}
-          <div className="relative animate-in zoom-in-95">
+        <div className="w-1/3 border-l border-gray-200 bg-white">
+          <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">패션 아이템 상세</h3>
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+              >
+                ✕
+              </button>
+            </div>
             <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />
           </div>
         </div>
