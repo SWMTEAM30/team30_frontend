@@ -8,7 +8,7 @@ import ChatSubmit from '@/components/ChatSubmit';
 import ChatArea from '@/components/ChatArea';
 import { useChat } from '@/hooks/useChat';
 import { useChatRooms } from '@/hooks/useChatRoom';
-import ImageDetailPanel from '@/components/ImageDetailPanel';
+import ImagePanel from '@/components/ImagePanel';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState<string>('');
@@ -16,7 +16,10 @@ export default function Chat() {
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const [isAIResponding, setIsAIResponding] = useState<boolean>(false);
   const [hasUserSentMessage, setHasUserSentMessage] = useState<boolean>(false);
-  const [selectedImage, setSelectedImage] = useState<MessageImage | null>(null);
+  const [openTabs, setOpenTabs] = useState<MessageImage[]>([]);
+  const [activeTabId, setActiveTabId] = useState<string | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   /** chat state 관리하는 hook */
   const { messages, examples, isLoading: isChatLoading, sendMessage, addMessageToCache } = useChat(currentChatId);
@@ -29,6 +32,12 @@ export default function Chat() {
       if (lastMessage && lastMessage.user.userId !== 'asdf') setIsAIResponding(false);
     }
   }, [messages, hasUserSentMessage]);
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      setIsPanelOpen(false);
+    }
+  }, [isSidebarOpen]);
 
   const sendMsg = useCallback(
     (inputValue: string, inputImage?: MessageImage) => {
@@ -89,6 +98,32 @@ export default function Chat() {
     setInputImage(undefined);
   };
 
+  const handleOpenTab = (newImageData: MessageImage) => {
+    const isAlreadyOpen = openTabs.some((tab) => tab.src === newImageData.src);
+    if (!isAlreadyOpen) {
+      setOpenTabs((prevTabs) => [...prevTabs, newImageData]);
+    }
+    setActiveTabId(newImageData.src);
+    setIsPanelOpen(true); // 이미지 클릭 시 패널 열기
+  };
+
+  // 3. 탭을 닫는 함수
+  const handleCloseTab = (tabSrcToClose: string) => {
+    const remainingTabs = openTabs.filter((tab) => tab.src !== tabSrcToClose);
+    setOpenTabs(remainingTabs);
+    if (activeTabId === tabSrcToClose) {
+      if (remainingTabs.length > 0) {
+        setActiveTabId(remainingTabs[remainingTabs.length - 1].src);
+      } else {
+        setActiveTabId(null);
+      }
+    }
+  };
+
+  const handleTogglePanel = () => {
+    setIsPanelOpen(!isPanelOpen);
+  };
+
   return (
     <div className="flex min-h-screen w-full relative">
       <div className="hidden lg:block">
@@ -106,6 +141,9 @@ export default function Chat() {
             onChatSelect={handleChatSelect}
             onNewChat={handleNewChat}
             chatRooms={chatRooms}
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+            setIsPanelOpen={setIsPanelOpen}
           />
           <div className="flex-1 min-h-0">
             <ChatArea
@@ -115,7 +153,7 @@ export default function Chat() {
               isAIResponding={isAIResponding && hasUserSentMessage}
               examples={examples}
               onExampleSelect={handleExampleSelect}
-              setSelectedImage={setSelectedImage}
+              setSelectedImage={handleOpenTab}
             />
           </div>
           <ChatSubmit
@@ -127,18 +165,14 @@ export default function Chat() {
           />
         </div>
       </SidebarInset>
-      <div className="flex h-[100vh] overflow-hidden">
-        <div className="hidden lg:block h-full">
-          <div
-            className={`h-full ${selectedImage ? 'w-96' : 'w-0'} bg-beige border-l border-gray-200 transition-all duration-500 ease-in-out
-              ${selectedImage ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}
-            `}
-            style={{ minWidth: 0 }}
-          >
-            {selectedImage && <ImageDetailPanel imageData={selectedImage} onClose={() => setSelectedImage(null)} />}
-          </div>
-        </div>
-      </div>
+      <ImagePanel
+        isOpen={isPanelOpen}
+        onToggle={handleTogglePanel}
+        openTabs={openTabs}
+        activeTabId={activeTabId}
+        onTabSelect={setActiveTabId}
+        onTabClose={handleCloseTab}
+      />
     </div>
   );
 }
