@@ -21,9 +21,6 @@ export default function ImageDetailPanel({
       {/* 헤더 */}
       <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">패션 아이템 상세 정보</h2>
-        <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-          <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-        </button>
       </div>
 
       {/* 내용 */}

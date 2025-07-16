@@ -20,7 +20,7 @@ export default function ChatArea({
   isAIResponding?: boolean;
   examples: string[];
   onExampleSelect?: (text: string) => void;
-  setSelectedImage: (img: MessageImage | null) => void;
+  setSelectedImage: Function;
 }) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
