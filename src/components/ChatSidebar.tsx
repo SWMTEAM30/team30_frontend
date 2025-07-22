@@ -1,23 +1,24 @@
+import { currentChatIdAtom } from '@/atoms/chatAtoms';
 import SidebarContent from '@/components/SidebarContent';
+import { useAtomValue } from 'jotai';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
 
-interface AppSidebarProps {
+export function ChatSidebar({
+  chatRooms,
+  onChatSelect,
+  onNewChat,
+}: {
   chatRooms: ChatRoom[];
-  currentChatId: number | null;
   onChatSelect: (chatId: number) => void;
   onNewChat: () => void;
-}
-
-export function AppSidebar({ chatRooms, currentChatId, onChatSelect, onNewChat }: AppSidebarProps) {
+}) {
+  const currentChatId = useAtomValue(currentChatIdAtom);
   const [openSidebar, setOpenSidebar] = useState(false);
 
   return (
     <aside
-      className={`h-screen bg-beige transition-all duration-300 ease-in-out flex flex-col
-        ${openSidebar ? 'w-80' : 'w-32'}
-        overflow-x-hidden
-      `}
+      className={`h-screen bg-beige transition-all duration-300 ease-in-out flex flex-col ${openSidebar ? 'w-80' : 'w-32'} overflow-x-hidden`}
     >
       <div className="flex items-center w-full h-20">
         <button

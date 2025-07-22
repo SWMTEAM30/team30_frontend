@@ -72,16 +72,16 @@ export const getChatReceive = async (roomId: number | null) => {
       ok: false,
       error: new Error('no have room id'),
     } as APIErrorResponse;
-  const response = await requestAPI<string[]>(`/api/chat/receive?roomId=${roomId}`, 'GET');
+  const response = await requestAPI<AgentMessage[]>(`/api/chat/receive?roomId=${roomId}`, 'GET');
   if (response.ok === true) {
     return {
       ok: response.ok,
       status: response.status,
       message: response.message,
-      data: response.data.map((e: string, i: number) => ({
+      data: response.data.map((agent: AgentMessage, i: number) => ({
         id: Date.now().toString(),
-        text: e,
-        user: { userId: 'qwer', username: 'mendul' },
+        text: agent.message,
+        user: { userId: agent.agent_id, username: agent.agent_name },
         timestamp: new Date(),
         images: imageset[i],
       })),

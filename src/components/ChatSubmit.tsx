@@ -4,22 +4,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { useRef, ChangeEvent } from 'react';
 import { postChatUpload } from '@/api/chatAPI';
 import Image from 'next/image';
+import { useAtom, useAtomValue } from 'jotai';
+import { inputValueAtom, inputImageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
 
-export default function ChatSubmit({
-  inputValue,
-  setInputValue,
-  inputImage,
-  setInputImage,
-  handleSendMessage,
-  isAIResponding = false,
-}: {
-  inputValue: any;
-  setInputValue: any;
-  inputImage: any;
-  setInputImage: any;
-  handleSendMessage: any;
-  isAIResponding?: boolean;
-}) {
+export default function ChatSubmit({ handleSendMessage }: { handleSendMessage: any }) {
+  const [inputValue, setInputValue] = useAtom(inputValueAtom);
+  const [inputImage, setInputImage] = useAtom(inputImageAtom);
+  const isAIResponding = useAtomValue(isAIRespondingAtom);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleButtonClick = () => fileInputRef.current?.click();
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +73,14 @@ export default function ChatSubmit({
         disabled={isAIResponding}
       />
       <div className="flex space-x-5">
-        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" disabled={isAIResponding} />
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+          accept="image/*"
+          disabled={isAIResponding}
+        />
         <Button
           onClick={handleButtonClick}
           className="

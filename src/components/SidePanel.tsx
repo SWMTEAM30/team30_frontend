@@ -1,10 +1,8 @@
-// components/ImagePanel.tsx
-
 import Image from 'next/image';
 import ImageDetailPanel from '@/components/ImageDetailPanel';
 import { cn } from '@/lib/utils';
 
-export default function ImagePanel({
+export default function SidePanel({
   openTabs,
   activeTabId,
   onTabSelect,
