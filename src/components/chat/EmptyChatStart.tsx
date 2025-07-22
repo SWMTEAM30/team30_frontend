@@ -1,4 +1,4 @@
-import ExampleSuggestions from '@/components/ExampleSuggestion';
+import ExampleSuggestions from '@/components/chat/ExampleSuggestion';
 
 export default function EmptyChatStart({
   examples,

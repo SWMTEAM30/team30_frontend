@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react';
-import SidebarContent from '@/components/SidebarContent';
+import SidebarContent from '@/components/chat/SidebarContent';
 import { useAtom, useAtomValue } from 'jotai';
 import { activePanelTypeAtom, currentChatIdAtom } from '@/atoms/chatAtoms';
 

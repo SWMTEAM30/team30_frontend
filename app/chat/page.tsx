@@ -1,15 +1,15 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { ChatSidebar } from '@/components/ChatSidebar';
+import { ChatSidebar } from '@/components/chat/ChatSidebar';
 import { SidebarInset } from '@/components/ui/sidebar';
-import ChatHeader from '@/components/ChatHeader';
-import ChatSubmit from '@/components/ChatSubmit';
-import ChatArea from '@/components/ChatArea';
+import ChatHeader from '@/components/chat/ChatHeader';
+import ChatSubmit from '@/components/chat/ChatSubmit';
+import ChatArea from '@/components/chat/ChatArea';
 import { useChat } from '@/hooks/useChat';
 import { useChatRooms } from '@/hooks/useChatRoom';
 import { ChevronLeft } from 'lucide-react';
-import SidePanel from '@/components/SidePanel';
+import SidePanel from '@/components/chat/SidePanel';
 import { useAtom, Provider, useSetAtom } from 'jotai';
 import {
   inputValueAtom,
@@ -23,6 +23,8 @@ import {
   activeImageTabIdAtom,
   activeWikiTabIdAtom,
 } from '@/atoms/chatAtoms';
+import ImagePanel from '@/components/chat/ImagePanel';
+import WikiPanel from '@/components/chat/WikiPanel';
 
 export default function Chat() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
@@ -169,7 +171,7 @@ export default function Chat() {
         <div
           className={`fixed top-0 right-0 h-full bg-beige border-l border-gray-200 shadow-xl z-40 
                  flex flex-row transition-transform duration-500 ease-in-out
-                 ${activePanelTypeAtom != null ? 'translate-x-0' : 'translate-x-full'}`}
+                 ${activePanelType != null ? 'translate-x-0' : 'translate-x-full'}`}
         >
           <button
             onClick={() => {
@@ -197,17 +199,22 @@ export default function Chat() {
               className={`transition-transform duration-300 ${activePanelType === 'wiki' ? 'rotate-180' : 'rotate-0'}`}
             />
           </button>
-          <SidePanel
-            className={`${activePanelType === 'wiki' ? '-translate-x-full' : 'translate-x-full'}`}
-            openTabs={[]}
-            activeTabId={null}
-            onTabSelect={function (id: string): void {
-              throw new Error('Function not implemented.');
-            }}
-            onTabClose={function (id: string): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
+          {activePanelType === 'image' && (
+            <ImagePanel
+              openTabs={imageTabs}
+              activeTabId={activeImageTabId}
+              onTabSelect={setActiveImageTabId}
+              onTabClose={handleCloseTab}
+            />
+          )}
+          {activePanelType === 'wiki' && (
+            <WikiPanel
+              openTabs={wikiTabs}
+              activeTabId={activeWikiTabId}
+              onTabSelect={setActiveWikiTabId}
+              onTabClose={handleCloseTab}
+            />
+          )}
         </div>
       </div>
     </Provider>

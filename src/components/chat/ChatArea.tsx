@@ -1,8 +1,8 @@
 import { isAIRespondingAtom } from '@/atoms/chatAtoms';
-import AILoadingSpinner from '@/components/AILoadingSpinner';
-import EmptyChatStart from '@/components/EmptyChatStart';
-import ExampleSuggestions from '@/components/ExampleSuggestion';
-import MessageBalloon from '@/components/MessageBalloon';
+import AILoadingSpinner from '@/components/chat/AILoadingSpinner';
+import EmptyChatStart from '@/components/chat/EmptyChatStart';
+import ExampleSuggestions from '@/components/chat/ExampleSuggestion';
+import MessageBalloon from '@/components/chat/MessageBalloon';
 import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 

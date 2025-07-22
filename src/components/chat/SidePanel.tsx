@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import ImageDetailPanel from '@/components/ImageDetailPanel';
+import ImageDetailPanel from '@/components/chat/ImageDetailPanel';
 import { cn } from '@/lib/utils';
 
 export default function SidePanel({
