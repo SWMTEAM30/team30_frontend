@@ -6,8 +6,9 @@ import { postChatUpload } from '@/api/chatAPI';
 import Image from 'next/image';
 import { useAtom, useAtomValue } from 'jotai';
 import { inputValueAtom, inputImageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
+import { useChatHandlers } from '@/components/chat/ChatProvider';
 
-export default function ChatSubmit({ handleSendMessage }: { handleSendMessage: any }) {
+export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputImage, setInputImage] = useAtom(inputImageAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
@@ -34,6 +35,8 @@ export default function ChatSubmit({ handleSendMessage }: { handleSendMessage: a
       setInputImage(newMessageImage);
     }
   };
+
+  const { handleSendMessage } = useChatHandlers();
 
   return (
     <div

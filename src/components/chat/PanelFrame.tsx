@@ -2,7 +2,7 @@ import Image from 'next/image';
 import ImageDetailPanel from '@/components/chat/ImageDetailPanel';
 import { cn } from '@/lib/utils';
 
-export default function SidePanel({
+export default function PanelFrame({
   openTabs,
   activeTabId,
   onTabSelect,
@@ -27,7 +27,7 @@ export default function SidePanel({
         )}
       >
         {openTabs.map((tab) => (
-          <button
+          <div
             key={tab.src}
             onClick={() => onTabSelect(tab.src)}
             className={`relative overflow-hidden flex-shrink-0 
@@ -45,7 +45,7 @@ export default function SidePanel({
             >
               ×
             </button>
-          </button>
+          </div>
         ))}
       </div>
       {/* 오른쪽: 상세 이미지 영역 (2/3) */}

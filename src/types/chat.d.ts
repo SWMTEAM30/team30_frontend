@@ -1,10 +1,7 @@
 type Message = {
   id: string;
   text: string;
-  user: {
-    userId: string;
-    username: string;
-  };
+  user: User;
   timestamp: Date;
   images?: MessageImage[]; // AI 메시지에 포함될 이미지 URL 배열
 };

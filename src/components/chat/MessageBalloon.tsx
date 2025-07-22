@@ -1,15 +1,9 @@
+import { useChatHandlers } from '@/components/chat/ChatProvider';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
 
-export default function MessageBalloon({
-  message,
-  userID,
-  setSelectedImage,
-}: {
-  message: Message;
-  userID: string;
-  setSelectedImage: Function;
-}) {
+export default function MessageBalloon({ message, userID }: { message: Message; userID: string }) {
+  const { handleOpenTab } = useChatHandlers();
   return (
     <div className={`flex ${message.user.userId == userID ? 'justify-end' : 'justify-start'}`}>
       {message.user.userId != userID && (
@@ -35,7 +29,7 @@ export default function MessageBalloon({
                   src={image.src}
                   alt={image.name}
                   className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
-                  onClick={() => setSelectedImage(image)}
+                  onClick={() => handleOpenTab(image, 'image')}
                 />
               ))}
           </div>

@@ -1,29 +1,30 @@
+import { wikiTabsAtom, activeWikiTabIdAtom } from '@/atoms/chatAtoms';
+import { useChatHandlers } from '@/components/chat/ChatProvider';
+import { useAtomValue, useAtom } from 'jotai';
 import React from 'react';
 
-interface WikiPanelProps {
-  openTabs: any[];
-  activeTabId: string | null;
-  onTabSelect: (id: string) => void;
-  onTabClose: (id: string) => void;
-  className?: string;
-}
-
-const WikiPanel: React.FC<WikiPanelProps> = ({ openTabs, activeTabId, onTabSelect, onTabClose, className }) => {
-  const activeTabData = openTabs.find((tab) => tab.src === activeTabId);
+export default function WikiPanel({ className }: { className?: string }) {
+  const wikiTabs = useAtomValue(wikiTabsAtom);
+  const [activeWikiTabId, setActiveImageTabId] = useAtom(activeWikiTabIdAtom);
+  const activeTabData = wikiTabs.find((tab) => tab.src === activeWikiTabId);
+  const { handleCloseTab } = useChatHandlers();
 
   return (
     <div className={`flex h-full w-96 bg-beige border-l border-gray-200 ${className || ''}`}>
       {/* 탭 목록 */}
       <div className="w-28 border-r border-gray-200 flex flex-col items-center gap-2 p-2 overflow-y-auto">
-        {openTabs.map((tab) => (
+        {wikiTabs.map((tab) => (
           <button
             key={tab.src}
-            onClick={() => onTabSelect(tab.src)}
-            className={`w-full p-2 rounded-lg mb-2 ${activeTabId === tab.src ? 'bg-blue-200' : 'hover:bg-gray-100'}`}
+            onClick={() => setActiveImageTabId(tab.src)}
+            className={`w-full p-2 rounded-lg mb-2 ${activeWikiTabId === tab.src ? 'bg-blue-200' : 'hover:bg-gray-100'}`}
           >
             <span>{tab.name || tab.src}</span>
             <button
-              onClick={e => { e.stopPropagation(); onTabClose(tab.src); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCloseTab(tab.src);
+              }}
               className="ml-2 text-xs text-red-500 hover:underline"
             >
               닫기
@@ -44,6 +45,4 @@ const WikiPanel: React.FC<WikiPanelProps> = ({ openTabs, activeTabId, onTabSelec
       </div>
     </div>
   );
-};
-
-export default WikiPanel; 
+}

@@ -2,17 +2,12 @@ import { Menu } from 'lucide-react';
 import SidebarContent from '@/components/chat/SidebarContent';
 import { useAtom, useAtomValue } from 'jotai';
 import { activePanelTypeAtom, currentChatIdAtom } from '@/atoms/chatAtoms';
+import { useChatHandlers } from '@/components/chat/ChatProvider';
 
-interface AppSidebarProps {
-  chatRooms: ChatRoom[];
-  onChatSelect: (chatId: number) => void;
-  onNewChat: () => void;
-  setIsSidebarOpen: (isSidebarOpen: boolean) => void;
-}
-
-export default function ChatHeader({ chatRooms, onChatSelect, onNewChat, setIsSidebarOpen }: AppSidebarProps) {
+export default function ChatHeader() {
   const currentChatId = useAtomValue(currentChatIdAtom);
   const [activePanelType, setActivePanelType] = useAtom(activePanelTypeAtom);
+  const { setIsSidebarOpen } = useChatHandlers();
   return (
     <div className="flex items-center justify-between px-4 py-6 mx-16 md:mx-auto w-[calc(100vw-68px)] lg:w-full bg-white">
       <div className="flex items-center gap-2">
@@ -37,13 +32,7 @@ export default function ChatHeader({ chatRooms, onChatSelect, onNewChat, setIsSi
                   <Menu className="w-8 h-8 text-blue" />
                 </button>
               </div>
-              <SidebarContent
-                chatRooms={chatRooms}
-                currentChatId={currentChatId}
-                onChatSelect={onChatSelect}
-                onNewChat={onNewChat}
-                className="py-6"
-              />
+              <SidebarContent className="py-6" />
             </aside>
           </>
         )}

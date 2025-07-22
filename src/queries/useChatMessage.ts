@@ -1,21 +1,37 @@
 import { getChatReceive, postChatSend } from '@/api/chatAPI';
+import { currentChatIdAtom } from '@/atoms/chatAtoms';
 import { queryKeys } from '@/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
 
-export const useChat = (chatId: number | null) => {
+const examples = [
+  '소개팅을 가야 하는 상황이야.',
+  '조금 특별한 데이트를 하고 싶은데, 입을 만한 옷을 추천해줘.',
+  '면접을 보러 가야하는데, 가장 적합한 옷이 무엇일지 몰라서. 추천받고 싶어.',
+  '꾸민 듯 안 꾸민 듯한 꾸안꾸 패션을 추구해보고 싶어.',
+];
+
+export const useChatMessage = () => {
+  const chatId = useAtomValue(currentChatIdAtom);
   const queryClient = useQueryClient();
 
+  const [pollCount, setPollCount] = useState(0);
   const accumulatedMessagesKey = queryKeys.chatMessages.list(chatId!); // 채팅방 별로 데이터 저장하는 키
   const newChatMessageFetcherKey = queryKeys.chatMessages.fetcher(chatId!); // 채팅방 별로 API 받아오는 키
 
   const { data: queryResult, status } = useQuery({
     queryKey: newChatMessageFetcherKey, // 여기서는 API를 받아서 가공할 예정
     queryFn: () => getChatReceive(chatId),
-    refetchInterval: 3000,
+    refetchInterval: pollCount < 10 ? 3000 : false,
     refetchIntervalInBackground: true,
     enabled: !!chatId,
   });
+
+  useEffect(() => {
+    if (status === 'success') setPollCount(10);
+    if (pollCount < 10) setPollCount((c) => c + 1);
+  }, [status, pollCount]);
 
   useEffect(() => {
     /**
@@ -76,6 +92,9 @@ export const useChat = (chatId: number | null) => {
       onError: (error) => {
         callbacks?.onError?.(error);
       },
+      onSettled: () => {
+        setPollCount(0);
+      },
     });
   };
 
@@ -86,13 +105,6 @@ export const useChat = (chatId: number | null) => {
       return [...oldMessages, newMessage];
     });
   };
-
-  const examples = [
-    '소개팅을 가야 하는 상황이야.',
-    '조금 특별한 데이트를 하고 싶은데, 입을 만한 옷을 추천해줘.',
-    '면접을 보러 가야하는데, 가장 적합한 옷이 무엇일지 몰라서. 추천받고 싶어.',
-    '꾸민 듯 안 꾸민 듯한 꾸안꾸 패션을 추구해보고 싶어.',
-  ];
 
   if (!chatId) {
     return {

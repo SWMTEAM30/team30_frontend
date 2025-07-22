@@ -1,19 +1,8 @@
-import { currentChatIdAtom } from '@/atoms/chatAtoms';
 import SidebarContent from '@/components/chat/SidebarContent';
-import { useAtomValue } from 'jotai';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
 
-export function ChatSidebar({
-  chatRooms,
-  onChatSelect,
-  onNewChat,
-}: {
-  chatRooms: ChatRoom[];
-  onChatSelect: (chatId: number) => void;
-  onNewChat: () => void;
-}) {
-  const currentChatId = useAtomValue(currentChatIdAtom);
+export function ChatSidebar() {
   const [openSidebar, setOpenSidebar] = useState(false);
 
   return (
@@ -29,14 +18,7 @@ export function ChatSidebar({
           <Menu className="w-8 h-8 text-blue" />
         </button>
       </div>
-      <SidebarContent
-        chatRooms={chatRooms}
-        currentChatId={currentChatId}
-        onChatSelect={onChatSelect}
-        onNewChat={onNewChat}
-        className={`w-full ${openSidebar ? '' : 'sidebar-collapsed'}`}
-        isSidebarOpen={openSidebar}
-      />
+      <SidebarContent className={`w-full ${openSidebar ? '' : 'sidebar-collapsed'}`} />
     </aside>
   );
 }
