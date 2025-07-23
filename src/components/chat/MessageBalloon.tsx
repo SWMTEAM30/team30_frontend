@@ -1,24 +1,28 @@
-import { useChatHandlers } from '@/components/chat/ChatProvider';
+import { userAtom } from '@/atoms/authAtoms';
+import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import { tmpUserId } from '@/queries/useUser';
 import { messageColor } from '@/styles/chat';
+import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 
-export default function MessageBalloon({ message, userID }: { message: Message; userID: string }) {
+export default function MessageBalloon({ message }: { message: Message }) {
   const { handleOpenTab } = useChatHandlers();
+  const user = useAtomValue(userAtom);
+  const isUserId = () => message.user.userId === (user?.userId || tmpUserId);
+
   return (
-    <div className={`flex ${message.user.userId == userID ? 'justify-end' : 'justify-start'}`}>
-      {message.user.userId != userID && (
+    <div className={`flex ${isUserId() ? 'justify-end' : 'justify-start'}`}>
+      {!isUserId() && (
         <div className="w-12 h-12 m-4 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
           AI
         </div>
       )}
-      <div
-        className={`max-w-[70%] p-6 rounded-2xl ${message.user.userId == userID ? messageColor[0] : messageColor[1]}`}
-      >
+      <div className={`max-w-[70%] p-6 rounded-2xl ${isUserId() ? messageColor[0] : messageColor[1]}`}>
         <p className="text-lg md:text-xl font-serif font-extrabold mb-3">{message.user.username}</p>
         <p className="text-lg md:text-2xl font-serif">{message.text}</p>
         <p className="text-xs opacity-70 mt-2">{message.timestamp.toLocaleTimeString()}</p>
         {/* AI 메시지에만 사진 첨부 */}
-        {message.user.userId !== userID && (
+        {!isUserId() && (
           <div className="mt-4 flex flex-row gap-2 overflow-x-auto">
             {message.images &&
               message.images.map((image, key) => (

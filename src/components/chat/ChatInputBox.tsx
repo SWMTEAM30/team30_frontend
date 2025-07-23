@@ -6,7 +6,7 @@ import { postChatUpload } from '@/api/chatAPI';
 import Image from 'next/image';
 import { useAtom, useAtomValue } from 'jotai';
 import { inputValueAtom, inputImageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/ChatProvider';
+import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
@@ -40,7 +40,6 @@ export default function ChatInputBox() {
 
   return (
     <div
-      // 1. 부모 컨테이너를 Flexbox로 만듭니다.
       className="
     shrink-0
     flex flex-col items-end gap-2 w-full max-w-7xl mx-auto 
@@ -87,14 +86,14 @@ export default function ChatInputBox() {
         <Button
           onClick={handleButtonClick}
           className="
-      flex-shrink-0 /* 3. 버튼은 공간이 부족해도 찌그러지지 않습니다. */
+      flex-shrink-0
       flex items-center justify-center
       w-16 h-16 rounded-full
       bg-blue-500 text-white 
       hover:bg-blue-600
       disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
       transition-all duration-200
-      mb-1 /* 세로 정렬 미세 조정 */
+      mb-1
     "
           disabled={isAIResponding}
         >
@@ -104,14 +103,14 @@ export default function ChatInputBox() {
           onClick={handleSendMessage}
           disabled={inputValue.trim() === '' || isAIResponding}
           className="
-      flex-shrink-0 /* 3. 버튼은 공간이 부족해도 찌그러지지 않습니다. */
+      flex-shrink-0 
       flex items-center justify-center
       w-16 h-16 rounded-full
       bg-blue-500 text-white 
       hover:bg-blue-600
       disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
       transition-all duration-200
-      mb-1 /* 세로 정렬 미세 조정 */
+      mb-1
     "
         >
           <Send className="w-5 h-5" />

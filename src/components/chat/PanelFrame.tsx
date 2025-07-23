@@ -51,7 +51,7 @@ export default function PanelFrame({
       {/* 오른쪽: 상세 이미지 영역 (2/3) */}
       <div className="flex-1 w-96 h-full overflow-y-auto">
         {activeTabData ? (
-          <ImageDetailPanel imageData={activeTabData} onClose={() => onTabClose(activeTabData.src)} />
+          <ImageDetailPanel imageData={activeTabData} />
         ) : (
           <div className="p-8 text-center text-gray-500">선택된 이미지가 없습니다.</div>
         )}

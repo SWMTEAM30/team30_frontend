@@ -1,61 +1,44 @@
 import { getChatReceive, postChatSend } from '@/api/chatAPI';
-import { currentChatIdAtom } from '@/atoms/chatAtoms';
+import { currentChatIdAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
 import { queryKeys } from '@/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-
-const examples = [
-  '소개팅을 가야 하는 상황이야.',
-  '조금 특별한 데이트를 하고 싶은데, 입을 만한 옷을 추천해줘.',
-  '면접을 보러 가야하는데, 가장 적합한 옷이 무엇일지 몰라서. 추천받고 싶어.',
-  '꾸민 듯 안 꾸민 듯한 꾸안꾸 패션을 추구해보고 싶어.',
-];
 
 export const useChatMessage = () => {
   const chatId = useAtomValue(currentChatIdAtom);
   const queryClient = useQueryClient();
+  const setMessages = useSetAtom(messagesAtomFamily(chatId));
 
   const [pollCount, setPollCount] = useState(0);
-  const accumulatedMessagesKey = queryKeys.chatMessages.list(chatId!); // 채팅방 별로 데이터 저장하는 키
   const newChatMessageFetcherKey = queryKeys.chatMessages.fetcher(chatId!); // 채팅방 별로 API 받아오는 키
 
-  const { data: queryResult, status } = useQuery({
+  const {
+    data: queryResult,
+    status,
+    isFetching,
+  } = useQuery({
     queryKey: newChatMessageFetcherKey, // 여기서는 API를 받아서 가공할 예정
-    queryFn: () => getChatReceive(chatId),
+    queryFn: () => getChatReceive(chatId!),
     refetchInterval: pollCount < 10 ? 3000 : false,
     refetchIntervalInBackground: true,
     enabled: !!chatId,
   });
 
+  // poll count limiting
   useEffect(() => {
-    if (status === 'success') setPollCount(10);
-    if (pollCount < 10) setPollCount((c) => c + 1);
-  }, [status, pollCount]);
+    setPollCount((c) => c + 1);
+  }, [isFetching]);
 
+  // chat message accumulating
   useEffect(() => {
-    /**
-     * newChatMessageFetcherKey로부터 접근한 state data는
-     * [data, error] 형식으로 된 API response를 queryResult로 저장함.
-     *
-     * accumulatedMessagesKey로 state data를 접근함
-     *
-     * state를 refresh하여 chat data를 누적함
-     */
-
-    // chatId가 없거나 response가 없으면 ignore accumulating messages
     if (!chatId || status !== 'success' || !queryResult.ok) return;
-
-    // chat message accumulating
-
-    queryClient.setQueryData<Message[]>(accumulatedMessagesKey, (oldMessages = []) => {
-      const newMessages = queryResult.data;
-      const existingIds = new Set(oldMessages.map((msg) => msg.id));
-      const uniqueNewMessages = newMessages.filter((msg) => !existingIds.has(msg.id));
-      if (uniqueNewMessages.length === 0) return oldMessages;
-      return [...oldMessages, ...uniqueNewMessages];
+    setMessages((oldMessages = []) => {
+      const newMessage = queryResult.data;
+      if (oldMessages.some((msg) => msg.id === newMessage.id)) return oldMessages;
+      return [...oldMessages, newMessage];
     });
-  }, [queryResult, status, queryClient, accumulatedMessagesKey, chatId]);
+  }, [queryResult, status, queryClient, chatId]);
 
   // 메시지 보내기 mutation
   const { mutate: sendMessageMutation, isPending: isSending } = useMutation({
@@ -64,18 +47,28 @@ export const useChatMessage = () => {
         content: variables.newMessage.text,
         imageUrl: variables.newMessage.images?.[0].src,
       }),
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ queryKey: newChatMessageFetcherKey });
+      const optimisticMessage = variables.newMessage;
+      setMessages((oldMessages) => [...oldMessages, optimisticMessage]);
+    },
     onSuccess: (responseFromServer) => {
-      console.log(responseFromServer);
-      if (!responseFromServer.ok) return;
+      if (!responseFromServer.ok) {
+        queryClient.invalidateQueries({ queryKey: newChatMessageFetcherKey });
+        return;
+      }
       const newChatId = responseFromServer.data;
       if (!chatId && newChatId) {
         queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.all() });
       }
     },
+    // onError에서는 롤백 대신 invalidate를 통해 서버의 정확한 데이터로 덮어쓰는 것이 간단합니다.
+    onError: () => {
+      queryClient.invalidateQueries({ queryKey: newChatMessageFetcherKey });
+    },
     onSettled: () => {
       // 최신 서버 상태와 동기화하기 위해 메시지 목록 쿼리를 무효화
       // 이렇게 하면 임시 ID가 실제 서버 ID로 교체되는 등의 작업 가능
-      queryClient.invalidateQueries({ queryKey: accumulatedMessagesKey });
       queryClient.invalidateQueries({ queryKey: newChatMessageFetcherKey }); // 폴링 쿼리도 동기화
     },
   });
@@ -98,36 +91,19 @@ export const useChatMessage = () => {
     });
   };
 
-  const addMessageToCache = (newMessage: Message, targetChatId: number) => {
-    const cacheKey = queryKeys.chatMessages.list(targetChatId);
-    queryClient.setQueryData<Message[]>(cacheKey, (oldMessages = []) => {
-      if (oldMessages.some((msg) => msg.id === newMessage.id)) return oldMessages; // 이거 종북임
-      return [...oldMessages, newMessage];
-    });
-  };
-
   if (!chatId) {
     return {
-      messages: [],
-      examples: examples,
       isLoading: false,
       error: false,
       sendMessage: sendMessage,
       isSending: isSending,
-      addMessageToCache: addMessageToCache,
     };
   }
 
-  // hook에 맞게 messages를 출력
-  const allMessages = queryClient.getQueryData<Message[]>(accumulatedMessagesKey) || [];
-
   return {
-    messages: allMessages,
-    examples: examples,
-    isLoading: status === 'pending' && allMessages.length === 0, // 초기 로딩 상태
+    isLoading: status === 'pending',
     error: status === 'error',
     sendMessage: sendMessage,
     isSending: isSending,
-    addMessageToCache: addMessageToCache,
   };
 };

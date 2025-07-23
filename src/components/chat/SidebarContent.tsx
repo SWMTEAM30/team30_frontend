@@ -1,5 +1,5 @@
 import { activePanelTypeAtom, currentChatIdAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/ChatProvider';
+import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 import { useChatRooms } from '@/queries/useChatRoom';
 import { cn } from '@/lib/utils';
 import { useAtomValue } from 'jotai';

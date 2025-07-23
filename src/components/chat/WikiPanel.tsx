@@ -1,5 +1,5 @@
 import { wikiTabsAtom, activeWikiTabIdAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/ChatProvider';
+import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 import { useAtomValue, useAtom } from 'jotai';
 import React from 'react';
 

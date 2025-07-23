@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtom, Provider as JotaiProvider, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import {
   inputValueAtom,
   inputImageAtom,
@@ -12,10 +12,14 @@ import {
   wikiTabsAtom,
   activeImageTabIdAtom,
   activeWikiTabIdAtom,
+  isSidebarOpenAtom,
+  messagesAtomFamily,
 } from '@/atoms/chatAtoms';
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect } from 'react';
 import { useChatRooms } from '@/queries/useChatRoom';
 import { useChatMessage } from '@/queries/useChatMessage';
+import { userAtom } from '@/atoms/authAtoms';
+import { tmpUserId, tmpUsername } from '@/queries/useUser';
 
 type ChatActionsContextType = {
   handleSendMessage: () => void;
@@ -34,13 +38,13 @@ export const useChatHandlers = () => {
   return context;
 };
 
-const ChatLogicProvider = ({ children }: { children: ReactNode }) => {
+export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputImage, setInputImage] = useAtom(inputImageAtom);
   const [currentChatId, setCurrentChatId] = useAtom(currentChatIdAtom);
   const [hasUserSentMessage, setHasUserSentMessage] = useAtom(hasUserSentMessageAtom);
   const [isAIResponding, setIsAIResponding] = useAtom(isAIRespondingAtom);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom);
 
   const [activePanelType, setActivePanelType] = useAtom(activePanelTypeAtom);
   const [imageTabs, setImageTabs] = useAtom(imageTabsAtom);
@@ -48,8 +52,11 @@ const ChatLogicProvider = ({ children }: { children: ReactNode }) => {
   const [activeImageTabId, setActiveImageTabId] = useAtom(activeImageTabIdAtom);
   const [activeWikiTabId, setActiveWikiTabId] = useAtom(activeWikiTabIdAtom);
 
-  const { messages, examples, isLoading, sendMessage, addMessageToCache } = useChatMessage();
-  const { rooms: chatRooms, error: chatRoomError } = useChatRooms();
+  const user = useAtomValue(userAtom);
+
+  const { sendMessage } = useChatMessage();
+  const { error: chatRoomError } = useChatRooms();
+  const messages = useAtomValue(messagesAtomFamily(currentChatId));
 
   // AI 응답이 오면 스피너를 제거
   useEffect(() => {
@@ -64,11 +71,10 @@ const ChatLogicProvider = ({ children }: { children: ReactNode }) => {
   const sendMsg = useCallback(
     (inputValue: string, inputImage?: MessageImage) => {
       resetAtomState(true);
-      console.log(isAIResponding);
       const userMessage: Message = {
         id: Date.now().toString(),
         text: inputValue,
-        user: { userId: 'asdf', username: 'mindul' },
+        user: { userId: user?.userId || tmpUserId, username: user?.username || tmpUsername },
         images: inputImage && [inputImage],
         timestamp: new Date(),
       };
@@ -78,7 +84,7 @@ const ChatLogicProvider = ({ children }: { children: ReactNode }) => {
         {
           onSuccess: (responseFromServer) => {
             if (responseFromServer.ok) {
-              addMessageToCache(userMessage, responseFromServer.data);
+              // addMessageToCache(userMessage, responseFromServer.data);
               if (currentChatId == null) setCurrentChatId(responseFromServer.data);
             }
           },
@@ -88,7 +94,7 @@ const ChatLogicProvider = ({ children }: { children: ReactNode }) => {
         },
       );
     },
-    [currentChatId, sendMessage, addMessageToCache, setCurrentChatId, setIsAIResponding, setHasUserSentMessage],
+    [currentChatId, sendMessage, setCurrentChatId, setIsAIResponding, setHasUserSentMessage],
   );
 
   const resetAtomState = useCallback(
@@ -191,13 +197,4 @@ const ChatLogicProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return <ChatActionsContext.Provider value={actionsValue}>{children}</ChatActionsContext.Provider>;
-};
-
-// 최종적으로 export할 Provider
-export const ChatProvider = ({ children }: { children: ReactNode }) => {
-  return (
-    <JotaiProvider>
-      <ChatLogicProvider>{children}</ChatLogicProvider>
-    </JotaiProvider>
-  );
 };

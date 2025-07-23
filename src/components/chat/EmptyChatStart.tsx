@@ -1,12 +1,6 @@
 import ExampleSuggestions from '@/components/chat/ExampleSuggestion';
 
-export default function EmptyChatStart({
-  examples,
-  onExampleSelect,
-}: {
-  examples: string[];
-  onExampleSelect: (text: string) => void;
-}) {
+export default function EmptyChatStart() {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-4">
       {/* 로고 */}
@@ -23,7 +17,7 @@ export default function EmptyChatStart({
       </div>
 
       {/* 예시 선택지 */}
-      <ExampleSuggestions onExampleSelect={onExampleSelect} examples={examples} />
+      <ExampleSuggestions />
     </div>
   );
 }

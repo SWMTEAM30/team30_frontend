@@ -5,12 +5,12 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import ChatHeader from '@/components/chat/ChatHeader';
 import ChatInputBox from '@/components/chat/ChatInputBox';
 import ChatArea from '@/components/chat/ChatArea';
-import { ChatProvider } from '@/components/chat/ChatProvider';
+import { ChatContextProvider } from '@/components/chat/ChatContextProvider';
 import ChatSidePanel from '@/components/chat/ChatSidePanel';
 
 export default function Chat() {
   return (
-    <ChatProvider>
+    <ChatContextProvider>
       <div className="flex min-h-screen w-full relative">
         <div className="hidden lg:block">
           <ChatSidebar />
@@ -26,6 +26,6 @@ export default function Chat() {
         </SidebarInset>
         <ChatSidePanel />
       </div>
-    </ChatProvider>
+    </ChatContextProvider>
   );
 }

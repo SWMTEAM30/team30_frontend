@@ -1,7 +1,6 @@
 import { userAtom } from '@/atoms/authAtoms';
-import { isAIRespondingAtom } from '@/atoms/chatAtoms';
+import { currentChatIdAtom, examplesAtomFamily, isAIRespondingAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
 import AILoadingSpinner from '@/components/chat/AILoadingSpinner';
-import { useChatHandlers } from '@/components/chat/ChatProvider';
 import EmptyChatStart from '@/components/chat/EmptyChatStart';
 import ExampleSuggestions from '@/components/chat/ExampleSuggestion';
 import MessageBalloon from '@/components/chat/MessageBalloon';
@@ -12,9 +11,12 @@ import { useCallback, useEffect, useRef } from 'react';
 export default function ChatArea() {
   const isAIResponding = useAtomValue(isAIRespondingAtom);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const { messages, examples: messageExamples, isLoading: isChatLoading } = useChatMessage();
+  const { isLoading: isChatLoading } = useChatMessage();
   const user = useAtomValue(userAtom);
-  const { handleExampleSelect } = useChatHandlers();
+
+  const currentChatId = useAtomValue(currentChatIdAtom);
+  const messages = useAtomValue(messagesAtomFamily(currentChatId));
+  const messageExamples = useAtomValue(examplesAtomFamily(currentChatId));
 
   // 스크롤을 맨 아래로 이동시키는 함수
   const scrollToBottom = useCallback(() => {
@@ -35,7 +37,7 @@ export default function ChatArea() {
   if (messages.length === 0 && !isChatLoading && !isAIResponding) {
     return (
       <div className="h-[calc(100vh-200px)] p-4">
-        <EmptyChatStart examples={messageExamples} onExampleSelect={handleExampleSelect || (() => {})} />
+        <EmptyChatStart />
       </div>
     );
   }
@@ -51,18 +53,16 @@ export default function ChatArea() {
             ) : (
               <>
                 {messages.map((message, i) => (
-                  <MessageBalloon key={i} message={message} userID={message.user.userId} />
+                  <MessageBalloon key={i} message={message} />
                 ))}
                 {/* AI 응답 준비 중일 때 스피너 표시 */}
-                {isAIResponding && new Array(4).fill('').map((_, i) => <AILoadingSpinner key={i} />)}
+                {isAIResponding && <AILoadingSpinner />}
                 {/* AI 응답이 완료되면 예시 선택지 표시 (마지막 메시지가 AI 응답이고 스피너가 꺼져있을 때)*/}
                 {messages.length > 0 &&
                   user &&
                   messages[messages.length - 1]?.user.userId !== user.userId &&
                   !isAIResponding &&
-                  messageExamples && (
-                    <ExampleSuggestions onExampleSelect={handleExampleSelect} examples={messageExamples} />
-                  )}
+                  messageExamples && <ExampleSuggestions />}
               </>
             )}
           </div>

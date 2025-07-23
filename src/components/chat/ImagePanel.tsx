@@ -5,7 +5,7 @@ import ImageDetailPanel from '@/components/chat/ImageDetailPanel';
 import { cn } from '@/lib/utils';
 import { useAtom, useAtomValue } from 'jotai';
 import { activeImageTabIdAtom, imageTabsAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/ChatProvider';
+import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 
 export default function ImagePanel({ className }: { className?: string }) {
   const imageTabs = useAtomValue(imageTabsAtom);
@@ -31,7 +31,7 @@ export default function ImagePanel({ className }: { className?: string }) {
                        ${activeImageTabId === tab.src ? 'ring-2 ring-blue-500 ring-offset-2' : 'hover:opacity-80'}`}
           >
             <Image src={tab.src} alt={tab.name} width={64} height={64} className="h-32 w-28 object-cover" />
-            <button
+            <div
               onClick={(e) => {
                 e.stopPropagation();
                 handleCloseTab(tab.src);
@@ -40,14 +40,14 @@ export default function ImagePanel({ className }: { className?: string }) {
               title="탭 닫기"
             >
               ×
-            </button>
+            </div>
           </button>
         ))}
       </div>
       {/* 오른쪽: 상세 이미지 영역 (2/3) */}
       <div className="flex-1 w-96 h-full overflow-y-auto">
         {activeTabData ? (
-          <ImageDetailPanel imageData={activeTabData} onClose={() => handleCloseTab(activeTabData.src)} />
+          <ImageDetailPanel imageData={activeTabData} />
         ) : (
           <div className="p-8 text-center text-gray-500">선택된 이미지가 없습니다.</div>
         )}
