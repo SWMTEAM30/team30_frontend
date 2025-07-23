@@ -72,20 +72,21 @@ export const getChatReceive = async (roomId: number | null) => {
       ok: false,
       error: new Error('no have room id'),
     } as APIErrorResponse;
-  const response = await requestAPI<string[]>(`/api/chat/receive?roomId=${roomId}`, 'GET');
+  const response = await requestAPI<AgentMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
   if (response.ok === true) {
+    console.log(imageset[0]);
     return {
       ok: response.ok,
       status: response.status,
       message: response.message,
-      data: response.data.map((e: string, i: number) => ({
+      data: {
         id: Date.now().toString(),
-        text: e,
-        user: { userId: 'qwer', username: 'mendul' },
+        text: response.data.message,
+        user: { userId: response.data.agent_id, username: response.data.agent_name },
         timestamp: new Date(),
-        images: imageset[i],
-      })),
-    } as APISuccessResponse<Message[]>;
+        images: imageset[0],
+      },
+    } as APISuccessResponse<Message>;
   } else {
     return response;
   }
@@ -95,7 +96,6 @@ export const getChatRoomsHistory = async () => requestAPI<RoomHistory>(`/api/cha
 
 // POST
 export const postChatSend = async (roomId: number | null, message: { content: string; imageUrl?: string }) => {
-  console.log(message);
   return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', message);
 };
 export const postChatUpload = async (file: any) => requestAPI<string>(`/api/chat/upload`, 'POST', file, {});

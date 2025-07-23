@@ -1,10 +1,8 @@
 import Image from 'next/image';
-import { X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ImageDetailPanel({
   imageData,
-  onClose,
 }: {
   imageData: {
     src: string;
@@ -12,7 +10,6 @@ export default function ImageDetailPanel({
     description: string;
     tags: string[];
   } | null;
-  onClose: () => void;
 }) {
   if (!imageData) return null;
 

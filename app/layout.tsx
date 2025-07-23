@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { plus_jakarta_sans, noto_sans_kr } from 'app/fonts';
+import { Provider as JotaiProvider } from 'jotai';
 import QueryProvider from 'app/providers';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import AuthJotaiInitializer from '@/components/auth/AuthJotaiInitializer';
 
 // const geistSans = Geist({
 //   variable: '--font-geist-sans',
@@ -28,7 +30,12 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${plus_jakarta_sans.variable} ${noto_sans_kr.variable} antialiased min-h-screen flex flex-col`}>
         <main className="flex-grow">
-          <QueryProvider>{children}</QueryProvider>
+          <JotaiProvider>
+            <QueryProvider>
+              <AuthJotaiInitializer />
+              {children}
+            </QueryProvider>
+          </JotaiProvider>
         </main>
         <GoogleAnalytics gaId="G-LS5SN8G0F6" />
       </body>

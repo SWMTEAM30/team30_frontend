@@ -4,22 +4,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useRef, ChangeEvent } from 'react';
 import { postChatUpload } from '@/api/chatAPI';
 import Image from 'next/image';
+import { useAtom, useAtomValue } from 'jotai';
+import { inputValueAtom, inputImageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
+import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 
-export default function ChatSubmit({
-  inputValue,
-  setInputValue,
-  inputImage,
-  setInputImage,
-  handleSendMessage,
-  isAIResponding = false,
-}: {
-  inputValue: any;
-  setInputValue: any;
-  inputImage: any;
-  setInputImage: any;
-  handleSendMessage: any;
-  isAIResponding?: boolean;
-}) {
+export default function ChatInputBox() {
+  const [inputValue, setInputValue] = useAtom(inputValueAtom);
+  const [inputImage, setInputImage] = useAtom(inputImageAtom);
+  const isAIResponding = useAtomValue(isAIRespondingAtom);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleButtonClick = () => fileInputRef.current?.click();
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -43,9 +36,10 @@ export default function ChatSubmit({
     }
   };
 
+  const { handleSendMessage } = useChatHandlers();
+
   return (
     <div
-      // 1. 부모 컨테이너를 Flexbox로 만듭니다.
       className="
     shrink-0
     flex flex-col items-end gap-2 w-full max-w-7xl mx-auto 
@@ -81,18 +75,25 @@ export default function ChatSubmit({
         disabled={isAIResponding}
       />
       <div className="flex space-x-5">
-        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" disabled={isAIResponding} />
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+          accept="image/*"
+          disabled={isAIResponding}
+        />
         <Button
           onClick={handleButtonClick}
           className="
-      flex-shrink-0 /* 3. 버튼은 공간이 부족해도 찌그러지지 않습니다. */
+      flex-shrink-0
       flex items-center justify-center
       w-16 h-16 rounded-full
       bg-blue-500 text-white 
       hover:bg-blue-600
       disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
       transition-all duration-200
-      mb-1 /* 세로 정렬 미세 조정 */
+      mb-1
     "
           disabled={isAIResponding}
         >
@@ -102,14 +103,14 @@ export default function ChatSubmit({
           onClick={handleSendMessage}
           disabled={inputValue.trim() === '' || isAIResponding}
           className="
-      flex-shrink-0 /* 3. 버튼은 공간이 부족해도 찌그러지지 않습니다. */
+      flex-shrink-0 
       flex items-center justify-center
       w-16 h-16 rounded-full
       bg-blue-500 text-white 
       hover:bg-blue-600
       disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
       transition-all duration-200
-      mb-1 /* 세로 정렬 미세 조정 */
+      mb-1
     "
         >
           <Send className="w-5 h-5" />
