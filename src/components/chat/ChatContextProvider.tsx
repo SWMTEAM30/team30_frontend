@@ -84,7 +84,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         {
           onSuccess: (responseFromServer) => {
             if (responseFromServer.ok) {
-              // addMessageToCache(userMessage, responseFromServer.data);
               if (currentChatId == null) setCurrentChatId(responseFromServer.data);
             }
           },
@@ -134,19 +133,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   }, [chatRoomError, setCurrentChatId, resetAtomState]);
 
   const handleOpenTab = useCallback(
-    (data: any, type: 'image' | 'wiki') => {
+    (data: PanelData, type: 'image' | 'wiki') => {
       if (type === 'image') {
         setImageTabs((prevTabs) => {
-          if (prevTabs.some((tab) => tab.id === data.id)) return prevTabs;
+          if (prevTabs.some((tab) => tab.src === data.src)) return prevTabs;
           return [...prevTabs, data];
         });
-        setActiveImageTabId(data.id);
+        setActiveImageTabId(data.src);
       } else {
         setWikiTabs((prevTabs) => {
-          if (prevTabs.some((tab) => tab.id === data.id)) return prevTabs;
+          if (prevTabs.some((tab) => tab.src === data.src)) return prevTabs;
           return [...prevTabs, data];
         });
-        setActiveWikiTabId(data.id);
+        setActiveWikiTabId(data.src);
       }
       setActivePanelType(type);
     },

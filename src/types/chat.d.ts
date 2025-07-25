@@ -3,7 +3,7 @@ type Message = {
   text: string;
   user: User;
   timestamp: Date;
-  images?: MessageImage[]; // AI 메시지에 포함될 이미지 URL 배열
+  images?: PanelData[]; // AI 메시지에 포함될 이미지 URL 배열
 };
 
 type AgentMessage = {
@@ -12,14 +12,18 @@ type AgentMessage = {
   agent_role: string;
   message: string;
   order: number;
+  product_image_url: string;
 };
 
-type MessageImage = {
+interface PanelData {
   src: string;
   name: string;
-  description: string;
+  content: string;
   tags: string[];
-};
+}
+
+interface MessageImage extends PanelData {}
+interface MessageWiki extends PanelData {}
 
 type ChatRoom = {
   id: number;

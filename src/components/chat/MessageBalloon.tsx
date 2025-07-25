@@ -1,5 +1,6 @@
 import { userAtom } from '@/atoms/authAtoms';
 import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import MessageParser from '@/components/chat/MessageParser';
 import { tmpUserId } from '@/queries/useUser';
 import { messageColor } from '@/styles/chat';
 import { useAtomValue } from 'jotai';
@@ -19,7 +20,9 @@ export default function MessageBalloon({ message }: { message: Message }) {
       )}
       <div className={`max-w-[70%] p-6 rounded-2xl ${isUserId() ? messageColor[0] : messageColor[1]}`}>
         <p className="text-lg md:text-xl font-serif font-extrabold mb-3">{message.user.username}</p>
-        <p className="text-lg md:text-2xl font-serif">{message.text}</p>
+        <p className="text-lg md:text-2xl font-serif">
+          {isUserId() ? message.text : <MessageParser text={message.text} />}
+        </p>
         <p className="text-xs opacity-70 mt-2">{message.timestamp.toLocaleTimeString()}</p>
         {/* AI 메시지에만 사진 첨부 */}
         {!isUserId() && (

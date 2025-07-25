@@ -10,7 +10,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "preinstall": "npx only-allow pnpm",
-    "generate:theme": "tsx scripts/generate-theme.ts"
+    "generate:theme": "tsx scripts/generate-theme.ts",
+    "generate:wiki": "tsx scripts/generate-wiki.ts"
   },
   "dependencies": {
     "@capacitor/core": "^7.4.0",
@@ -33,9 +34,12 @@
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "form-data": "^4.0.4",
+    "fs": "0.0.1-security",
+    "gray-matter": "^4.0.3",
     "jotai": "2.12.5",
     "lucide-react": "^0.513.0",
     "next": "15.3.1",
+    "next-mdx-remote": "^5.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.3.1",
