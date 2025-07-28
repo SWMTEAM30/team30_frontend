@@ -1,8 +1,7 @@
 import { wikiTabsAtom, activeWikiTabIdAtom } from '@/atoms/chatAtoms';
 import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 import { useAtomValue, useAtom } from 'jotai';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Link from 'next/link';
+import { MDXRemote } from 'next-mdx-remote';
 import React from 'react';
 
 export default function WikiPanel({ className }: { className?: string }) {
@@ -19,13 +18,12 @@ export default function WikiPanel({ className }: { className?: string }) {
           <button
             key={i}
             onClick={() => setActiveImageTabId(tab.src)}
-            className={`w-full p-2 mb-2 ${activeWikiTabId === tab.src ? 'bg-beige-100' : 'hover:bg-beige-300'}`}
+            className={`w-full flex p-2 mb-2 ${activeWikiTabId === tab.src ? 'bg-beige-100' : 'hover:bg-beige-300'}`}
           >
             <span
               onClick={(e) => {
                 e.stopPropagation();
                 handleCloseTab(tab.src);
-                console.log(tab);
               }}
               className="me-3 text-md text-red-500"
             >
@@ -40,9 +38,7 @@ export default function WikiPanel({ className }: { className?: string }) {
         {activeTabData ? (
           <div>
             <h2 className="text-lg font-bold mb-2">{activeTabData.name}</h2>
-            <div>
-              {activeTabData.content ? <Link href={'/wiki/style/classic'}>클래식</Link> : '위키 내용이 없습니다.'}
-            </div>
+            <div>{activeTabData.content ? <MDXRemote {...activeTabData.content} /> : '위키 내용이 없습니다.'}</div>
           </div>
         ) : (
           <div className="text-gray-500">선택된 위키가 없습니다.</div>

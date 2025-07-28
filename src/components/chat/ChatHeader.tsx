@@ -1,3 +1,5 @@
+'use client';
+
 import { Menu } from 'lucide-react';
 import SidebarContent from '@/components/chat/SidebarContent';
 import { useAtom, useAtomValue } from 'jotai';

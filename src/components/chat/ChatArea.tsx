@@ -1,3 +1,5 @@
+'use client';
+
 import { userAtom } from '@/atoms/authAtoms';
 import { currentChatIdAtom, examplesAtomFamily, isAIRespondingAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
 import AILoadingSpinner from '@/components/chat/AILoadingSpinner';

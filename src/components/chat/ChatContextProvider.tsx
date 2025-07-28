@@ -154,21 +154,32 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleCloseTab = useCallback(
     (targetTabId: string) => {
-      const isImageType = activePanelType === 'image';
-      const currentTabs = isImageType ? imageTabs : wikiTabs;
-      const setCurrentTabs = isImageType ? setImageTabs : setWikiTabs;
-      const activeTabId = isImageType ? activeImageTabId : activeImageTabId;
-      const setActiveTabId = isImageType ? setActiveImageTabId : setActiveWikiTabId;
+      // ✨ if 블록 안에서는 모든 변수가 'image' 관련 타입임이 보장됩니다.
+      if (activePanelType === 'image') {
+        const remainingTabs = imageTabs.filter((tab) => tab.src !== targetTabId);
+        setImageTabs(remainingTabs);
 
-      const remainingTabs = currentTabs.filter((tab) => tab.src !== targetTabId);
-      setCurrentTabs(remainingTabs);
+        if (activeImageTabId === targetTabId) {
+          if (remainingTabs.length > 0) {
+            setActiveImageTabId(remainingTabs[remainingTabs.length - 1].src);
+          } else {
+            setActiveImageTabId(null);
+            setActivePanelType(null);
+          }
+        }
+      }
+      // ✨ else 블록 안에서는 모든 변수가 'wiki' 관련 타입임이 보장됩니다.
+      else if (activePanelType === 'wiki') {
+        const remainingTabs = wikiTabs.filter((tab) => tab.src !== targetTabId);
+        setWikiTabs(remainingTabs);
 
-      if (activeTabId === targetTabId) {
-        if (remainingTabs.length > 0) {
-          setActiveTabId(remainingTabs[remainingTabs.length - 1].src);
-        } else {
-          setActiveTabId(null);
-          setActivePanelType(null);
+        if (activeWikiTabId === targetTabId) {
+          if (remainingTabs.length > 0) {
+            setActiveWikiTabId(remainingTabs[remainingTabs.length - 1].src);
+          } else {
+            setActiveWikiTabId(null);
+            setActivePanelType(null);
+          }
         }
       }
     },
@@ -182,6 +193,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setWikiTabs,
       activeWikiTabId,
       setActiveWikiTabId,
+      setActivePanelType,
     ],
   );
 

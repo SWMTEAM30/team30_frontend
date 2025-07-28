@@ -10,8 +10,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "preinstall": "npx only-allow pnpm",
-    "generate:theme": "tsx scripts/generate-theme.ts",
-    "generate:wiki": "tsx scripts/generate-wiki.ts"
+    "generate:theme": "tsx scripts/generate-theme.mts",
+    "generate:wiki": "tsx scripts/generate-wiki.mts"
   },
   "dependencies": {
     "@capacitor/core": "^7.4.0",

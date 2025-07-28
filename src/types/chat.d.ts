@@ -18,12 +18,18 @@ type AgentMessage = {
 interface PanelData {
   src: string;
   name: string;
-  content: string;
+  content: any;
   tags: string[];
 }
 
-interface MessageImage extends PanelData {}
-interface MessageWiki extends PanelData {}
+interface MessageImage extends PanelData {
+  content: string;
+}
+interface MessageWiki extends PanelData {
+  content: MDXRemoteSerializeResult<Record<string, unknown>, Record<string, unknown>>;
+}
+
+type WikiIndex = Record<string, MessageWiki>;
 
 type ChatRoom = {
   id: number;

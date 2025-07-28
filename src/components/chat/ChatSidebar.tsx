@@ -1,3 +1,5 @@
+'use client';
+
 import { isSidebarOpenAtom } from '@/atoms/chatAtoms';
 import SidebarContent from '@/components/chat/SidebarContent';
 import { useAtom } from 'jotai';
