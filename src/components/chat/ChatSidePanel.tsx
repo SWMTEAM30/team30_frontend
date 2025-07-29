@@ -1,10 +1,12 @@
+'use client';
+
 import { activePanelTypeAtom } from '@/atoms/chatAtoms';
 import ImagePanel from '@/components/chat/ImagePanel';
 import WikiPanel from '@/components/chat/WikiPanel';
 import { useAtom } from 'jotai';
 import { ChevronLeft } from 'lucide-react';
 
-export default function SidePanel({}) {
+export default function ChatSidePanel({}) {
   const [activePanelType, setActivePanelType] = useAtom(activePanelTypeAtom);
 
   return (

@@ -68,6 +68,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [messages, hasUserSentMessage]);
 
+  const resetAtomState = useCallback(
+    (flag: boolean) => {
+      setHasUserSentMessage(flag);
+      setIsAIResponding(flag);
+      setInputValue('');
+      setInputImage(undefined);
+    },
+    [setHasUserSentMessage, setIsAIResponding, setInputValue, setInputImage],
+  );
+
   const sendMsg = useCallback(
     (inputValue: string, inputImage?: MessageImage) => {
       resetAtomState(true);
@@ -78,33 +88,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         images: inputImage && [inputImage],
         timestamp: new Date(),
       };
-
-      sendMessage(
-        { roomId: currentChatId, newMessage: userMessage },
-        {
-          onSuccess: (responseFromServer) => {
-            if (responseFromServer.ok) {
-              // addMessageToCache(userMessage, responseFromServer.data);
-              if (currentChatId == null) setCurrentChatId(responseFromServer.data);
-            }
-          },
-          onError: () => {
-            setIsAIResponding(false); // 에러 발생 시에도 스피너 숨김
-          },
-        },
-      );
+      sendMessage(userMessage);
     },
     [currentChatId, sendMessage, setCurrentChatId, setIsAIResponding, setHasUserSentMessage],
-  );
-
-  const resetAtomState = useCallback(
-    (flag: boolean) => {
-      setHasUserSentMessage(flag);
-      setIsAIResponding(flag);
-      setInputValue('');
-      setInputImage(undefined);
-    },
-    [setHasUserSentMessage, setIsAIResponding, setInputValue, setInputImage],
   );
 
   const handleExampleSelect = useCallback(
@@ -134,19 +120,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   }, [chatRoomError, setCurrentChatId, resetAtomState]);
 
   const handleOpenTab = useCallback(
-    (data: any, type: 'image' | 'wiki') => {
+    (data: PanelData, type: 'image' | 'wiki') => {
       if (type === 'image') {
         setImageTabs((prevTabs) => {
-          if (prevTabs.some((tab) => tab.id === data.id)) return prevTabs;
+          if (prevTabs.some((tab) => tab.src === data.src)) return prevTabs;
           return [...prevTabs, data];
         });
-        setActiveImageTabId(data.id);
+        setActiveImageTabId(data.src);
       } else {
         setWikiTabs((prevTabs) => {
-          if (prevTabs.some((tab) => tab.id === data.id)) return prevTabs;
+          if (prevTabs.some((tab) => tab.src === data.src)) return prevTabs;
           return [...prevTabs, data];
         });
-        setActiveWikiTabId(data.id);
+        setActiveWikiTabId(data.src);
       }
       setActivePanelType(type);
     },
@@ -155,21 +141,32 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleCloseTab = useCallback(
     (targetTabId: string) => {
-      const isImageType = activePanelType === 'image';
-      const currentTabs = isImageType ? imageTabs : wikiTabs;
-      const setCurrentTabs = isImageType ? setImageTabs : setWikiTabs;
-      const activeTabId = isImageType ? activeImageTabId : activeImageTabId;
-      const setActiveTabId = isImageType ? setActiveImageTabId : setActiveWikiTabId;
+      // ✨ if 블록 안에서는 모든 변수가 'image' 관련 타입임이 보장됩니다.
+      if (activePanelType === 'image') {
+        const remainingTabs = imageTabs.filter((tab) => tab.src !== targetTabId);
+        setImageTabs(remainingTabs);
 
-      const remainingTabs = currentTabs.filter((tab) => tab.src !== targetTabId);
-      setCurrentTabs(remainingTabs);
+        if (activeImageTabId === targetTabId) {
+          if (remainingTabs.length > 0) {
+            setActiveImageTabId(remainingTabs[remainingTabs.length - 1].src);
+          } else {
+            setActiveImageTabId(null);
+            setActivePanelType(null);
+          }
+        }
+      }
+      // ✨ else 블록 안에서는 모든 변수가 'wiki' 관련 타입임이 보장됩니다.
+      else if (activePanelType === 'wiki') {
+        const remainingTabs = wikiTabs.filter((tab) => tab.src !== targetTabId);
+        setWikiTabs(remainingTabs);
 
-      if (activeTabId === targetTabId) {
-        if (remainingTabs.length > 0) {
-          setActiveTabId(remainingTabs[remainingTabs.length - 1].src);
-        } else {
-          setActiveTabId(null);
-          setActivePanelType(null);
+        if (activeWikiTabId === targetTabId) {
+          if (remainingTabs.length > 0) {
+            setActiveWikiTabId(remainingTabs[remainingTabs.length - 1].src);
+          } else {
+            setActiveWikiTabId(null);
+            setActivePanelType(null);
+          }
         }
       }
     },
@@ -183,6 +180,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setWikiTabs,
       activeWikiTabId,
       setActiveWikiTabId,
+      setActivePanelType,
     ],
   );
 

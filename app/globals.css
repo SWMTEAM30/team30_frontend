@@ -305,6 +305,35 @@ html {
   display: none;  /* Chrome, Safari and Opera */
 }
 
+/* 사이드바 커스텀 스크롤바 */
+.sidebar-scroll {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
 /* 오버레이 애니메이션 */
 @keyframes fadeIn {
   from {

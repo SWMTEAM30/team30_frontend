@@ -1,5 +1,3 @@
-'use client';
-
 import { ChatSidebar } from '@/components/chat/ChatSidebar';
 import { SidebarInset } from '@/components/ui/sidebar';
 import ChatHeader from '@/components/chat/ChatHeader';

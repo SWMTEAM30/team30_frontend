@@ -9,8 +9,8 @@ export const hasUserSentMessageAtom = atom<boolean>(false);
 export const isSidebarOpenAtom = atom<boolean>(false);
 
 export const activePanelTypeAtom = atom<'image' | 'wiki' | null>(null);
-export const imageTabsAtom = atom<any[]>([]);
-export const wikiTabsAtom = atom<any[]>([]);
+export const imageTabsAtom = atom<MessageImage[]>([]);
+export const wikiTabsAtom = atom<MessageWiki[]>([]);
 export const activeImageTabIdAtom = atom<string | null>(null);
 export const activeWikiTabIdAtom = atom<string | null>(null);
 

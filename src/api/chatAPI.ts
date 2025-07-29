@@ -74,7 +74,6 @@ export const getChatReceive = async (roomId: number | null) => {
     } as APIErrorResponse;
   const response = await requestAPI<AgentMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
   if (response.ok === true) {
-    console.log(imageset[0]);
     return {
       ok: response.ok,
       status: response.status,
@@ -84,7 +83,17 @@ export const getChatReceive = async (roomId: number | null) => {
         text: response.data.message,
         user: { userId: response.data.agent_id, username: response.data.agent_name },
         timestamp: new Date(),
-        images: imageset[0],
+        images: response.data.product_image_url
+          ? [
+              {
+                src: response.data.product_image_url,
+                name: '얇은 비키니',
+                content:
+                  '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 수정하라고 하세요',
+                tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
+              },
+            ]
+          : [],
       },
     } as APISuccessResponse<Message>;
   } else {

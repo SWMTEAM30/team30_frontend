@@ -1,16 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function ImageDetailPanel({
-  imageData,
-}: {
-  imageData: {
-    src: string;
-    name: string;
-    description: string;
-    tags: string[];
-  } | null;
-}) {
+export default function ImageDetailPanel({ imageData }: { imageData: MessageImage | null }) {
   if (!imageData) return null;
 
   return (
@@ -37,7 +28,7 @@ export default function ImageDetailPanel({
         <div className="space-y-4 w-72 max-w-[288px] mx-auto">
           <div>
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{imageData.name}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{imageData.description}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{imageData.content}</p>
           </div>
 
           {/* 태그 */}

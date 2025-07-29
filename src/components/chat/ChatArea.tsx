@@ -1,3 +1,5 @@
+'use client';
+
 import { userAtom } from '@/atoms/authAtoms';
 import { currentChatIdAtom, examplesAtomFamily, isAIRespondingAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
 import AILoadingSpinner from '@/components/chat/AILoadingSpinner';
@@ -20,12 +22,12 @@ export default function ChatArea() {
 
   // 스크롤을 맨 아래로 이동시키는 함수
   const scrollToBottom = useCallback(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
+    // if (scrollAreaRef.current) {
+    //   scrollAreaRef.current.scrollTo({
+    //     top: scrollAreaRef.current.scrollHeight,
+    //     behavior: 'smooth',
+    //   });
+    // }
   }, [scrollAreaRef]);
 
   // 메시지가 추가될 때마다 스크롤을 맨 아래로 이동
@@ -48,7 +50,7 @@ export default function ChatArea() {
       <div className={`flex flex-col transition-all duration-500 ease-in-out flex-1`}>
         <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-6 mx-auto max-w-[960px]">
-            {isChatLoading ? (
+            {messages.length == 0 ? (
               <div>대화 내용을 불러오는 중...</div>
             ) : (
               <>

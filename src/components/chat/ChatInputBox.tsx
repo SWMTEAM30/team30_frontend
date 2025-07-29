@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,6 +14,8 @@ export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputImage, setInputImage] = useAtom(inputImageAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
+
+  const { handleSendMessage } = useChatHandlers();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleButtonClick = () => fileInputRef.current?.click();
@@ -28,15 +32,12 @@ export default function ChatInputBox() {
       const newMessageImage: MessageImage = {
         src: response.data,
         name: response.data,
-        description: '사진s',
-        tags: ['미니멀', '응애'],
+        content: '이걸 발견했다면 프론트엔드 개발자한테 "ChatInputBox 수정하세요" 라고 말하면 됩니다.',
+        tags: ['응애'],
       };
-      console.log(newMessageImage);
       setInputImage(newMessageImage);
     }
   };
-
-  const { handleSendMessage } = useChatHandlers();
 
   return (
     <div
