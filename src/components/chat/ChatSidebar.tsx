@@ -10,9 +10,9 @@ export function ChatSidebar() {
 
   return (
     <aside
-      className={`h-screen bg-beige transition-all duration-300 ease-in-out flex flex-col ${isSidebarOpen ? 'w-80' : 'w-32'} overflow-x-hidden`}
+      className={`h-screen bg-beige transition-all duration-300 ease-in-out flex flex-col ${isSidebarOpen ? 'w-80' : 'w-32'} overflow-hidden`}
     >
-      <div className="flex items-center w-full h-20">
+      <div className="flex items-center w-full h-20 flex-shrink-0">
         <button
           type="button"
           className="p-6 cursor-pointer flex items-center justify-center"
@@ -21,7 +21,7 @@ export function ChatSidebar() {
           <Menu className="w-8 h-8 text-blue" />
         </button>
       </div>
-      <SidebarContent className={`w-full ${isSidebarOpen ? '' : 'sidebar-collapsed'}`} />
+      <SidebarContent className={`w-full flex-1 ${isSidebarOpen ? '' : 'sidebar-collapsed'}`} />
     </aside>
   );
 }
