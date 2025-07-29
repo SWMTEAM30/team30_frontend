@@ -15,6 +15,8 @@ export default function ChatInputBox() {
   const [inputImage, setInputImage] = useAtom(inputImageAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
 
+  const { handleSendMessage } = useChatHandlers();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleButtonClick = () => fileInputRef.current?.click();
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -33,12 +35,9 @@ export default function ChatInputBox() {
         content: '이걸 발견했다면 프론트엔드 개발자한테 "ChatInputBox 수정하세요" 라고 말하면 됩니다.',
         tags: ['응애'],
       };
-      console.log(newMessageImage);
       setInputImage(newMessageImage);
     }
   };
-
-  const { handleSendMessage } = useChatHandlers();
 
   return (
     <div

@@ -68,6 +68,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [messages, hasUserSentMessage]);
 
+  const resetAtomState = useCallback(
+    (flag: boolean) => {
+      setHasUserSentMessage(flag);
+      setIsAIResponding(flag);
+      setInputValue('');
+      setInputImage(undefined);
+    },
+    [setHasUserSentMessage, setIsAIResponding, setInputValue, setInputImage],
+  );
+
   const sendMsg = useCallback(
     (inputValue: string, inputImage?: MessageImage) => {
       resetAtomState(true);
@@ -78,32 +88,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         images: inputImage && [inputImage],
         timestamp: new Date(),
       };
-
-      sendMessage(
-        { roomId: currentChatId, newMessage: userMessage },
-        {
-          onSuccess: (responseFromServer) => {
-            if (responseFromServer.ok) {
-              if (currentChatId == null) setCurrentChatId(responseFromServer.data);
-            }
-          },
-          onError: () => {
-            setIsAIResponding(false); // 에러 발생 시에도 스피너 숨김
-          },
-        },
-      );
+      sendMessage(userMessage);
     },
     [currentChatId, sendMessage, setCurrentChatId, setIsAIResponding, setHasUserSentMessage],
-  );
-
-  const resetAtomState = useCallback(
-    (flag: boolean) => {
-      setHasUserSentMessage(flag);
-      setIsAIResponding(flag);
-      setInputValue('');
-      setInputImage(undefined);
-    },
-    [setHasUserSentMessage, setIsAIResponding, setInputValue, setInputImage],
   );
 
   const handleExampleSelect = useCallback(
