@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { serialize } from 'next-mdx-remote/serialize';
+import { serialize } from 'next-mdx-remote-client/serialize';
 
 // 콘텐츠 소스 폴더와 JSON 결과물 파일 경로를 정의합니다.
 const contentDirectory = path.join(process.cwd(), 'content/wiki');
@@ -50,7 +50,16 @@ async function getIndexedWikiData() {
         .replace(/\.mdx$/, '');
 
       // MDX 콘텐츠를 클라이언트에서 렌더링할 수 있도록 직렬화합니다.
-      const mdxSource = await serialize(content);
+      const mdxSource = await serialize({
+        source: content,
+        options: {
+          mdxOptions: {
+            development: false,
+          },
+        },
+      });
+
+      console.log(mdxSource);
 
       // 'name'을 key로, 나머지 정보를 value로 하는 객체를 생성합니다.
       indexedWikis[data.name] = {
