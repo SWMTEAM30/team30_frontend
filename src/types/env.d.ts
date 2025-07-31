@@ -7,6 +7,7 @@ declare global {
       AUTH_KAKAO_SECRET: string;
       AUTH_KAKAO_REDIRECT_URL: string;
       AUTH_KAKAO_BACKEND_URL: string;
+      GEMINI_API_KEY: string;
     }
   }
   // interface Window {

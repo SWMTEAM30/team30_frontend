@@ -54,7 +54,7 @@ async function getIndexedWikiData() {
         source: content,
         options: {
           mdxOptions: {
-            development: false,
+            development: true,
           },
         },
       });
