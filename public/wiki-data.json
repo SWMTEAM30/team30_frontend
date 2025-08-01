@@ -2,12 +2,9 @@
   "차콜 그레이": {
     "src": "chacole-gray",
     "name": "차콜 그레이",
-    "tags": [
-      "색깔",
-      "기본"
-    ],
+    "tags": ["색깔", "기본"],
     "content": {
-      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsxDEV: _jsxDEV} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  const _components = {\n    h2: \"h2\",\n    img: \"img\",\n    p: \"p\",\n    ..._provideComponents(),\n    ...props.components\n  };\n  return _jsxDEV(_Fragment, {\n    children: [_jsxDEV(_components.h2, {\n      children: \"차콜 그레이란?\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 2,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"유행을 타지 않는 클래식한 느낌의 색감입니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 4,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: _jsxDEV(_components.img, {\n        src: \"/images/wiki/chacole.jpg\",\n        alt: \"차콜 그레이 이미지\"\n      }, undefined, false, {\n        fileName: \"<source.js>\",\n        lineNumber: 6,\n        columnNumber: 1\n      }, this)\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 6,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"안정적인 색감으로 신뢰감을 주는 이미지를 연출할 수 있습니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 8,\n      columnNumber: 1\n    }, this)]\n  }, undefined, true, {\n    fileName: \"<source.js>\",\n    lineNumber: 1,\n    columnNumber: 1\n  }, this);\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsxDEV(MDXLayout, {\n    ...props,\n    children: _jsxDEV(_createMdxContent, {\n      ...props\n    }, undefined, false, {\n      fileName: \"<source.js>\"\n    }, this)\n  }, undefined, false, {\n    fileName: \"<source.js>\"\n  }, this) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
+      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
       "scope": {}
     }
@@ -15,12 +12,9 @@
   "클래식": {
     "src": "classic",
     "name": "클래식",
-    "tags": [
-      "스타일",
-      "기본"
-    ],
+    "tags": ["스타일", "기본"],
     "content": {
-      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsxDEV: _jsxDEV} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  const _components = {\n    h2: \"h2\",\n    img: \"img\",\n    p: \"p\",\n    strong: \"strong\",\n    ..._provideComponents(),\n    ...props.components\n  };\n  return _jsxDEV(_Fragment, {\n    children: [_jsxDEV(_components.h2, {\n      children: \"클래식 스타일이란?\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 2,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: [\"유행을 타지 않는 \", _jsxDEV(_components.strong, {\n        children: \"테일러드 수트, 블레이저, 화이트 셔츠\"\n      }, undefined, false, {\n        fileName: \"<source.js>\",\n        lineNumber: 4,\n        columnNumber: 11\n      }, this), \" 등이 대표적인 아이템입니다.\"]\n    }, undefined, true, {\n      fileName: \"<source.js>\",\n      lineNumber: 4,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: _jsxDEV(_components.img, {\n        src: \"/images/wiki/classic-look.jpg\",\n        alt: \"클래식 스타일 이미지\"\n      }, undefined, false, {\n        fileName: \"<source.js>\",\n        lineNumber: 6,\n        columnNumber: 1\n      }, this)\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 6,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"품질 좋은 소재와 기본적인 디자인으로 신뢰감을 주는 이미지를 연출할 수 있습니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 8,\n      columnNumber: 1\n    }, this)]\n  }, undefined, true, {\n    fileName: \"<source.js>\",\n    lineNumber: 1,\n    columnNumber: 1\n  }, this);\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsxDEV(MDXLayout, {\n    ...props,\n    children: _jsxDEV(_createMdxContent, {\n      ...props\n    }, undefined, false, {\n      fileName: \"<source.js>\"\n    }, this)\n  }, undefined, false, {\n    fileName: \"<source.js>\"\n  }, this) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
+      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
       "scope": {}
     }
@@ -28,12 +22,9 @@
   "데님": {
     "src": "denim",
     "name": "데님",
-    "tags": [
-      "청바지",
-      "기본"
-    ],
+    "tags": ["청바지", "기본"],
     "content": {
-      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsxDEV: _jsxDEV} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  const _components = {\n    h2: \"h2\",\n    img: \"img\",\n    p: \"p\",\n    ..._provideComponents(),\n    ...props.components\n  };\n  return _jsxDEV(_Fragment, {\n    children: [_jsxDEV(_components.h2, {\n      children: \"데님이란?\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 2,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"청바지에 쓰이는 제질입니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 4,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: _jsxDEV(_components.img, {\n        src: \"/images/wiki/denim-shirt.jpg\",\n        alt: \"데님 청셔츠 이미지\"\n      }, undefined, false, {\n        fileName: \"<source.js>\",\n        lineNumber: 6,\n        columnNumber: 1\n      }, this)\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 6,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"청색의 캐주얼한 이미지를 주거나, 단정하면서도 가벼운 느낌을 연출할 수 있습니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 8,\n      columnNumber: 1\n    }, this)]\n  }, undefined, true, {\n    fileName: \"<source.js>\",\n    lineNumber: 1,\n    columnNumber: 1\n  }, this);\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsxDEV(MDXLayout, {\n    ...props,\n    children: _jsxDEV(_createMdxContent, {\n      ...props\n    }, undefined, false, {\n      fileName: \"<source.js>\"\n    }, this)\n  }, undefined, false, {\n    fileName: \"<source.js>\"\n  }, this) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
+      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
       "scope": {}
     }
@@ -41,13 +32,9 @@
   "린넨 셔츠": {
     "src": "linen-shirt",
     "name": "린넨 셔츠",
-    "tags": [
-      "셔츠",
-      "느좋",
-      "기본"
-    ],
+    "tags": ["셔츠", "느좋", "기본"],
     "content": {
-      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsxDEV: _jsxDEV} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  const _components = {\n    h2: \"h2\",\n    img: \"img\",\n    p: \"p\",\n    ..._provideComponents(),\n    ...props.components\n  };\n  return _jsxDEV(_Fragment, {\n    children: [_jsxDEV(_components.h2, {\n      children: \"린넨 셔츠란?\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 2,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"여름 소재 린넨으로 만든, 가벼운 느낌의 셔츠입니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 4,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: _jsxDEV(_components.img, {\n        src: \"/images/wiki/linen-shirt.jpg\",\n        alt: \"린넨 셔츠 이미지\"\n      }, undefined, false, {\n        fileName: \"<source.js>\",\n        lineNumber: 6,\n        columnNumber: 1\n      }, this)\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 6,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"S/S 시즌의 정석 아이템이자, 남녀노소 모든 사람에게서 사랑받는 패션 아이템입니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 8,\n      columnNumber: 1\n    }, this)]\n  }, undefined, true, {\n    fileName: \"<source.js>\",\n    lineNumber: 1,\n    columnNumber: 1\n  }, this);\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsxDEV(MDXLayout, {\n    ...props,\n    children: _jsxDEV(_createMdxContent, {\n      ...props\n    }, undefined, false, {\n      fileName: \"<source.js>\"\n    }, this)\n  }, undefined, false, {\n    fileName: \"<source.js>\"\n  }, this) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
+      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
       "scope": {}
     }
@@ -55,12 +42,9 @@
   "오버핏": {
     "src": "overfit",
     "name": "오버핏",
-    "tags": [
-      "스타일",
-      "기본"
-    ],
+    "tags": ["스타일", "기본"],
     "content": {
-      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsxDEV: _jsxDEV} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  const _components = {\n    h2: \"h2\",\n    img: \"img\",\n    p: \"p\",\n    strong: \"strong\",\n    ..._provideComponents(),\n    ...props.components\n  };\n  return _jsxDEV(_Fragment, {\n    children: [_jsxDEV(_components.h2, {\n      children: \"오버핏이란?\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 2,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"원래 사이즈보다 한 치수 이상 큰 핏을 의미합니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 4,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: _jsxDEV(_components.img, {\n        src: \"/images/wiki/overfit.jpg\",\n        alt: \"오버핏 셔츠 이미지\"\n      }, undefined, false, {\n        fileName: \"<source.js>\",\n        lineNumber: 6,\n        columnNumber: 1\n      }, this)\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 6,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: \"박시한 이미지나, 푸근한 이미지를 주어 캐주얼한 분위기나 편안한 분위기를 유도할 수 있습니다.\"\n    }, undefined, false, {\n      fileName: \"<source.js>\",\n      lineNumber: 8,\n      columnNumber: 1\n    }, this), \"\\n\", _jsxDEV(_components.p, {\n      children: [\"보통의 경우, \", _jsxDEV(_components.strong, {\n        children: \"오버핏 셔츠\"\n      }, undefined, false, {\n        fileName: \"<source.js>\",\n        lineNumber: 10,\n        columnNumber: 9\n      }, this), \" 등을 활용해서 입습니다.\"]\n    }, undefined, true, {\n      fileName: \"<source.js>\",\n      lineNumber: 10,\n      columnNumber: 1\n    }, this)]\n  }, undefined, true, {\n    fileName: \"<source.js>\",\n    lineNumber: 1,\n    columnNumber: 1\n  }, this);\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsxDEV(MDXLayout, {\n    ...props,\n    children: _jsxDEV(_createMdxContent, {\n      ...props\n    }, undefined, false, {\n      fileName: \"<source.js>\"\n    }, this)\n  }, undefined, false, {\n    fileName: \"<source.js>\"\n  }, this) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
+      "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
       "scope": {}
     }
