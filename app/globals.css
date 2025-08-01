@@ -292,6 +292,7 @@ html {
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-noto-sans-kr), var(--font-plus-jakarta-sans), system-ui, sans-serif;
   }
 }
 
@@ -302,6 +303,16 @@ html {
 }
 
 .scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* 전체 페이지 스크롤바 숨김 */
+html, body {
+  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
 

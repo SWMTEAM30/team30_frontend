@@ -2,10 +2,7 @@
   "차콜 그레이": {
     "src": "chacole-gray",
     "name": "차콜 그레이",
-    "tags": [
-      "색깔",
-      "기본"
-    ],
+    "tags": ["색깔", "기본"],
     "content": {
       "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
@@ -15,10 +12,7 @@
   "클래식": {
     "src": "classic",
     "name": "클래식",
-    "tags": [
-      "스타일",
-      "기본"
-    ],
+    "tags": ["스타일", "기본"],
     "content": {
       "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
@@ -28,10 +22,7 @@
   "데님": {
     "src": "denim",
     "name": "데님",
-    "tags": [
-      "청바지",
-      "기본"
-    ],
+    "tags": ["청바지", "기본"],
     "content": {
       "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
@@ -41,11 +32,7 @@
   "린넨 셔츠": {
     "src": "linen-shirt",
     "name": "린넨 셔츠",
-    "tags": [
-      "셔츠",
-      "느좋",
-      "기본"
-    ],
+    "tags": ["셔츠", "느좋", "기본"],
     "content": {
       "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
@@ -55,10 +42,7 @@
   "오버핏": {
     "src": "overfit",
     "name": "오버핏",
-    "tags": [
-      "스타일",
-      "기본"
-    ],
+    "tags": ["스타일", "기본"],
     "content": {
       "compiledSource": "\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  return _jsx(_Fragment, {});\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n",
       "frontmatter": {},
