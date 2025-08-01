@@ -9,14 +9,12 @@ export default function Home() {
   const [message, setMessage] = useState('');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
-  const [userInfo, setUserInfo] = useState({ height: '', weight: '' });
+  const [userInfo, setUserInfo] = useState({ height: 0, weight: 0 });
   const router = useRouter();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  const onboardingMessages = [
-    { text: '안녕하세요! 당신만의 스타일을 찾아드릴게요. 먼저 키를 알려주세요 (예: 170cm)', type: 'bot' },
-  ];
+  const onboardingMessages = [{ text: '어떤 상황에서 입을 옷을 찾고 계신가요?', type: 'bot' }];
 
   const [chatHistory, setChatHistory] = useState(onboardingMessages);
 
@@ -42,22 +40,42 @@ export default function Home() {
     const newHistory = [...chatHistory, { text: message, type: 'user' }];
 
     if (onboardingStep === 0) {
-      // 키 입력
-      setUserInfo((prev) => ({ ...prev, height: message }));
-      newHistory.push({ text: '좋아요! 이제 몸무게를 알려주세요 (예: 60kg)', type: 'bot' });
-      setOnboardingStep(1);
+      // 키 입력 검증
+      const heightMatch = message.match(/(\d+)/);
+      const height = heightMatch ? parseInt(heightMatch[1]) : null;
+
+      if (height && height >= 100 && height <= 220) {
+        setUserInfo((prev) => ({ ...prev, height: height }));
+        newHistory.push({ text: '좋아요! 이제 몸무게를 알려주세요 (예: 60kg)', type: 'bot' });
+        setOnboardingStep(1);
+      } else {
+        newHistory.push({
+          text: '올바른 키를 입력해주세요. 100cm~220cm 사이의 숫자로 입력해주세요. (예: 170cm)',
+          type: 'bot',
+        });
+      }
     } else if (onboardingStep === 1) {
-      // 몸무게 입력
-      setUserInfo((prev) => ({ ...prev, weight: message }));
-      newHistory.push({
-        text: '완료! 이제 당신만의 스타일 어시스턴트와 대화를 시작할 수 있어요. 채팅 페이지로 이동하시겠어요?',
-        type: 'bot',
-      });
-      setOnboardingStep(2);
+      // 몸무게 입력 검증
+      const weightMatch = message.match(/(\d+)/);
+      const weight = weightMatch ? parseInt(weightMatch[1]) : null;
+
+      if (weight && weight >= 30 && weight <= 150) {
+        setUserInfo((prev) => ({ ...prev, weight: weight }));
+        newHistory.push({
+          text: '완료! 이제 당신만의 스타일 어시스턴트와 대화를 시작할 수 있어요. 채팅 페이지로 이동하시겠어요?',
+          type: 'bot',
+        });
+        setOnboardingStep(2);
+        console.log(userInfo, weight);
+      } else {
+        newHistory.push({
+          text: '올바른 몸무게를 입력해주세요. 30kg~150kg 사이의 숫자로 입력해주세요. (예: 60kg)',
+          type: 'bot',
+        });
+      }
     } else {
-      // 온보딩 완료 후 채팅 페이지로 이동
-      router.push('/chat');
-      return;
+      // 온보딩 완료 - 채팅 버튼이 표시됨
+      setOnboardingStep(2);
     }
 
     setChatHistory(newHistory);
@@ -111,37 +129,35 @@ export default function Home() {
     };
   }, []);
 
-     return (
-           <div className="bg-beige-400 font-sans">
-              {/* Main Content Section - 100vh */}
-        <div className="h-screen flex items-center justify-center">
-                 <div className="max-w-5xl mx-auto px-4 w-full">
-           {/* Hero Section - slides up when onboarding starts */}
-           <div
-             className={`text-center transition-all duration-700 ease-out ${
-               showOnboarding
-                 ? 'hidden'
-                 : 'transform translate-y-0 opacity-100'
-             }`}
-           >
-             <div className="my-16">
-               <div className="inline-flex items-center px-6 py-3 bg-white/80 text-blue rounded-full text-lg font-medium shadow-sm">
-                 <LucideIcon name={'Clock'} color={'blue-500'} className="w-5 h-5 mr-2 dark" />
-                 패션을 잘 모르겠다면?
-               </div>
+  return (
+    <div className="bg-beige-400 font-sans">
+      {/* Main Content Section - 100vh */}
+      <div className="h-screen flex items-center justify-center">
+        <div className="max-w-5xl mx-auto px-4 w-full">
+          {/* Hero Section - slides up when onboarding starts */}
+          <div
+            className={`text-center transition-all duration-700 ease-out ${
+              showOnboarding ? 'hidden' : 'transform translate-y-0 opacity-100'
+            }`}
+          >
+            <div className="my-16">
+              <div className="inline-flex items-center px-6 py-3 bg-white/80 text-blue rounded-full text-lg font-medium shadow-sm">
+                <LucideIcon name={'Clock'} color={'blue-500'} className="w-5 h-5 mr-2 dark" />
+                패션을 잘 모르겠다면?
+              </div>
 
-               <h2 className="text-7xl font-bold text-gray-900 my-24 leading-tight">
-                 <span className="text-blue font-">The First Take</span>
-               </h2>
-               <div className="text-2xl font-bold text-gray-900 mb-32 leading-tight font-sans">
-                 패션 전문가가 아니더라도
-                 <br />
-                 완벽한 한 벌을 찾을 수 있어요
-               </div>
-             </div>
-           </div>
+              <h2 className="text-7xl font-bold text-gray-900 my-24 leading-tight">
+                <span className="text-blue font-">The First Take</span>
+              </h2>
+              <div className="text-2xl font-bold text-gray-900 mb-32 leading-tight font-sans">
+                패션 전문가가 아니더라도
+                <br />
+                완벽한 한 벌을 찾을 수 있어요
+              </div>
+            </div>
+          </div>
 
-           {/* Chat History - slides down when onboarding starts */}
+          {/* Chat History - slides down when onboarding starts */}
           <div
             className={`max-w-6xl mx-auto transition-all duration-700 ease-out ${
               showOnboarding
@@ -149,19 +165,22 @@ export default function Home() {
                 : 'transform -translate-y-8 opacity-0 pointer-events-none absolute'
             }`}
           >
-                                      <div className="space-y-4 mb-6 h-[400px] overflow-y-auto scrollbar-hide flex flex-col justify-start" ref={chatContainerRef}>
-               {chatHistory.map((msg, idx) => (
-                 <div key={idx} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                   <div
-                     className={`max-w-2xl p-6 rounded-3xl ${
-                       msg.type === 'user' ? 'bg-blue text-beige-50' : 'bg-white/80 border border-gray-200'
-                     }`}
-                   >
-                     <p className="text-2xl leading-relaxed">{msg.text}</p>
-                   </div>
-                 </div>
-               ))}
-             </div>
+            <div
+              className="space-y-4 mb-6 h-[400px] overflow-y-auto scrollbar-hide flex flex-col justify-start"
+              ref={chatContainerRef}
+            >
+              {chatHistory.map((msg, idx) => (
+                <div key={idx} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-2xl p-6 rounded-3xl ${
+                      msg.type === 'user' ? 'bg-blue text-beige-50' : 'bg-white/80 border border-gray-200'
+                    }`}
+                  >
+                    <p className="text-2xl leading-relaxed">{msg.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Main Interface - slides to different positions */}
@@ -233,31 +252,41 @@ export default function Home() {
                     </>
                   ) : (
                     <>
-                      <div className="w-full">
-                        <textarea
-                          ref={inputRef}
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
-                          onKeyPress={handleKeyPress}
-                          placeholder={
-                            onboardingStep === 0
-                              ? '키를 입력해주세요'
-                              : onboardingStep === 1
-                                ? '몸무게를 입력해주세요'
-                                : '채팅 페이지로 가려면 아무거나 입력하세요'
-                          }
-                          className="w-full px-12 py-10 text-2xl border-2 border-blue/20 rounded-3xl focus:border-blue focus:outline-none transition-all duration-300 resize-none"
-                          rows={3}
-                        />
-                      </div>
-                      <div>
-                        <button
-                          onClick={handleOnboardingMessage}
-                          className="inline-flex items-center px-12 py-4 bg-blue text-beige-50 font-bold rounded-2xl hover:bg-navy-600 transition-all transform hover:scale-105 shadow-lg"
-                        >
-                          <LucideIcon name={'ArrowRight'} color="beige-50" className="w-8 h-8" />
-                        </button>
-                      </div>
+                      {onboardingStep === 2 ? (
+                        // 마지막 단계: 채팅 버튼만 표시
+                        <div className="text-center">
+                          <button
+                            onClick={() => router.push('/chat')}
+                            className="inline-flex items-center px-12 py-6 bg-blue text-beige-50 font-bold rounded-2xl hover:bg-navy-600 transition-all transform hover:scale-105 shadow-lg text-xl"
+                          >
+                            <LucideIcon name={'MessageSquare'} color="beige-50" className="mr-4 w-8 h-8" />
+                            채팅 시작하기
+                          </button>
+                        </div>
+                      ) : (
+                        // 온보딩 중: 기존 입력창 표시
+                        <>
+                          <div className="w-full">
+                            <textarea
+                              ref={inputRef}
+                              value={message}
+                              onChange={(e) => setMessage(e.target.value)}
+                              onKeyPress={handleKeyPress}
+                              placeholder={onboardingStep === 0 ? '키를 입력해주세요' : '몸무게를 입력해주세요'}
+                              className="w-full px-12 py-10 text-2xl border-2 border-blue/20 rounded-3xl focus:border-blue focus:outline-none transition-all duration-300 resize-none"
+                              rows={3}
+                            />
+                          </div>
+                          <div>
+                            <button
+                              onClick={handleOnboardingMessage}
+                              className="inline-flex items-center px-12 py-4 bg-blue text-beige-50 font-bold rounded-2xl hover:bg-navy-600 transition-all transform hover:scale-105 shadow-lg"
+                            >
+                              <LucideIcon name={'ArrowRight'} color="beige-50" className="w-8 h-8" />
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                   {!showOnboarding && <p className="text-gray-500 mt-4 text-lg">⏱️ 30초면 완성! 복잡한 설문 없어요</p>}
@@ -268,8 +297,8 @@ export default function Home() {
         </div>
       </div>
 
-                           {/* Service Description Cards Section - Separate from main content */}
-        <div className="transition-all duration-700 ease-out">
+      {/* Service Description Cards Section - Separate from main content */}
+      <div className="transition-all duration-700 ease-out">
         <div className="py-16 space-y-8 max-w-6xl mx-auto px-4">
           {/* Scroll hint message */}
           <div className="text-center mb-16">
@@ -379,6 +408,9 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Bottom spacing */}
+          <div className="h-48"></div>
         </div>
       </div>
     </div>
