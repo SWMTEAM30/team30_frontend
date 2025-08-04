@@ -48,7 +48,7 @@ export default function ChatArea() {
     <div className="flex h-[calc(100vh-200px)] overflow-hidden">
       {/* 채팅 영역 */}
       <div className={`flex flex-col transition-all duration-500 ease-in-out flex-1`}>
-        <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto">
+        <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto scrollbar-hide">
           <div className="space-y-6 mx-auto max-w-[960px]">
             {messages.length == 0 ? (
               <div>대화 내용을 불러오는 중...</div>

@@ -1,5 +1,52 @@
 import { requestAPI } from '@/api/API';
 
+// GET
+export const getChatReceive = async (roomId: number | null) => {
+  if (!roomId)
+    return {
+      ok: false,
+      error: new Error('no have room id'),
+    } as APIErrorResponse;
+  const response = await requestAPI<AgentMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
+  if (response.ok === true) {
+    return {
+      ok: response.ok,
+      status: response.status,
+      message: response.message,
+      data: {
+        id: Date.now().toString(),
+        text: response.data.message,
+        user: { userId: response.data.agent_id, username: response.data.agent_name },
+        timestamp: new Date(),
+        images: response.data.product_image_url
+          ? [
+              {
+                src: response.data.product_image_url,
+                name: '얇은 비키니',
+                content:
+                  '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 수정하라고 하세요',
+                tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
+              },
+            ]
+          : [],
+      },
+    } as APISuccessResponse<Message>;
+  } else {
+    return response;
+  }
+};
+
+export const getChatRoomsHistory = async () => requestAPI<RoomHistory>(`/api/chat/rooms/history`, 'GET');
+
+export const getChatRoomsRoomIdMessages = async (roomId: number) =>
+  requestAPI<RoomHistory>(`/api/chat/rooms/${roomId}/messages`, 'GET');
+
+// POST
+export const postChatSend = async (roomId: number | null, message: { content: string; imageUrl?: string }) => {
+  return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', message);
+};
+export const postChatUpload = async (file: any) => requestAPI<string>(`/api/chat/upload`, 'POST', file, {});
+
 const imageset = [
   [
     {
@@ -64,47 +111,3 @@ const imageset = [
     },
   ],
 ];
-
-// GET
-export const getChatReceive = async (roomId: number | null) => {
-  if (!roomId)
-    return {
-      ok: false,
-      error: new Error('no have room id'),
-    } as APIErrorResponse;
-  const response = await requestAPI<AgentMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
-  if (response.ok === true) {
-    return {
-      ok: response.ok,
-      status: response.status,
-      message: response.message,
-      data: {
-        id: Date.now().toString(),
-        text: response.data.message,
-        user: { userId: response.data.agent_id, username: response.data.agent_name },
-        timestamp: new Date(),
-        images: response.data.product_image_url
-          ? [
-              {
-                src: response.data.product_image_url,
-                name: '얇은 비키니',
-                content:
-                  '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 수정하라고 하세요',
-                tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
-              },
-            ]
-          : [],
-      },
-    } as APISuccessResponse<Message>;
-  } else {
-    return response;
-  }
-};
-
-export const getChatRoomsHistory = async () => requestAPI<RoomHistory>(`/api/chat/rooms/history`, 'GET');
-
-// POST
-export const postChatSend = async (roomId: number | null, message: { content: string; imageUrl?: string }) => {
-  return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', message);
-};
-export const postChatUpload = async (file: any) => requestAPI<string>(`/api/chat/upload`, 'POST', file, {});
