@@ -30,7 +30,7 @@ type ChatActionsContextType = {
   handleOpenTab: (data: any, type: 'image' | 'wiki') => void;
   handleCloseTab: (targetTabId: string) => void;
   setIsSidebarOpen: (isOpen: boolean) => void;
-  addExistingMessages: (existingMessages: Message[]) => void;
+  addExistingMessages: (chatId: number | null, existingMessages: Message[]) => void;
 };
 const ChatActionsContext = createContext<ChatActionsContextType | undefined>(undefined);
 
@@ -114,7 +114,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       const response = await getChatRoomsRoomIdMessages(chatId);
       if (!response.ok) return;
       setCurrentChatId(chatId);
-      addExistingMessages(response.data.messages);
+      addExistingMessages(chatId, response.data.messages);
       resetAtomState(false);
     },
     [setCurrentChatId, resetAtomState],

@@ -1,3 +1,12 @@
+type APIResponseMessage = {
+  message: string;
+  order: number;
+  agent_id: string;
+  agent_name: string;
+  agent_role: string;
+  product_image_url: string;
+};
+
 type APIMessage = {
   id: number;
   content: string;
@@ -18,5 +27,5 @@ type APIRoomHistory = {
 };
 
 type APIRoomIdMessages = {
-  messages: AgentMessage[];
+  messages: APIMessage[];
 };

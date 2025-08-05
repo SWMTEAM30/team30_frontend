@@ -41,3 +41,11 @@ type ChatRoom = {
   title: string;
   timestamp: Date;
 };
+
+type RoomHistory = {
+  all_rooms: ChatRoom[];
+};
+
+type RoomIdMessages = {
+  messages: Message[];
+};
