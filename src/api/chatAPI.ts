@@ -1,45 +1,74 @@
 import { requestAPI } from '@/api/API';
-
 // GET
-export const getChatReceive = async (roomId: number | null) => {
-  if (!roomId)
+export const getChatReceive = async (roomId: number | null): Promise<APIResponse<Message>> => {
+  if (!roomId) {
     return {
       ok: false,
-      error: new Error('no have room id'),
-    } as APIErrorResponse;
-  const response = await requestAPI<AgentMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
-  if (response.ok === true) {
+      error: new Error('Room ID is required to receive messages.'),
+    };
+  }
+  const response = await requestAPI<APIMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
+  if (response.ok === false) return response;
+
+  try {
+    const apiMsg = response.data;
+    let message: Message;
+
+    const imageUrls: MessageImage[] = apiMsg.product_image_url
+      ? [
+          {
+            src: apiMsg.product_image_url,
+            name: '얇은 비키니',
+            content:
+              '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 chatAPI.ts 수정하라고 하세요',
+            tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
+          },
+        ]
+      : [];
+
+    if (apiMsg.message_type === 'USER') {
+      message = {
+        id: apiMsg.id.toString(),
+        content: apiMsg.content,
+        user: { userId: apiMsg.id.toString(), username: 'asdf' },
+        agent: null,
+        message_type: 'USER',
+        createdAt: new Date(apiMsg.created_at),
+        imageUrls: imageUrls,
+      };
+    } else {
+      message = {
+        id: apiMsg.id.toString(),
+        content: apiMsg.content,
+        user: null,
+        agent: {
+          agentType: apiMsg.agent_type!,
+          agentname: apiMsg.agent_name!,
+        },
+        message_type: apiMsg.message_type,
+        createdAt: new Date(apiMsg.created_at),
+        imageUrls: imageUrls,
+      };
+    }
+
     return {
-      ok: response.ok,
+      ok: true,
       status: response.status,
       message: response.message,
-      data: {
-        id: Date.now().toString(),
-        text: response.data.message,
-        user: { userId: response.data.agent_id, username: response.data.agent_name },
-        timestamp: new Date(),
-        images: response.data.product_image_url
-          ? [
-              {
-                src: response.data.product_image_url,
-                name: '얇은 비키니',
-                content:
-                  '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 수정하라고 하세요',
-                tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
-              },
-            ]
-          : [],
-      },
-    } as APISuccessResponse<Message>;
-  } else {
-    return response;
+      data: message,
+    };
+  } catch (parseError) {
+    return {
+      ok: false,
+      error: new Error('Failed to parse message data from API.'),
+    };
   }
 };
 
-export const getChatRoomsHistory = async () => requestAPI<RoomHistory>(`/api/chat/rooms/history`, 'GET');
+export const getChatRoomsHistory = async () => requestAPI<APIRoomHistory>(`/api/chat/rooms/history`, 'GET');
 
 export const getChatRoomsRoomIdMessages = async (roomId: number) =>
-  requestAPI<RoomHistory>(`/api/chat/rooms/${roomId}/messages`, 'GET');
+  requestAPI<APIRoomIdMessages>(`/api/chat/rooms/${roomId}/messages`, 'GET');
 
 // POST
 export const postChatSend = async (roomId: number | null, message: { content: string; imageUrl?: string }) => {

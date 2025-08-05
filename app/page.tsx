@@ -8,10 +8,10 @@ export default function Home() {
     <div className="bg-beige-400 font-sans">
       <div className="h-screen flex items-center justify-center">
         <div className="max-w-5xl mx-auto px-4 w-full">
-          {/* Hero Section - slides up when onboarding starts */}
           <HeroSection />
           <Onboarding />
-          {/* Scroll hint message - moved to first section */}
+
+          {/* 아래 정보 알려주는 지표 */}
           <div className="text-center mt-16">
             <div className="inline-flex items-center px-8 py-4 bg-blue/10 text-blue rounded-2xl">
               <LucideIcon name={'ArrowDown'} color="blue-500" className="w-6 h-6 mr-3 animate-bounce" />

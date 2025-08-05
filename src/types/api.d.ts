@@ -1,13 +1,3 @@
-type AnswerType = {
-  question: string;
-  answer: string;
-};
-
-type QuestionAPIType = {
-  question: string;
-  options: Array<string>;
-};
-
 // 성공 시의 반환 타입
 type APISuccessResponse<T> = {
   ok: true;

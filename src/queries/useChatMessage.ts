@@ -2,8 +2,8 @@ import { getChatReceive, postChatSend } from '@/api/chatAPI';
 import { currentChatIdAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
 import { queryKeys } from '@/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { SetStateAction, useAtom, useStore } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
+import { useAtom, useStore } from 'jotai';
+import { useEffect, useState, useCallback } from 'react';
 
 export const useChatMessage = () => {
   const [chatId, setChatId] = useAtom(currentChatIdAtom);
@@ -39,6 +39,24 @@ export const useChatMessage = () => {
     });
   }, [queryResult, status, queryClient, chatId]);
 
+  // 기존 채팅내역을 현재 채팅방에 추가하는 함수
+  const addExistingMessages = useCallback(
+    (existingMessages: Message[]) => {
+      if (!chatId || !existingMessages.length) return;
+
+      store.set(messagesAtomFamily(chatId), (currentMessages = []) => {
+        // 중복 메시지 제거 (id 기준)
+        const existingIds = new Set(currentMessages.map((msg) => msg.id));
+        const newMessages = existingMessages.filter((msg) => !existingIds.has(msg.id));
+
+        // 기존 메시지와 새 메시지를 합치고 timestamp 기준으로 정렬
+        const combinedMessages = [...currentMessages, ...newMessages];
+        return combinedMessages.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      });
+    },
+    [chatId, store],
+  );
+
   // 메시지 보내기 mutation
   const { mutate, isPending: isSending } = useMutation({
     mutationFn: (newMessage: Message) =>
@@ -67,6 +85,7 @@ export const useChatMessage = () => {
       error: false,
       sendMessage: mutate,
       isSending: isSending,
+      addExistingMessages,
     };
   }
 
@@ -75,5 +94,6 @@ export const useChatMessage = () => {
     error: status === 'error',
     sendMessage: mutate,
     isSending: isSending,
+    addExistingMessages,
   };
 };

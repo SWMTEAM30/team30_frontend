@@ -20,6 +20,7 @@ import { useChatRooms } from '@/queries/useChatRoom';
 import { useChatMessage } from '@/queries/useChatMessage';
 import { userAtom } from '@/atoms/authAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
+import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
 
 type ChatActionsContextType = {
   handleSendMessage: () => void;
@@ -29,6 +30,7 @@ type ChatActionsContextType = {
   handleOpenTab: (data: any, type: 'image' | 'wiki') => void;
   handleCloseTab: (targetTabId: string) => void;
   setIsSidebarOpen: (isOpen: boolean) => void;
+  addExistingMessages: (existingMessages: Message[]) => void;
 };
 const ChatActionsContext = createContext<ChatActionsContextType | undefined>(undefined);
 
@@ -54,7 +56,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const user = useAtomValue(userAtom);
 
-  const { sendMessage } = useChatMessage();
+  const { sendMessage, addExistingMessages } = useChatMessage();
   const { error: chatRoomError } = useChatRooms();
   const messages = useAtomValue(messagesAtomFamily(currentChatId));
 
@@ -62,7 +64,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (messages.length > 0 && hasUserSentMessage) {
       const lastMessage = messages[messages.length - 1];
-      if (lastMessage && lastMessage.user.userId !== 'asdf') {
+      if (lastMessage && lastMessage.user) {
         setIsAIResponding(false);
       }
     }
@@ -83,10 +85,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       resetAtomState(true);
       const userMessage: Message = {
         id: Date.now().toString(),
-        text: inputValue,
+        content: inputValue,
         user: { userId: user?.userId || tmpUserId, username: user?.username || tmpUsername },
-        images: inputImage && [inputImage],
-        timestamp: new Date(),
+        agent: null,
+        message_type: 'USER',
+        imageUrls: inputImage ? [inputImage] : [],
+        createdAt: new Date(),
       };
       sendMessage(userMessage);
     },
@@ -106,8 +110,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   }, [inputValue, inputImage, sendMsg, setInputValue, setInputImage]);
 
   const handleChatSelect = useCallback(
-    (chatId: number) => {
+    async (chatId: number) => {
+      const response = await getChatRoomsRoomIdMessages(chatId);
+      if (!response.ok) return;
       setCurrentChatId(chatId);
+      addExistingMessages(response.data.messages);
       resetAtomState(false);
     },
     [setCurrentChatId, resetAtomState],
@@ -192,6 +199,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     handleOpenTab,
     handleCloseTab,
     setIsSidebarOpen,
+    addExistingMessages,
   };
 
   return <ChatActionsContext.Provider value={actionsValue}>{children}</ChatActionsContext.Provider>;
