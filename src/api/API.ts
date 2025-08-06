@@ -14,7 +14,7 @@ export const requestAPI = async <T>(
       if (body instanceof FormData) option['body'] = body;
       else option['body'] = JSON.stringify(body);
     }
-    const response = await fetch(`${url}`, option);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_TFT_BACKEND_URL}${url}`, option);
     return await response.json();
   } catch (apiErr) {
     return {
