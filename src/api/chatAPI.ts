@@ -56,46 +56,38 @@ const formatfromAPIResponsetoMessage = (apiMsg: APIResponseMessage): Message => 
 
 // GET
 export const getChatReceive = async (roomId: number | null): Promise<APIResponse<Message>> => {
-  if (!roomId) {
+  if (!roomId)
     return {
-      ok: false,
-      error: new Error('Room ID is required to receive messages.'),
+      status: 'fail',
+      message: 'Room ID is required to receive messages.',
+      data: null,
     };
-  }
-  const response = await requestAPI<APIResponseMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
-  if (response.ok === false) return response;
 
-  try {
-    const data = formatfromAPIResponsetoMessage(response.data);
+  const response = await requestAPI<APIResponseMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
+  if (response.status === 'fail')
     return {
-      ok: true,
-      status: response.status,
+      status: 'fail',
       message: response.message,
-      data: data,
+      data: null,
     };
-  } catch (parseError) {
-    console.error(parseError);
-    return {
-      ok: false,
-      error: new Error('Failed to parse message data from API.'),
-    };
-  }
+
+  return {
+    status: response.status,
+    message: response.message,
+    data: formatfromAPIResponsetoMessage(response.data),
+  };
 };
 
 export const getChatRoomsHistory = async () => requestAPI<APIRoomHistory>(`/api/chat/rooms/history`, 'GET');
 
 export const getChatRoomsRoomIdMessages = async (roomId: number): Promise<APIResponse<RoomIdMessages>> => {
-  if (!roomId) {
-    return {
-      ok: false,
-      error: new Error('Room ID is required to receive messages.'),
-    };
-  }
   const response = await requestAPI<APIRoomIdMessages>(`/api/chat/rooms/${roomId}/messages`, 'GET');
-  if (response.ok === false) return response;
+  if (response.status === 'fail') {
+    console.error(new Error(response.message));
+    return response;
+  }
 
   return {
-    ok: true,
     status: response.status,
     message: response.message,
     data: {

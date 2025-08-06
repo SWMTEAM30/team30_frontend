@@ -1,17 +1,15 @@
 // 성공 시의 반환 타입
 type APISuccessResponse<T> = {
-  ok: true;
-  status: string;
+  status: 'success';
   message: string;
   data: T;
 };
 
 // 실패 시의 반환 타입
 type APIErrorResponse = {
-  ok: false;
-  status?: string;
-  message?: string;
-  error: any;
+  status: 'fail';
+  message: string;
+  data: null;
 };
 
 // 최종 반환 타입 (성공 또는 실패)

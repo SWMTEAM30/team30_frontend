@@ -112,7 +112,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleChatSelect = useCallback(
     async (chatId: number) => {
       const response = await getChatRoomsRoomIdMessages(chatId);
-      if (!response.ok) return;
+      if (response.status == 'fail') return;
       setCurrentChatId(chatId);
       addExistingMessages(chatId, response.data.messages);
       resetAtomState(false);

@@ -32,8 +32,8 @@ export const useChatMessage = () => {
   // chat message accumulating
   useEffect(() => {
     console.log(chatId, queryResult);
-    if (!chatId || status !== 'success' || !queryResult.ok) {
-      if (queryResult?.ok === false) console.error(queryResult.error);
+    if (!chatId || status !== 'success' || queryResult.status === 'fail') {
+      //if (queryResult?.status == 'fail') console.error(queryResult?.message);
       return;
     }
 
@@ -48,7 +48,7 @@ export const useChatMessage = () => {
   const { mutate, isPending: isSending } = useMutation({
     mutationFn: (newMessage: Message) => postChatSend(chatId, newMessage),
     onSuccess: (responseFromServer, newMessage) => {
-      if (!responseFromServer.ok) return;
+      if (responseFromServer.status === 'fail') return;
       const newChatId = responseFromServer.data;
       store.set(messagesAtomFamily(newChatId), (oldMessages) => [...oldMessages, newMessage]);
       if (!chatId && newChatId) {
