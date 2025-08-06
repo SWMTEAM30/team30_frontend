@@ -14,15 +14,13 @@ export const requestAPI = async <T>(
       if (body instanceof FormData) option['body'] = body;
       else option['body'] = JSON.stringify(body);
     }
-    const response = await fetch(`${url}`, option);
-    return {
-      ok: true,
-      ...(await response.json()),
-    };
+    const response = await fetch(`${process.env.NEXT_PUBLIC_TFT_BACKEND_URL}${url}`, option);
+    return await response.json();
   } catch (apiErr) {
     return {
-      ok: false,
-      error: apiErr,
+      status: 'fail',
+      data: null,
+      message: 'API Error',
     };
   }
 };

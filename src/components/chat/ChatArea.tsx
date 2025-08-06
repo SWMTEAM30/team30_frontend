@@ -48,7 +48,7 @@ export default function ChatArea() {
     <div className="flex h-[calc(100vh-200px)] overflow-hidden">
       {/* 채팅 영역 */}
       <div className={`flex flex-col transition-all duration-500 ease-in-out flex-1`}>
-        <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto">
+        <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto scrollbar-hide">
           <div className="space-y-6 mx-auto max-w-[960px]">
             {messages.length == 0 ? (
               <div>대화 내용을 불러오는 중...</div>
@@ -62,7 +62,8 @@ export default function ChatArea() {
                 {/* AI 응답이 완료되면 예시 선택지 표시 (마지막 메시지가 AI 응답이고 스피너가 꺼져있을 때)*/}
                 {messages.length > 0 &&
                   user &&
-                  messages[messages.length - 1]?.user.userId !== user.userId &&
+                  messages[messages.length - 1]?.user &&
+                  messages[messages.length - 1]?.user?.userId !== user.userId &&
                   !isAIResponding &&
                   messageExamples && <ExampleSuggestions />}
               </>

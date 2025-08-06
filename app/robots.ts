@@ -6,10 +6,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/private/', '/api/'],
+        disallow: ['/admin/', '/api/'],
       },
     ],
-    sitemap: 'https://thefirsttake.com/sitemap.xml',
-    host: 'https://thefirsttake.com',
+    sitemap: 'https://the-first-take.com/sitemap.xml',
+    host: 'https://the-first-take.com',
   };
-} 
+}

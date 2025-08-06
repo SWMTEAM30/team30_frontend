@@ -1,5 +1,111 @@
 import { requestAPI } from '@/api/API';
 
+const formatfromAPIMessagetoMessage = (apiMsg: APIMessage): Message => {
+  let message: Message;
+  const imageUrls: MessageImage[] = apiMsg.product_image_url
+    ? [
+        {
+          src: apiMsg.product_image_url,
+          name: '얇은 비키니',
+          content:
+            '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 chatAPI.ts 수정하라고 하세요',
+          tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
+        },
+      ]
+    : [];
+
+  if (apiMsg.message_type === 'USER') {
+    message = {
+      id: apiMsg.id.toString(),
+      content: apiMsg.content,
+      user: { userId: apiMsg.id.toString(), username: 'asdf' },
+      agent: null,
+      message_type: 'USER',
+      createdAt: new Date(apiMsg.created_at),
+      imageUrls: imageUrls,
+    };
+  } else {
+    message = {
+      id: apiMsg.id.toString(),
+      content: apiMsg.content,
+      user: null,
+      agent: {
+        agentType: apiMsg.agent_type!,
+        agentname: apiMsg.agent_name!,
+      },
+      message_type: apiMsg.message_type,
+      createdAt: new Date(apiMsg.created_at),
+      imageUrls: imageUrls,
+    };
+  }
+  return message;
+};
+
+const formatfromAPIResponsetoMessage = (apiMsg: APIResponseMessage): Message => {
+  return formatfromAPIMessagetoMessage({
+    id: apiMsg.order || 1,
+    content: apiMsg.message,
+    image_url: null,
+    message_type: apiMsg.agent_role,
+    created_at: new Date().toString(),
+    agent_type: apiMsg.agent_role,
+    agent_name: apiMsg.agent_name,
+    product_image_url: apiMsg.product_image_url,
+  });
+};
+
+// GET
+export const getChatReceive = async (roomId: number | null): Promise<APIResponse<Message>> => {
+  if (!roomId)
+    return {
+      status: 'fail',
+      message: 'Room ID is required to receive messages.',
+      data: null,
+    };
+
+  const response = await requestAPI<APIResponseMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
+  if (response.status === 'fail')
+    return {
+      status: 'fail',
+      message: response.message,
+      data: null,
+    };
+
+  return {
+    status: response.status,
+    message: response.message,
+    data: formatfromAPIResponsetoMessage(response.data),
+  };
+};
+
+export const getChatRoomsHistory = async () => requestAPI<APIRoomHistory>(`/api/chat/rooms/history`, 'GET');
+
+export const getChatRoomsRoomIdMessages = async (roomId: number): Promise<APIResponse<RoomIdMessages>> => {
+  const response = await requestAPI<APIRoomIdMessages>(`/api/chat/rooms/${roomId}/messages`, 'GET');
+  if (response.status === 'fail') {
+    console.error(new Error(response.message));
+    return response;
+  }
+
+  return {
+    status: response.status,
+    message: response.message,
+    data: {
+      messages: response.data.messages.map((e) => formatfromAPIMessagetoMessage(e)),
+    },
+  };
+};
+
+// POST
+export const postChatSend = async (roomId: number | null, message: Message) => {
+  return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', {
+    content: message.content,
+    imageUrl: message.imageUrls?.[0]?.src,
+  });
+};
+
+export const postChatUpload = async (file: any) => requestAPI<string>(`/api/chat/upload`, 'POST', file, {});
+
 const imageset = [
   [
     {
@@ -64,47 +170,3 @@ const imageset = [
     },
   ],
 ];
-
-// GET
-export const getChatReceive = async (roomId: number | null) => {
-  if (!roomId)
-    return {
-      ok: false,
-      error: new Error('no have room id'),
-    } as APIErrorResponse;
-  const response = await requestAPI<AgentMessage>(`/api/chat/receive?roomId=${roomId}`, 'GET');
-  if (response.ok === true) {
-    return {
-      ok: response.ok,
-      status: response.status,
-      message: response.message,
-      data: {
-        id: Date.now().toString(),
-        text: response.data.message,
-        user: { userId: response.data.agent_id, username: response.data.agent_name },
-        timestamp: new Date(),
-        images: response.data.product_image_url
-          ? [
-              {
-                src: response.data.product_image_url,
-                name: '얇은 비키니',
-                content:
-                  '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 수정하라고 하세요',
-                tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
-              },
-            ]
-          : [],
-      },
-    } as APISuccessResponse<Message>;
-  } else {
-    return response;
-  }
-};
-
-export const getChatRoomsHistory = async () => requestAPI<RoomHistory>(`/api/chat/rooms/history`, 'GET');
-
-// POST
-export const postChatSend = async (roomId: number | null, message: { content: string; imageUrl?: string }) => {
-  return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', message);
-};
-export const postChatUpload = async (file: any) => requestAPI<string>(`/api/chat/upload`, 'POST', file, {});

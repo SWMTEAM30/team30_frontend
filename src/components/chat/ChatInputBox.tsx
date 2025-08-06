@@ -25,8 +25,8 @@ export default function ChatInputBox() {
       const formData = new FormData();
       formData.append('file', files[0]);
       const response = await postChatUpload(formData);
-      if (!response.ok) {
-        console.error(response.error);
+      if (response.status === 'fail') {
+        console.error(response.message);
         return;
       }
       const newMessageImage: MessageImage = {

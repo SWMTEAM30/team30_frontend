@@ -2,7 +2,7 @@ import { getChatReceive, postChatSend } from '@/api/chatAPI';
 import { currentChatIdAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
 import { queryKeys } from '@/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { SetStateAction, useAtom, useStore } from 'jotai';
+import { useAtom, useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useChatMessage = () => {
@@ -10,7 +10,7 @@ export const useChatMessage = () => {
   const queryClient = useQueryClient();
   const [pollCount, setPollCount] = useState(0);
   const store = useStore();
-  const newChatMessageFetcherKey = queryKeys.chatMessages.fetcher(chatId!); // 채팅방 별로 API 받아오는 키
+  const newChatMessageFetcherKey = queryKeys.chatMessages.fetcher(chatId); // 채팅방 별로 API 받아오는 키
 
   const {
     data: queryResult,
@@ -18,7 +18,7 @@ export const useChatMessage = () => {
     isFetching,
   } = useQuery({
     queryKey: newChatMessageFetcherKey, // 여기서는 API를 받아서 가공할 예정
-    queryFn: () => getChatReceive(chatId!),
+    queryFn: () => getChatReceive(chatId),
     refetchInterval: pollCount < 10 ? 3000 : false,
     refetchIntervalInBackground: true,
     enabled: !!chatId,
@@ -31,7 +31,12 @@ export const useChatMessage = () => {
 
   // chat message accumulating
   useEffect(() => {
-    if (!chatId || status !== 'success' || !queryResult.ok) return;
+    console.log(chatId, queryResult);
+    if (!chatId || status !== 'success' || queryResult.status === 'fail') {
+      //if (queryResult?.status == 'fail') console.error(queryResult?.message);
+      return;
+    }
+
     store.set(messagesAtomFamily(chatId), (oldMessages = []) => {
       const newMessage = queryResult.data;
       if (oldMessages.some((msg) => msg.id === newMessage.id)) return oldMessages;
@@ -41,13 +46,9 @@ export const useChatMessage = () => {
 
   // 메시지 보내기 mutation
   const { mutate, isPending: isSending } = useMutation({
-    mutationFn: (newMessage: Message) =>
-      postChatSend(chatId, {
-        content: newMessage.text,
-        imageUrl: newMessage.images?.[0].src,
-      }),
+    mutationFn: (newMessage: Message) => postChatSend(chatId, newMessage),
     onSuccess: (responseFromServer, newMessage) => {
-      if (!responseFromServer.ok) return;
+      if (responseFromServer.status === 'fail') return;
       const newChatId = responseFromServer.data;
       store.set(messagesAtomFamily(newChatId), (oldMessages) => [...oldMessages, newMessage]);
       if (!chatId && newChatId) {
@@ -61,12 +62,28 @@ export const useChatMessage = () => {
     },
   });
 
+  const addExistingMessages = useCallback(
+    (chatId: number | null, existingMessages: Message[]) => {
+      if (!chatId || !existingMessages.length) return;
+
+      store.set(messagesAtomFamily(chatId), (currentMessages = []) => {
+        const existingIds = new Set(currentMessages.map((msg) => msg.id));
+        const newMessages = existingMessages.filter((msg) => !existingIds.has(msg.id));
+        return [...currentMessages, ...newMessages].sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        );
+      });
+    },
+    [chatId, store],
+  );
+
   if (!chatId) {
     return {
       isLoading: false,
       error: false,
       sendMessage: mutate,
       isSending: isSending,
+      addExistingMessages,
     };
   }
 
@@ -75,5 +92,6 @@ export const useChatMessage = () => {
     error: status === 'error',
     sendMessage: mutate,
     isSending: isSending,
+    addExistingMessages,
   };
 };

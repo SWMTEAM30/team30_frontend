@@ -9,7 +9,7 @@ export default async function WikiPage({ params }: any) {
   const { content, frontmatter } = getMDXContent('content/wiki', params.slug);
 
   return (
-    <article className="prose p-8">
+    <article className="prose">
       <h1>{frontmatter.name}</h1>
       <MDXRemote source={content} components={{}} />
     </article>

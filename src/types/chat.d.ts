@@ -1,19 +1,24 @@
-type Message = {
+type UserMessage = {
   id: string;
-  text: string;
+  content: string;
   user: User;
-  timestamp: Date;
-  images?: PanelData[]; // AI 메시지에 포함될 이미지 URL 배열
+  agent: null;
+  message_type: string;
+  imageUrls: MessageImage[];
+  createdAt: Date;
 };
 
 type AgentMessage = {
-  agent_id: string;
-  agent_name: string;
-  agent_role: string;
-  message: string;
-  order: number;
-  product_image_url: string;
+  id: string;
+  content: string;
+  user: null;
+  agent: Agent;
+  message_type: string;
+  imageUrls: MessageImage[];
+  createdAt: Date;
 };
+
+type Message = UserMessage | AgentMessage;
 
 interface PanelData {
   src: string;
@@ -37,10 +42,10 @@ type ChatRoom = {
   timestamp: Date;
 };
 
-interface RoomHistory {
-  all_rooms: {
-    id: number;
-    title: string;
-    createdAt: string;
-  }[];
-}
+type RoomHistory = {
+  all_rooms: ChatRoom[];
+};
+
+type RoomIdMessages = {
+  messages: Message[];
+};

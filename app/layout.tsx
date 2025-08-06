@@ -18,8 +18,10 @@ import AuthJotaiInitializer from '@/components/auth/AuthJotaiInitializer';
 
 export const metadata: Metadata = {
   title: 'The First Take - AI 패션 스타일 어시스턴트',
-  description: 'AI가 당신만의 완벽한 스타일을 찾아드립니다. 복잡한 옷 고르기, 이제 끝! 상황과 체형을 고려한 딱 한 벌만 추천받으세요.',
-  keywords: 'AI 패션, 스타일 추천, 옷 고르기, 패션 어시스턴트, 맞춤 코디, 패션 AI, 스타일링, 옷 추천, 패션 고민, AI 스타일',
+  description:
+    'AI가 당신만의 완벽한 스타일을 찾아드립니다. 복잡한 옷 고르기, 이제 끝! 상황과 체형을 고려한 딱 한 벌만 추천받으세요.',
+  keywords:
+    'AI 패션, 스타일 추천, 옷 고르기, 패션 어시스턴트, 맞춤 코디, 패션 AI, 스타일링, 옷 추천, 패션 고민, AI 스타일',
   authors: [{ name: 'The First Take' }],
   creator: 'The First Take',
   publisher: 'The First Take',
@@ -28,14 +30,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://thefirsttake.com'),
+  metadataBase: new URL('https://the-first-take.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: 'The First Take - AI 패션 스타일 어시스턴트',
     description: 'AI가 당신만의 완벽한 스타일을 찾아드립니다. 복잡한 옷 고르기, 이제 끝!',
-    url: 'https://thefirsttake.com',
+    url: 'https://the-first-take.com',
     siteName: 'The First Take',
     images: [
       {

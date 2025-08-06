@@ -3,12 +3,11 @@
 import { Menu } from 'lucide-react';
 import SidebarContent from '@/components/chat/SidebarContent';
 import { useAtom, useAtomValue } from 'jotai';
-import { activePanelTypeAtom, currentChatIdAtom, isSidebarOpenAtom } from '@/atoms/chatAtoms';
+import { currentChatIdAtom, isSidebarOpenAtom } from '@/atoms/chatAtoms';
 import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 
 export default function ChatHeader() {
   const currentChatId = useAtomValue(currentChatIdAtom);
-  const [activePanelType, setActivePanelType] = useAtom(activePanelTypeAtom);
   const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom);
   const { setIsSidebarOpen: setSidebarOpen } = useChatHandlers();
   return (
