@@ -14,7 +14,7 @@ export const useChatRooms = () => {
     queryKey: queryKey,
     queryFn: async (): Promise<ChatRoom[]> => {
       const result = await getChatRoomsHistory();
-      if (result.ok) {
+      if (result.status === 'success') {
         // api 받아온 거를 ChatRoom[] 모양에 맞게 formatting 해줘야 함.
         return result.data.all_rooms.map((chatRoom) => ({
           id: chatRoom.id,
@@ -23,7 +23,7 @@ export const useChatRooms = () => {
         }));
       } else
         // 만약 error가 있다면 에러를 표기
-        throw new Error(result.error || '채팅방 목록을 가져오는 데 실패했습니다.');
+        throw new Error(result.message || '채팅방 목록을 가져오는 데 실패했습니다.');
     },
   });
 
