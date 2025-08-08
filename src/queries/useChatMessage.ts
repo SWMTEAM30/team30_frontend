@@ -31,7 +31,6 @@ export const useChatMessage = () => {
 
   // chat message accumulating
   useEffect(() => {
-    console.log(chatId, queryResult);
     if (!chatId || status !== 'success' || queryResult.status === 'fail') {
       //if (queryResult?.status == 'fail') console.error(queryResult?.message);
       return;
