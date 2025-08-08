@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'The First Take - AI 패션 스타일링',
-    short_name: 'First Take',
+    short_name: 'The First Take',
     description: 'AI와 함께 나만의 패션 스타일을 찾아보세요.',
     start_url: '/',
     display: 'standalone',
