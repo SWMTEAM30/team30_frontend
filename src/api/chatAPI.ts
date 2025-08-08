@@ -43,7 +43,7 @@ const formatfromAPIMessagetoMessage = (apiMsg: APIMessage): Message => {
 
 const formatfromAPIResponsetoMessage = (apiMsg: APIResponseMessage): Message => {
   return formatfromAPIMessagetoMessage({
-    id: apiMsg.order || 1,
+    id: new Date().valueOf(),
     content: apiMsg.message,
     image_url: null,
     message_type: apiMsg.agent_role,

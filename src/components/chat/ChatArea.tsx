@@ -20,21 +20,6 @@ export default function ChatArea() {
   const messages = useAtomValue(messagesAtomFamily(currentChatId));
   const messageExamples = useAtomValue(examplesAtomFamily(currentChatId));
 
-  // 스크롤을 맨 아래로 이동시키는 함수
-  const scrollToBottom = useCallback(() => {
-    // if (scrollAreaRef.current) {
-    //   scrollAreaRef.current.scrollTo({
-    //     top: scrollAreaRef.current.scrollHeight,
-    //     behavior: 'smooth',
-    //   });
-    // }
-  }, [scrollAreaRef]);
-
-  // 메시지가 추가될 때마다 스크롤을 맨 아래로 이동
-  useEffect(() => {
-    if (messages.length > 0 || isAIResponding) setTimeout(scrollToBottom, 100);
-  }, [messages, isAIResponding]);
-
   // 채팅방이 비어있고 로딩 중이 아닐 때 시작 화면 표시
   if (messages.length === 0 && !isChatLoading && !isAIResponding) {
     return (
@@ -61,9 +46,7 @@ export default function ChatArea() {
                 {isAIResponding && <AILoadingSpinner />}
                 {/* AI 응답이 완료되면 예시 선택지 표시 (마지막 메시지가 AI 응답이고 스피너가 꺼져있을 때)*/}
                 {messages.length > 0 &&
-                  user &&
-                  messages[messages.length - 1]?.user &&
-                  messages[messages.length - 1]?.user?.userId !== user.userId &&
+                  messages[messages.length - 1].user?.userId !== user?.userId &&
                   !isAIResponding &&
                   messageExamples && <ExampleSuggestions />}
               </>
