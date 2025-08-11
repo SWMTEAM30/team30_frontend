@@ -1,17 +1,26 @@
 import { requestAPI } from '@/api/API';
 
+type APIMessage = {
+  id: number;
+  content: string;
+  image_url: string | null;
+  message_type: string | 'USER';
+  created_at: string;
+  agent_type: string | null;
+  agent_name: string | null;
+  product_image_url: string[];
+};
+
 const formatfromAPIMessagetoMessage = (apiMsg: APIMessage): Message => {
   let message: Message;
   const imageUrls: MessageImage[] = apiMsg.product_image_url
-    ? [
-        {
-          src: apiMsg.product_image_url,
-          name: '얇은 비키니',
-          content:
-            '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 chatAPI.ts 수정하라고 하세요',
-          tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
-        },
-      ]
+    ? apiMsg.product_image_url.map((imageUrl) => ({
+        src: imageUrl,
+        name: '얇은 비키니',
+        content:
+          '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 chatAPI.ts 수정하라고 하세요',
+        tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
+      }))
     : [];
 
   if (apiMsg.message_type === 'USER') {

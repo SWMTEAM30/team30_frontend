@@ -4,8 +4,7 @@ import { atomFamily } from 'jotai/utils';
 export const inputValueAtom = atom<string>('');
 export const inputImageAtom = atom<MessageImage | undefined>(undefined);
 export const currentChatIdAtom = atom<number | null>(null);
-export const isAIRespondingAtom = atom<boolean>(false);
-export const hasUserSentMessageAtom = atom<boolean>(false);
+export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''>('');
 export const isSidebarOpenAtom = atom<boolean>(false);
 
 export const activePanelTypeAtom = atom<'image' | 'wiki' | null>(null);

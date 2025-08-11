@@ -6,7 +6,6 @@ import {
   inputImageAtom,
   currentChatIdAtom,
   isAIRespondingAtom,
-  hasUserSentMessageAtom,
   activePanelTypeAtom,
   imageTabsAtom,
   wikiTabsAtom,
@@ -15,12 +14,12 @@ import {
   isSidebarOpenAtom,
   messagesAtomFamily,
 } from '@/atoms/chatAtoms';
-import { createContext, ReactNode, useCallback, useContext, useEffect } from 'react';
+import { ChangeEvent, createContext, ReactNode, useCallback, useContext, useEffect } from 'react';
 import { useChatRooms } from '@/queries/useChatRoom';
 import { useChatMessage } from '@/queries/useChatMessage';
 import { userAtom } from '@/atoms/authAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
-import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
+import { postChatUpload, getChatRoomsRoomIdMessages } from '@/api/chatAPI';
 
 type ChatActionsContextType = {
   handleSendMessage: () => void;
@@ -28,6 +27,7 @@ type ChatActionsContextType = {
   handleChatSelect: (chatId: number) => void;
   handleExampleSelect: (exampleText: string) => void;
   handleOpenTab: (data: any, type: 'image' | 'wiki') => void;
+  handleFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handleCloseTab: (targetTabId: string) => void;
   setIsSidebarOpen: (isOpen: boolean) => void;
   addExistingMessages: (chatId: number | null, existingMessages: Message[]) => void;
@@ -44,7 +44,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputImage, setInputImage] = useAtom(inputImageAtom);
   const [currentChatId, setCurrentChatId] = useAtom(currentChatIdAtom);
-  const [hasUserSentMessage, setHasUserSentMessage] = useAtom(hasUserSentMessageAtom);
   const [isAIResponding, setIsAIResponding] = useAtom(isAIRespondingAtom);
   const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom);
 
@@ -62,27 +61,23 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   // AI 응답이 오면 스피너를 제거
   useEffect(() => {
-    if (messages.length > 0 && hasUserSentMessage) {
+    console.log('1', isAIResponding);
+    if (messages.length > 0 && isAIResponding) {
       const lastMessage = messages[messages.length - 1];
-      if (lastMessage && lastMessage.user) {
-        setIsAIResponding(false);
-      }
+      if (lastMessage?.user) setIsAIResponding('style');
     }
-  }, [messages, hasUserSentMessage]);
+  }, [messages, isAIResponding]);
 
-  const resetAtomState = useCallback(
-    (flag: boolean) => {
-      setHasUserSentMessage(flag);
-      setIsAIResponding(flag);
-      setInputValue('');
-      setInputImage(undefined);
-    },
-    [setHasUserSentMessage, setIsAIResponding, setInputValue, setInputImage],
-  );
+  const resetAtomState = useCallback(() => {
+    setIsAIResponding('');
+    setInputValue('');
+    setInputImage(undefined);
+  }, [setIsAIResponding, setInputValue, setInputImage]);
 
   const sendMsg = useCallback(
     (inputValue: string, inputImage?: MessageImage) => {
-      resetAtomState(true);
+      resetAtomState();
+      setIsAIResponding('style');
       const userMessage: Message = {
         id: Date.now().toString(),
         content: inputValue,
@@ -93,8 +88,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         createdAt: new Date(),
       };
       sendMessage(userMessage);
+      console.log('2', isAIResponding);
     },
-    [currentChatId, sendMessage, setCurrentChatId, setIsAIResponding, setHasUserSentMessage],
+    [currentChatId, sendMessage, setCurrentChatId, setIsAIResponding],
   );
 
   const handleExampleSelect = useCallback(
@@ -115,15 +111,35 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (response.status == 'fail') return;
       setCurrentChatId(chatId);
       addExistingMessages(chatId, response.data.messages);
-      resetAtomState(false);
+      resetAtomState();
     },
     [setCurrentChatId, resetAtomState],
   );
 
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const formData = new FormData();
+      formData.append('file', files[0]);
+      const response = await postChatUpload(formData);
+      if (response.status === 'fail') {
+        console.error(response.message);
+        return;
+      }
+      const newMessageImage: MessageImage = {
+        src: response.data,
+        name: response.data,
+        content: '이걸 발견했다면 프론트엔드 개발자한테 "ChatInputBox 수정하세요" 라고 말하면 됩니다.',
+        tags: ['응애'],
+      };
+      setInputImage(newMessageImage);
+    }
+  };
+
   const handleNewChat = useCallback(() => {
     if (chatRoomError) return;
     setCurrentChatId(null);
-    resetAtomState(false);
+    resetAtomState();
   }, [chatRoomError, setCurrentChatId, resetAtomState]);
 
   const handleOpenTab = useCallback(
@@ -183,6 +199,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setImageTabs,
       activeImageTabId,
       setActiveImageTabId,
+      handleFileChange,
       wikiTabs,
       setWikiTabs,
       activeWikiTabId,
@@ -195,6 +212,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     handleExampleSelect,
     handleSendMessage,
     handleChatSelect,
+    handleFileChange,
     handleNewChat,
     handleOpenTab,
     handleCloseTab,
