@@ -52,7 +52,7 @@ export default function ChatInputBox() {
       dark:text-white
     "
         rows={1}
-        disabled={isAIResponding}
+        disabled={isAIResponding.length > 0}
       />
       <div className="flex space-x-5">
         <input
@@ -61,7 +61,7 @@ export default function ChatInputBox() {
           onChange={handleFileChange}
           className="hidden"
           accept="image/*"
-          disabled={isAIResponding}
+          disabled={isAIResponding.length > 0}
         />
         <Button
           onClick={handleButtonClick}
@@ -75,13 +75,13 @@ export default function ChatInputBox() {
       transition-all duration-200
       mb-1
     "
-          disabled={isAIResponding}
+          disabled={isAIResponding.length > 0}
         >
           <Plus />
         </Button>
         <Button
           onClick={handleSendMessage}
-          disabled={inputValue.trim() === '' || isAIResponding}
+          disabled={inputValue.trim() === '' || isAIResponding.length > 0}
           className="
       flex-shrink-0 
       flex items-center justify-center

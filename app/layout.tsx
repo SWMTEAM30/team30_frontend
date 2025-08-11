@@ -5,6 +5,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import QueryProvider from 'app/providers';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import AuthJotaiInitializer from '@/components/auth/AuthJotaiInitializer';
+import { Suspense } from 'react';
+import WebVitals from '@/components/WebVitals';
 
 // const geistSans = Geist({
 //   variable: '--font-geist-sans',
@@ -95,8 +97,11 @@ export default function RootLayout({
             </QueryProvider>
           </JotaiProvider>
         </main>
-        <GoogleAnalytics gaId="G-LS5SN8G0F6" />
+        <Suspense fallback={null}>
+          <WebVitals />
+        </Suspense>
       </body>
+      <GoogleAnalytics gaId="G-LS5SN8G0F6" />
     </html>
   );
 }
