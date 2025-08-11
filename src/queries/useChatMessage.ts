@@ -1,12 +1,13 @@
 import { getChatReceive, postChatSend } from '@/api/chatAPI';
-import { currentChatIdAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
+import { currentChatIdAtom, isAIRespondingAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
 import { queryKeys } from '@/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useStore } from 'jotai';
+import { useAtom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useChatMessage = () => {
   const [chatId, setChatId] = useAtom(currentChatIdAtom);
+  const [isAIResponding, setIsAIResponding] = useAtom(isAIRespondingAtom);
   const queryClient = useQueryClient();
   const [pollCount, setPollCount] = useState(0);
   const store = useStore();
@@ -35,6 +36,11 @@ export const useChatMessage = () => {
       //if (queryResult?.status == 'fail') console.error(queryResult?.message);
       return;
     }
+
+    if (isAIResponding == 'style') setIsAIResponding('trend');
+    else if (isAIResponding == 'trend') setIsAIResponding('color');
+    else if (isAIResponding == 'color') setIsAIResponding('codi');
+    else if (isAIResponding == 'codi') setIsAIResponding('');
 
     store.set(messagesAtomFamily(chatId), (oldMessages = []) => {
       const newMessage = queryResult.data;

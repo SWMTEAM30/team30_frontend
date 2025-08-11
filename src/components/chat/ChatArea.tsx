@@ -8,7 +8,7 @@ import ExampleSuggestions from '@/components/chat/ExampleSuggestion';
 import MessageBalloon from '@/components/chat/MessageBalloon';
 import { useChatMessage } from '@/queries/useChatMessage';
 import { useAtomValue } from 'jotai';
-import { useCallback, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 export default function ChatArea() {
   const isAIResponding = useAtomValue(isAIRespondingAtom);
