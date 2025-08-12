@@ -1,7 +1,6 @@
 import LucideIcon from '@/components/icons/LucideIcon';
 
-export default function HeroSection() {
-  const showOnboarding = true;
+export default function HeroSection({ showOnboarding }: { showOnboarding: boolean }) {
   return (
     <div
       className={`text-center transition-all duration-700 ease-out ${

@@ -37,8 +37,7 @@ export const useChatMessage = () => {
       return;
     }
 
-    if (isAIResponding == 'style') setIsAIResponding('trend');
-    else if (isAIResponding == 'trend') setIsAIResponding('color');
+    if (isAIResponding == 'style') setIsAIResponding('color');
     else if (isAIResponding == 'color') setIsAIResponding('codi');
     else if (isAIResponding == 'codi') setIsAIResponding('');
 

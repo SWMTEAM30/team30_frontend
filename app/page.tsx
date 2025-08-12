@@ -1,6 +1,5 @@
 import LucideIcon from '@/components/icons/LucideIcon';
 import Explanation from '@/components/landing/Explanation';
-import HeroSection from '@/components/landing/HeroSection';
 import Onboarding from '@/components/landing/Onboarding';
 
 export default function Home() {
@@ -8,7 +7,6 @@ export default function Home() {
     <div className="bg-beige-400 font-sans">
       <div className="h-screen flex items-center justify-center">
         <div className="max-w-5xl mx-auto px-4 w-full">
-          <HeroSection />
           <Onboarding />
 
           {/* 아래 정보 알려주는 지표 */}

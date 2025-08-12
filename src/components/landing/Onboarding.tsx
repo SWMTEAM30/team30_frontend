@@ -1,6 +1,7 @@
 'use client';
 
 import LucideIcon from '@/components/icons/LucideIcon';
+import HeroSection from '@/components/landing/HeroSection';
 import SituationOption from '@/components/landing/SituationOption';
 import { matchThevalueinMessage } from '@/lib/validation';
 import { useRouter } from 'next/navigation';
@@ -121,6 +122,7 @@ export default function Onboarding() {
   return (
     <>
       {/* 뒤로 가기 버튼 - 온보딩 중에만 표시 */}
+      {<HeroSection showOnboarding={showOnboarding} />}
       {showOnboarding && (
         <div className="mt-32 mb-8">
           <button
