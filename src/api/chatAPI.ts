@@ -1,67 +1,5 @@
 import { requestAPI } from '@/api/API';
-
-type APIMessage = {
-  id: number;
-  content: string;
-  image_url: string | null;
-  message_type: string | 'USER';
-  created_at: string;
-  agent_type: string | null;
-  agent_name: string | null;
-  product_image_url: string[];
-};
-
-const formatfromAPIMessagetoMessage = (apiMsg: APIMessage): Message => {
-  let message: Message;
-  const imageUrls: MessageImage[] = apiMsg.product_image_url
-    ? apiMsg.product_image_url.map((imageUrl) => ({
-        src: imageUrl,
-        name: '얇은 비키니',
-        content:
-          '몰라요, 그냥 일단 비키니라고 예시를 넣었는데, 만약 이 글을 발견했다면 프론트엔드 개발자한테 chatAPI.ts 수정하라고 하세요',
-        tags: ['섹시한', '도발적인', '노출이심한', '과감한', '매력적인'],
-      }))
-    : [];
-
-  if (apiMsg.message_type === 'USER') {
-    message = {
-      id: apiMsg.id.toString(),
-      content: apiMsg.content,
-      user: { userId: apiMsg.id.toString(), username: 'asdf' },
-      agent: null,
-      message_type: 'USER',
-      createdAt: new Date(apiMsg.created_at),
-      imageUrls: imageUrls,
-    };
-  } else {
-    message = {
-      id: apiMsg.id.toString(),
-      content: apiMsg.content,
-      user: null,
-      agent: {
-        agentType: apiMsg.agent_type!,
-        agentname: apiMsg.agent_name!,
-      },
-      message_type: apiMsg.message_type,
-      createdAt: new Date(apiMsg.created_at),
-      imageUrls: imageUrls,
-    };
-  }
-  return message;
-};
-
-const formatfromAPIResponsetoMessage = (apiMsg: APIResponseMessage): Message => {
-  return formatfromAPIMessagetoMessage({
-    id: new Date().valueOf(),
-    content: apiMsg.message,
-    image_url: null,
-    message_type: apiMsg.agent_role,
-    created_at: new Date().toString(),
-    agent_type: apiMsg.agent_role,
-    agent_name: apiMsg.agent_name,
-    product_image_url: apiMsg.product_image_url,
-  });
-};
+import { formatMessage } from '@/lib/chat_formatter';
 
 // GET
 export const getChatReceive = async (roomId: number | null): Promise<APIResponse<Message>> => {
@@ -83,7 +21,7 @@ export const getChatReceive = async (roomId: number | null): Promise<APIResponse
   return {
     status: response.status,
     message: response.message,
-    data: formatfromAPIResponsetoMessage(response.data),
+    data: formatMessage(response.data),
   };
 };
 
@@ -100,7 +38,7 @@ export const getChatRoomsRoomIdMessages = async (roomId: number): Promise<APIRes
     status: response.status,
     message: response.message,
     data: {
-      messages: response.data.messages.map((e) => formatfromAPIMessagetoMessage(e)),
+      messages: response.data.messages.map((e) => formatMessage(e)),
     },
   };
 };
@@ -109,7 +47,7 @@ export const getChatRoomsRoomIdMessages = async (roomId: number): Promise<APIRes
 export const postChatSend = async (roomId: number | null, message: Message) => {
   return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', {
     content: message.content,
-    imageUrl: message.imageUrls?.[0]?.src,
+    imageUrl: message.products[0]?.product_url,
   });
 };
 

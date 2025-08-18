@@ -1,10 +1,12 @@
+type Product = { product_url: string; product_id: string };
+
 type UserMessage = {
   id: string;
   content: string;
   user: User;
   agent: null;
   message_type: string;
-  imageUrls: MessageImage[];
+  products: Product[];
   createdAt: Date;
 };
 
@@ -14,7 +16,7 @@ type AgentMessage = {
   user: null;
   agent: Agent;
   message_type: string;
-  imageUrls: MessageImage[];
+  products: Product[];
   createdAt: Date;
 };
 

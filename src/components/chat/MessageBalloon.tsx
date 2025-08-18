@@ -24,16 +24,16 @@ export default function MessageBalloon({ message }: { message: Message }) {
         {/* AI 메시지에만 사진 첨부 */}
         {!isUserId && (
           <div className="mt-4 flex flex-row gap-2 overflow-x-auto">
-            {message.imageUrls &&
-              message.imageUrls
-                .filter((image) => !!image.src)
+            {message.products &&
+              message.products
+                .filter((product) => !!product.product_url)
                 .map((image, key) => (
                   <Image
                     key={key}
                     width={300}
                     height={400}
-                    src={image.src}
-                    alt={image.name}
+                    src={image.product_url}
+                    alt={image.product_id}
                     className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
                     onClick={() => handleOpenTab(image, 'image')}
                   />
