@@ -1,6 +1,6 @@
 'use client';
 
-import LucideIcon from '@/components/icons/LucideIcon';
+import LucideIcon from '@/components/ui/icons/LucideIcon';
 import HeroSection from '@/components/landing/HeroSection';
 import SituationOption from '@/components/landing/SituationOption';
 import { matchThevalueinMessage } from '@/lib/validation';
