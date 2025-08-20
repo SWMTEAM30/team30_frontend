@@ -1,4 +1,4 @@
-import LucideIcon from '@/components/icons/LucideIcon';
+import LucideIcon from '@/components/ui/icons/LucideIcon';
 
 export default function HeroSection({ showOnboarding }: { showOnboarding: boolean }) {
   return (

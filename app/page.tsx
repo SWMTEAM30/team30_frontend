@@ -1,4 +1,4 @@
-import LucideIcon from '@/components/icons/LucideIcon';
+import LucideIcon from '@/components/ui/icons/LucideIcon';
 import Explanation from '@/components/landing/Explanation';
 import Onboarding from '@/components/landing/Onboarding';
 
