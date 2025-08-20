@@ -19,7 +19,9 @@ jobs:
             export NEXT_PUBLIC_TFT_BACKEND_URL=${{ secrets.NEXT_PUBLIC_TFT_BACKEND_URL }}
             set -e
             cd ${{ secrets.EC2_PROJECT_PATH }}
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
+
             pnpm install
             pnpm run build
             pm2 reload the-first-take || pm2 start "pnpm run start" --name the-first-take
