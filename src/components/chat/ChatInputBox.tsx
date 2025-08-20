@@ -6,12 +6,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { useRef } from 'react';
 import Image from 'next/image';
 import { useAtom, useAtomValue } from 'jotai';
-import { inputValueAtom, inputImageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
+import { inputValueAtom, inputProductAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
 import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
-  const inputImage = useAtomValue(inputImageAtom);
+  const inputProduct = useAtomValue(inputProductAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
   const { handleSendMessage, handleFileChange } = useChatHandlers();
 
@@ -31,7 +31,7 @@ export default function ChatInputBox() {
   "
     >
       <div className="flex space-x-5 items-start">
-        {inputImage && <Image src={inputImage.src} alt={''} width={100} height={100} />}
+        {inputProduct && <Image src={inputProduct.product_url} alt={''} width={100} height={100} />}
       </div>
       <Textarea
         value={inputValue}

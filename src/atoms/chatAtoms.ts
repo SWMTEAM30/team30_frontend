@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
 export const inputValueAtom = atom<string>('');
-export const inputImageAtom = atom<MessageImage | undefined>(undefined);
+export const inputProductAtom = atom<Product | undefined>(undefined);
 export const currentChatIdAtom = atom<number | null>(null);
 export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''>('');
 export const isSidebarOpenAtom = atom<boolean>(false);

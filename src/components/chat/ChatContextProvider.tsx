@@ -3,7 +3,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
   inputValueAtom,
-  inputImageAtom,
+  inputProductAtom,
   currentChatIdAtom,
   isAIRespondingAtom,
   activePanelTypeAtom,
@@ -19,7 +19,7 @@ import { useChatRooms } from '@/queries/useChatRoom';
 import { useChatMessage } from '@/queries/useChatMessage';
 import { userAtom } from '@/atoms/authAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
-import { postChatUpload, getChatRoomsRoomIdMessages } from '@/api/chatAPI';
+import { postChatUpload, getChatRoomsRoomIdMessages, getChatProduct } from '@/api/chatAPI';
 
 type ChatActionsContextType = {
   handleSendMessage: () => void;
@@ -40,9 +40,9 @@ export const useChatHandlers = () => {
   return context;
 };
 
-export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
+export default function ChatContextProvider({ children }: { children: ReactNode }) {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
-  const [inputImage, setInputImage] = useAtom(inputImageAtom);
+  const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
   const [currentChatId, setCurrentChatId] = useAtom(currentChatIdAtom);
   const [isAIResponding, setIsAIResponding] = useAtom(isAIRespondingAtom);
   const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom);
@@ -71,11 +71,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const resetAtomState = useCallback(() => {
     setIsAIResponding('');
     setInputValue('');
-    setInputImage(undefined);
-  }, [setIsAIResponding, setInputValue, setInputImage]);
+    setInputProduct(undefined);
+  }, [setIsAIResponding, setInputValue, setInputProduct]);
 
   const sendMsg = useCallback(
-    (inputValue: string, inputImage?: MessageImage) => {
+    (inputValue: string, products?: Product) => {
       resetAtomState();
       setIsAIResponding('style');
       const userMessage: Message = {
@@ -84,7 +84,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         user: { userId: user?.userId || tmpUserId, username: user?.username || tmpUsername },
         agent: null,
         message_type: 'USER',
-        imageUrls: inputImage ? [inputImage] : [],
+        products: products ? [products] : [],
         createdAt: new Date(),
       };
       sendMessage(userMessage);
@@ -102,8 +102,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSendMessage = useCallback(() => {
     if (!inputValue.trim()) return;
-    sendMsg(inputValue, inputImage);
-  }, [inputValue, inputImage, sendMsg, setInputValue, setInputImage]);
+    sendMsg(inputValue, inputProduct);
+  }, [inputValue, inputProduct, sendMsg, setInputValue, setInputProduct]);
 
   const handleChatSelect = useCallback(
     async (chatId: number) => {
@@ -126,13 +126,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         console.error(response.message);
         return;
       }
-      const newMessageImage: MessageImage = {
-        src: response.data,
-        name: response.data,
-        content: '이걸 발견했다면 프론트엔드 개발자한테 "ChatInputBox 수정하세요" 라고 말하면 됩니다.',
-        tags: ['응애'],
+      const newMessageImage: Product = {
+        product_url: response.data,
+        product_id: 'user',
       };
-      setInputImage(newMessageImage);
+      setInputProduct(newMessageImage);
     }
   };
 
@@ -221,4 +219,4 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return <ChatActionsContext.Provider value={actionsValue}>{children}</ChatActionsContext.Provider>;
-};
+}
