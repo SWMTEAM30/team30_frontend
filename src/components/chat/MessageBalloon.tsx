@@ -1,3 +1,4 @@
+import { getChatProduct } from '@/api/chatAPI';
 import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 import MessageParser from '@/components/chat/MessageParser';
 import { messageColor } from '@/styles/chat';
@@ -6,6 +7,13 @@ import Image from 'next/image';
 export default function MessageBalloon({ message }: { message: Message }) {
   const { handleOpenTab } = useChatHandlers();
   const isUserId = !!message.user;
+
+  const handleOpenImageTab = async (product: Product) => {
+    const data = await getChatProduct(product);
+    if (data.status == 'fail') return;
+    handleOpenTab(data.data, 'image');
+  };
+
   return (
     <div className={`flex ${isUserId ? 'justify-end' : 'justify-start'}`}>
       {!isUserId && (
@@ -27,15 +35,15 @@ export default function MessageBalloon({ message }: { message: Message }) {
             {message.products &&
               message.products
                 .filter((product) => !!product.product_url)
-                .map((image, key) => (
+                .map((product, key) => (
                   <Image
                     key={key}
                     width={300}
                     height={400}
-                    src={image.product_url}
-                    alt={image.product_id}
+                    src={product.product_url}
+                    alt={product.product_id}
                     className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
-                    onClick={() => handleOpenTab(image, 'image')}
+                    onClick={() => handleOpenImageTab(product)}
                   />
                 ))}
           </div>

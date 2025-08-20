@@ -19,7 +19,7 @@ import { useChatRooms } from '@/queries/useChatRoom';
 import { useChatMessage } from '@/queries/useChatMessage';
 import { userAtom } from '@/atoms/authAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
-import { postChatUpload, getChatRoomsRoomIdMessages } from '@/api/chatAPI';
+import { postChatUpload, getChatRoomsRoomIdMessages, getChatProduct } from '@/api/chatAPI';
 
 type ChatActionsContextType = {
   handleSendMessage: () => void;

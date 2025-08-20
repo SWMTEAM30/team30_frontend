@@ -43,6 +43,25 @@ export const getChatRoomsRoomIdMessages = async (roomId: number): Promise<APIRes
   };
 };
 
+export const getChatProduct = async (product: Product): Promise<APIResponse<MessageImage>> => {
+  const response = await requestAPI<APIProduct>(`/api/chat/product/${product.product_id}`, 'GET');
+  if (response.status === 'fail') {
+    console.error(new Error(response.message));
+    return response;
+  }
+
+  return {
+    status: response.status,
+    message: response.message,
+    data: {
+      name: response.data.product_name,
+      content: response.data.comprehensive_description,
+      tags: [...response.data.style_tags, ...response.data.tpo_tags],
+      src: product.product_url,
+    },
+  };
+};
+
 // POST
 export const postChatSend = async (roomId: number | null, message: Message) => {
   return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', {

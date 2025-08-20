@@ -1,4 +1,7 @@
-type Product = { product_url: string; product_id: string };
+type Product = {
+  product_url: string;
+  product_id: string;
+};
 
 type UserMessage = {
   id: string;

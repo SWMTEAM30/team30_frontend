@@ -19,18 +19,18 @@ export default function ImagePanel({ className }: { className?: string }) {
       <div
         className={cn(
           className,
-          `h-full w-28 border-r border-gray-200 bg-beige flex flex-col items-center gap-2 overflow-y-auto p-2`,
+          `h-full w-60 border-r border-gray-200 bg-beige flex flex-col items-center gap-2 overflow-y-auto p-2`,
         )}
       >
-        {imageTabs.map((tab) => (
+        {imageTabs.map((tab, key) => (
           <button
-            key={tab.src}
+            key={key}
             onClick={() => setActiveImageTabId(tab.src)}
             className={`relative overflow-hidden flex-shrink-0 
                        transition-all duration-200
                        ${activeImageTabId === tab.src ? 'ring-2 ring-blue-500 ring-offset-2' : 'hover:opacity-80'}`}
           >
-            <Image src={tab.src} alt={tab.name} width={64} height={64} className="h-32 w-28 object-cover" />
+            <Image src={tab.src} alt={tab.name} width={64} height={64} className="h-64 w-56 object-cover" />
             <div
               onClick={(e) => {
                 e.stopPropagation();
@@ -45,7 +45,7 @@ export default function ImagePanel({ className }: { className?: string }) {
         ))}
       </div>
       {/* 오른쪽: 상세 이미지 영역 (2/3) */}
-      <div className="flex-1 w-96 h-full overflow-y-auto">
+      <div className="flex-1 w-160 h-full overflow-y-auto">
         {activeTabData ? (
           <ImageDetailPanel imageData={activeTabData} />
         ) : (
