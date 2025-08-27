@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function ImageDetailPanel({ imageData }: { imageData: MessageImage | null }) {
   if (!imageData) return null;
-
+  console.log(imageData.content.product_id);
   return (
     <div className="max-h-full bg-beige dark:bg-gray-800">
       {/* 헤더 */}
@@ -28,7 +28,7 @@ export default function ImageDetailPanel({ imageData }: { imageData: MessageImag
         <div className="space-y-4 max-w-[288px] mx-auto">
           <div>
             <h3 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">{imageData.name}</h3>
-            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">{imageData.content}</p>
+            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">{imageData.content.content}</p>
           </div>
 
           {/* 태그 */}
@@ -49,11 +49,13 @@ export default function ImageDetailPanel({ imageData }: { imageData: MessageImag
           )}
         </div>
 
-        {/* <div className="pt-auto mt-8">
-          <Link href={'https://github.com/MindulMendul'} target="_blank">
-            <button className="w-full btn rounded-2xl p-5 bg-blue text-white text-2xl">사이트로 이동하기</button>{' '}
+        <div className="pt-auto mt-8">
+          <Link href={`https://www.musinsa.com/products/${imageData.content.product_id}`} target="_blank">
+            <button className="w-full btn rounded-md p-5 bg-beige text-blue text-xl font-bold">
+              구매페이지로 이동하기
+            </button>
           </Link>
-        </div> */}
+        </div>
       </div>
     </div>
   );

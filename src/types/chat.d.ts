@@ -33,7 +33,10 @@ interface PanelData {
 }
 
 interface MessageImage extends PanelData {
-  content: string;
+  content: {
+    product_id: string;
+    content: string;
+  };
 }
 interface MessageWiki extends PanelData {
   content: MDXRemoteSerializeResult<Record<string, unknown>, Record<string, unknown>>;

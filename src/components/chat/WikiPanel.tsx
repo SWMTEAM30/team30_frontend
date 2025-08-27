@@ -13,7 +13,7 @@ export default function WikiPanel({ className }: { className?: string }) {
   return (
     <div className={`flex h-full bg-beige border-l border-gray-200 ${className || ''}`}>
       {/* 탭 목록 */}
-      <div className="w-60 border-r border-gray-200 flex flex-col items-center gap-2 p-2 overflow-y-auto">
+      <div className="w-40 border-r border-gray-200 flex flex-col items-center gap-2 p-2 overflow-y-auto">
         {wikiTabs.map((tab, i) => (
           <button
             key={i}
@@ -34,13 +34,13 @@ export default function WikiPanel({ className }: { className?: string }) {
         ))}
       </div>
       {/* 탭 내용 */}
-      <div className="w-[50vw] flex-1 p-4 overflow-y-auto">
+      <div className="w-[35vw] flex-1 p-4 overflow-y-auto">
         {activeTabData ? (
           <div className="max-w-none">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
               {activeTabData.name}
             </h2>
-            <div className="text-2xl prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-ul:text-gray-700 prose-li:text-gray-700 prose-img:w-[300px] prose-img:h-auto prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto prose-img:my-6 prose-img:block">
+            <div className="text-2xl prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-ul:text-gray-700 prose-li:text-gray-700 prose-img:w-[200px] prose-img:h-auto prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto prose-img:my-6 prose-img:block">
               {activeTabData.content ? <MDXClient {...activeTabData.content} /> : '위키 내용이 없습니다.'}
             </div>
           </div>
