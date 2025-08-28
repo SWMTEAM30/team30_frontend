@@ -83,7 +83,6 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <meta name="theme-color" content="#27548a" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="The First Take" />
         <link rel="apple-touch-icon" href="/TFT_icon.png" />

@@ -61,7 +61,6 @@ export default function ChatContextProvider({ children }: { children: ReactNode 
 
   // AI 응답이 오면 스피너를 제거
   useEffect(() => {
-    console.log('1', isAIResponding);
     if (messages.length > 0 && isAIResponding) {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage?.user) setIsAIResponding('style');
@@ -88,7 +87,6 @@ export default function ChatContextProvider({ children }: { children: ReactNode 
         createdAt: new Date(),
       };
       sendMessage(userMessage);
-      console.log('2', isAIResponding);
     },
     [currentChatId, sendMessage, setCurrentChatId, setIsAIResponding],
   );

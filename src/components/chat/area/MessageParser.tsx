@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import { useChatHandlers } from '@/components/chat/area/ChatContextProvider';
 import { useWikiData } from '@/queries/useWiki';
 
 interface MessageParserProps {
@@ -14,16 +14,13 @@ export default function MessageParser({ text }: MessageParserProps) {
 
   const parsedText = useMemo(() => {
     if (isLoading || !wikiIndex) return [text];
-
     const keywords = Object.keys(wikiIndex);
     if (keywords.length === 0) return [text];
-
     const regex = new RegExp(`(${keywords.join('|')})`, 'g');
     return text.split(regex);
   }, [text, wikiIndex, isLoading]);
 
   if (isLoading) return <>위키 로딩 중...</>;
-
   return (
     <>
       {parsedText.map((part, index) => {

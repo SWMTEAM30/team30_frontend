@@ -1,6 +1,6 @@
 import { getChatProduct } from '@/api/chatAPI';
-import { useChatHandlers } from '@/components/chat/ChatContextProvider';
-import MessageParser from '@/components/chat/MessageParser';
+import { useChatHandlers } from '@/components/chat/area/ChatContextProvider';
+import MessageParser from '@/components/chat/area/MessageParser';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
 
@@ -31,7 +31,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
         <p className="text-xs opacity-70 mt-2">{message.createdAt.toLocaleTimeString()}</p>
         {/* AI 메시지에만 사진 첨부 */}
         {!isUserId && (
-          <div className="mt-4 flex flex-row gap-2 overflow-x-auto">
+          <div className="mt-4 flex flex-row gap-2 overflow-x-hidden">
             {message.products &&
               message.products
                 .filter((product) => !!product.product_url)

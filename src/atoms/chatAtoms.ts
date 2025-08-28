@@ -7,7 +7,7 @@ export const currentChatIdAtom = atom<number | null>(null);
 export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''>('');
 export const isSidebarOpenAtom = atom<boolean>(false);
 
-export const activePanelTypeAtom = atom<'image' | 'wiki' | null>(null);
+export const activePanelTypeAtom = atom<'image' | 'wiki' | 'fitting' | null>(null);
 export const imageTabsAtom = atom<MessageImage[]>([]);
 export const wikiTabsAtom = atom<MessageWiki[]>([]);
 export const activeImageTabIdAtom = atom<string | null>(null);

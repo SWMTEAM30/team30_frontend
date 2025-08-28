@@ -7,7 +7,7 @@ import { useRef } from 'react';
 import Image from 'next/image';
 import { useAtom, useAtomValue } from 'jotai';
 import { inputValueAtom, inputProductAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import { useChatHandlers } from '@/components/chat/area/ChatContextProvider';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);

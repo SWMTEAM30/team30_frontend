@@ -55,7 +55,10 @@ export const getChatProduct = async (product: Product): Promise<APIResponse<Mess
     message: response.message,
     data: {
       name: response.data.product_name,
-      content: response.data.comprehensive_description,
+      content: {
+        product_id: product.product_id,
+        content: response.data.comprehensive_description,
+      },
       tags: [...response.data.style_tags, ...response.data.tpo_tags],
       src: product.product_url,
     },
