@@ -3,9 +3,9 @@
 import { userAtom } from '@/atoms/authAtoms';
 import { currentChatIdAtom, examplesAtomFamily, isAIRespondingAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
 import AILoadingSpinner from '@/components/chat/AILoadingSpinner';
-import EmptyChatStart from '@/components/chat/EmptyChatStart';
-import ExampleSuggestions from '@/components/chat/ExampleSuggestion';
-import MessageBalloon from '@/components/chat/MessageBalloon';
+import EmptyChatStart from '@/components/chat/area/EmptyChatStart';
+import ExampleSuggestions from '@/components/chat/area/ExampleSuggestion';
+import MessageBalloon from '@/components/chat/area/MessageBalloon';
 import { useChatMessage } from '@/queries/useChatMessage';
 import { useAtomValue } from 'jotai';
 import { useRef } from 'react';

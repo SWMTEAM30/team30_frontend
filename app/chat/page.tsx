@@ -1,10 +1,10 @@
-import { ChatSidebar } from '@/components/chat/ChatSidebar';
+import { ChatSidebar } from '@/components/chat/sidebar/ChatSidebar';
 import { SidebarInset } from '@/components/ui/sidebar';
 import ChatHeader from '@/components/chat/ChatHeader';
-import ChatInputBox from '@/components/chat/ChatInputBox';
-import ChatArea from '@/components/chat/ChatArea';
-import ChatContextProvider from '@/components/chat/ChatContextProvider';
-import ChatSidePanel from '@/components/chat/ChatSidePanel';
+import ChatInputBox from '@/components/chat/area/ChatInputBox';
+import ChatArea from '@/components/chat/area/ChatArea';
+import ChatContextProvider from '@/components/chat/area/ChatContextProvider';
+import ChatSidePanel from '@/components/chat/panel/ChatSidePanel';
 
 export default function Chat() {
   return (

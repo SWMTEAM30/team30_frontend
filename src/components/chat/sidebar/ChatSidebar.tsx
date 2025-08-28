@@ -1,7 +1,7 @@
 'use client';
 
 import { isSidebarOpenAtom } from '@/atoms/chatAtoms';
-import SidebarContent from '@/components/chat/SidebarContent';
+import SidebarContent from '@/components/chat/sidebar/SidebarContent';
 import { useAtom } from 'jotai';
 import { Menu } from 'lucide-react';
 
