@@ -1,6 +1,6 @@
 import { MDXClient } from 'next-mdx-remote-client';
 import { useAtom, useAtomValue } from 'jotai';
-import { activeImageTabIdAtom, activeWikiTabIdAtom, imageTabsAtom } from '@/atoms/chatAtoms';
+import { activeWikiTabIdAtom, wikiTabsAtom } from '@/atoms/chatAtoms';
 import PanelFrame from '@/components/chat/panel/PanelFrame';
 import { useChatHandlers } from '@/components/chat/area/ChatContextProvider';
 
@@ -30,23 +30,23 @@ function WikiTabButton({ tab }: { tab: any }) {
 function WikiDetailPanel({ wiki }: { wiki: MessageWiki | null }) {
   if (!wiki) return null;
   return (
-    <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-ul:text-gray-700 prose-li:text-gray-700 prose-img:w-[300px] prose-img:h-auto prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto prose-img:my-6 prose-img:block">
+    <div className="p-5 prose text-lg prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-ul:text-gray-700 prose-li:text-gray-700 prose-img:w-[300px] prose-img:h-auto prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto prose-img:my-6 prose-img:block">
       <MDXClient {...wiki.content} />
     </div>
   );
 }
 
-export default function ImagePanel({ top }: { top: `top-${number}` }) {
-  const imageTabs = useAtomValue(imageTabsAtom);
-  const activeImageTabId = useAtomValue(activeImageTabIdAtom);
-  const activeTabData = imageTabs.find((tab) => tab.src === activeImageTabId);
+export default function WikiPanel({ top }: { top: `top-${number}` }) {
+  const wikiTabs = useAtomValue(wikiTabsAtom);
+  const activeWikiTabId = useAtomValue(activeWikiTabIdAtom);
+  const activeTabData = wikiTabs.find((tab) => tab.src === activeWikiTabId);
   return (
     <>
-      <PanelFrame<MessageImage>
+      <PanelFrame<MessageWiki>
         panelType={'wiki'}
         top={top}
         activeTabData={activeTabData}
-        tabs={imageTabs}
+        tabs={wikiTabs}
         renderTab={(tab) => <WikiTabButton tab={tab} />}
         renderContent={(activeTab) => <WikiDetailPanel wiki={activeTab} />}
         detailNoExistsText="단어가 선택되지 않았습니다."

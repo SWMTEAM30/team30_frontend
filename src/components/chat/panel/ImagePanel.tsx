@@ -11,8 +11,7 @@ function ImageTabButton({ tab }: { tab: any }) {
 
   return (
     <button
-      key={tab.id}
-      onClick={() => setActiveImageTabId(tab.id)}
+      onClick={() => setActiveImageTabId(tab.src)}
       className={`${activeImageTabId === tab.src ? 'ring-2 ring-blue-500' : 'hover:opacity-80'}`}
     >
       <Image src={tab.src} alt={tab.name} width={64} height={64} className="h-64 w-56 object-cover" />
@@ -21,10 +20,10 @@ function ImageTabButton({ tab }: { tab: any }) {
           e.stopPropagation();
           handleCloseTab(tab.src);
         }}
-        className="absolute top-0 right-0 m-1 w-5 h-5 bg-black/50 text-white text-xs rounded-full flex items-center justify-center hover:bg-red-500"
+        className="absolute top-0 right-0 m-1 w-5 h-5 bg-black/50 text-white text-xs rounded-full flex items-center justify-center"
         title="탭 닫기"
       >
-        ×
+        asdfasdf
       </div>
     </button>
   );
@@ -48,7 +47,7 @@ function ImageDetailPanel({ image }: { image: MessageImage | null }) {
             alt={image.name}
             width={288}
             height={384}
-            className="w-fullh-96 object-cover rounded-lg"
+            className="w-96 h-120 object-cover rounded-lg"
           />
         </div>
 
