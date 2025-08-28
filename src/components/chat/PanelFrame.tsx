@@ -1,61 +1,65 @@
 import Image from 'next/image';
-import ImageDetailPanel from '@/components/chat/ImageDetailPanel';
 import { cn } from '@/lib/utils';
+import { useAtomValue } from 'jotai';
+import { activePanelTypeAtom } from '@/atoms/chatAtoms';
+import { useChatHandlers } from '@/components/chat/ChatContextProvider';
 
 export default function PanelFrame({
-  openTabs,
+  panelType,
+  openedTabs,
   activeTabId,
-  onTabSelect,
-  onTabClose,
+  handleTabSelect,
   className,
+  DetailPanel,
+  detailNoExistsText = '선택된 데이터가 없습니다.',
 }: {
-  openTabs: any[];
+  panelType: 'image' | 'wiki' | 'fitting';
+  openedTabs: any[];
   activeTabId: string | null;
-  onTabSelect: (id: string) => void;
-  onTabClose: (id: string) => void;
+  handleTabSelect: (id: string) => void;
   className?: string;
+  DetailPanel: React.ReactNode;
+  detailNoExistsText: string;
 }) {
-  const activeTabData = openTabs.find((tab) => tab.src === activeTabId);
+  const activeTabData = openedTabs.find((tab) => tab.src === activeTabId);
+  const activePanelType = useAtomValue(activePanelTypeAtom);
+  const { handleCloseTab } = useChatHandlers();
 
-  return (
+  return activePanelType == panelType ? (
     <>
       {/* 왼쪽: 세로 탭 바 (1/3) */}
       <div
         className={cn(
           className,
-          `h-full w-28 border-r border-gray-200 bg-beige flex flex-col items-center gap-2 overflow-y-auto p-2`,
+          `h-full w-60 border-r border-gray-200 bg-beige flex flex-col items-center gap-2 overflow-y-auto p-2`,
         )}
       >
-        {openTabs.map((tab) => (
-          <div
-            key={tab.src}
-            onClick={() => onTabSelect(tab.src)}
+        {openedTabs.map((tab, key) => (
+          <button
+            key={key}
+            onClick={() => handleTabSelect(tab.src)}
             className={`relative overflow-hidden flex-shrink-0 
                        transition-all duration-200
                        ${activeTabId === tab.src ? 'ring-2 ring-blue-500 ring-offset-2' : 'hover:opacity-80'}`}
           >
-            <Image src={tab.src} alt={tab.name} width={64} height={64} className="h-32 w-28 object-cover" />
-            <button
+            <Image src={tab.src} alt={tab.name} width={64} height={64} className="h-64 w-56 object-cover" />
+            <div
               onClick={(e) => {
                 e.stopPropagation();
-                onTabClose(tab.src);
+                handleCloseTab(tab.src);
               }}
               className="absolute top-0 right-0 m-1 w-5 h-5 bg-black/50 text-white text-xs rounded-full flex items-center justify-center hover:bg-red-500"
               title="탭 닫기"
             >
               ×
-            </button>
-          </div>
+            </div>
+          </button>
         ))}
       </div>
       {/* 오른쪽: 상세 이미지 영역 (2/3) */}
-      <div className="flex-1 w-96 h-full overflow-y-auto">
-        {activeTabData ? (
-          <ImageDetailPanel imageData={activeTabData} />
-        ) : (
-          <div className="p-8 text-center text-gray-500">선택된 이미지가 없습니다.</div>
-        )}
+      <div className="flex-1 w-160 h-full overflow-y-auto">
+        {activeTabData ? <>{DetailPanel}</> : <div className="p-8 text-center text-gray-500">{detailNoExistsText}</div>}
       </div>
     </>
-  );
+  ) : null;
 }

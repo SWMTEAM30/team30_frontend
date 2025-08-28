@@ -11,14 +11,14 @@ export default function ImagePanel({ top }: { top: number }) {
 
   return (
     <>
-      <PanelExtensionButton panelType={'image'} top={top} />
+      <PanelExtensionButton panelType={'fitting'} top={top} />
       <PanelFrame
-        panelType={'image'}
+        panelType={'fitting'}
         openedTabs={imageTabs}
         activeTabId={activeImageTabId}
         handleTabSelect={setActiveImageTabId}
         DetailPanel={<ImageDetailPanel imageData={activeTabData ?? null} />}
-        detailNoExistsText={'선택된 이미지가 없습니다.'}
+        detailNoExistsText={'선택된 옷이 없습니다.'}
       />
     </>
   );
