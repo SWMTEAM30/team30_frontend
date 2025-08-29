@@ -2,10 +2,10 @@
 
 import { userAtom } from '@/atoms/authAtoms';
 import { currentChatIdAtom, examplesAtomFamily, isAIRespondingAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
-import AILoadingSpinner from '@/components/chat/AILoadingSpinner';
-import EmptyChatStart from '@/components/chat/area/EmptyChatStart';
-import ExampleSuggestions from '@/components/chat/area/ExampleSuggestion';
-import MessageBalloon from '@/components/chat/area/MessageBalloon';
+import AILoadingSpinner from '@/components/chat/message/AILoadingSpinner';
+import EmptyChatStart from '@/components/chat/message/EmptyChatStart';
+import ExampleSuggestions from '@/components/chat/message/ExampleSuggestion';
+import MessageBalloon from '@/components/chat/message/MessageBalloon';
 import { useChatMessage } from '@/queries/useChatMessage';
 import { useAtomValue } from 'jotai';
 import { useRef } from 'react';

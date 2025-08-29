@@ -36,21 +36,18 @@ function WikiDetailPanel({ wiki }: { wiki: MessageWiki | null }) {
   );
 }
 
-export default function WikiPanel({ top }: { top: `top-${number}` }) {
+export default function WikiPanel() {
   const wikiTabs = useAtomValue(wikiTabsAtom);
   const activeWikiTabId = useAtomValue(activeWikiTabIdAtom);
   const activeTabData = wikiTabs.find((tab) => tab.src === activeWikiTabId);
   return (
-    <>
-      <PanelFrame<MessageWiki>
-        panelType={'wiki'}
-        top={top}
-        activeTabData={activeTabData}
-        tabs={wikiTabs}
-        renderTab={(tab) => <WikiTabButton tab={tab} />}
-        renderContent={(activeTab) => <WikiDetailPanel wiki={activeTab} />}
-        detailNoExistsText="단어가 선택되지 않았습니다."
-      />
-    </>
+    <PanelFrame<MessageWiki>
+      panelType={'wiki'}
+      activeTabData={activeTabData}
+      tabs={wikiTabs}
+      renderTab={(tab) => <WikiTabButton tab={tab} />}
+      renderContent={(activeTab) => <WikiDetailPanel wiki={activeTab} />}
+      detailNoExistsText="단어가 선택되지 않았습니다."
+    />
   );
 }

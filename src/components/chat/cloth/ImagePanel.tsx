@@ -1,33 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAtomValue, useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { activeImageTabIdAtom, imageTabsAtom } from '@/atoms/chatAtoms';
-import PanelFrame from '@/components/chat/panel/PanelFrame';
-import { useChatHandlers } from '@/components/chat/area/ChatContextProvider';
-
-function ImageTabButton({ tab }: { tab: any }) {
-  const [activeImageTabId, setActiveImageTabId] = useAtom(activeImageTabIdAtom);
-  const { handleCloseTab } = useChatHandlers();
-
-  return (
-    <button
-      onClick={() => setActiveImageTabId(tab.src)}
-      className={`${activeImageTabId === tab.src ? 'ring-2 ring-blue-500' : 'hover:opacity-80'}`}
-    >
-      <Image src={tab.src} alt={tab.name} width={64} height={64} className="h-64 w-56 object-cover" />
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-          handleCloseTab(tab.src);
-        }}
-        className="absolute top-0 right-0 m-1 w-5 h-5 bg-black/50 text-white text-xs rounded-full flex items-center justify-center"
-        title="탭 닫기"
-      >
-        asdfasdf
-      </div>
-    </button>
-  );
-}
+import PanelFrame from '@/components/chat/cloth/PanelFrame';
 
 function ImageDetailPanel({ image }: { image: MessageImage | null }) {
   if (!image) return null;
@@ -88,21 +63,15 @@ function ImageDetailPanel({ image }: { image: MessageImage | null }) {
   );
 }
 
-export default function ImagePanel({ top }: { top: `top-${number}` }) {
+export default function ImagePanel() {
   const imageTabs = useAtomValue(imageTabsAtom);
   const activeImageTabId = useAtomValue(activeImageTabIdAtom);
   const activeTabData = imageTabs.find((tab) => tab.src === activeImageTabId);
   return (
-    <>
-      <PanelFrame<MessageImage>
-        panelType={'image'}
-        top={top}
-        activeTabData={activeTabData}
-        tabs={imageTabs}
-        renderTab={(tab) => <ImageTabButton tab={tab} />}
-        renderContent={(activeTab) => <ImageDetailPanel image={activeTab} />}
-        detailNoExistsText="표시할 이미지를 선택해주세요."
-      />
-    </>
+    <PanelFrame<MessageImage>
+      activeTabData={activeTabData}
+      renderContent={(activeTab) => <ImageDetailPanel image={activeTab} />}
+      detailNoExistsText="표시할 이미지를 선택해주세요."
+    />
   );
 }

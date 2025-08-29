@@ -1,6 +1,6 @@
 import { getChatProduct } from '@/api/chatAPI';
-import { useChatHandlers } from '@/components/chat/area/ChatContextProvider';
-import MessageParser from '@/components/chat/area/MessageParser';
+import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import MessageParser from '@/components/chat/message/MessageParser';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
 
