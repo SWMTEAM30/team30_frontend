@@ -8,7 +8,7 @@ export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''
 export const isSidebarOpenAtom = atom<boolean>(false);
 
 export const contentAtom = atom<'chat' | 'closet'>('chat');
-export const panelAtom = atom<'cloth' | 'fitting'>('cloth');
+export const panelAtom = atom<'cloth' | 'fitting'>('fitting');
 export const codinationAtom = atom<any[]>([]);
 
 export const activePanelTypeAtom = atom<'image' | 'wiki' | 'fitting' | null>(null);

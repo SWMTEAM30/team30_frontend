@@ -4,10 +4,10 @@ import ChatPanel from '@/components/chat/ChatPanel';
 export default function Chat() {
   return (
     <div className="flex">
-      <div className="flex min-h-screen w-2/5">
+      <div className="flex min-h-screen w-1/2">
         <ChatContent />
       </div>
-      <div className="w-3/5">
+      <div className="w-1/2">
         <ChatPanel />
       </div>
     </div>

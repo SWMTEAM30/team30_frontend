@@ -127,9 +127,23 @@ export default function ChatPanelCodination() {
     return new Intl.NumberFormat('ko-KR').format(price);
   };
 
+  if (carts.length === 0)
+    return (
+      <div className="flex flex-col items-center justify-center h-48 text-center">
+        <div className="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
+          <ShoppingCart className="w-10 h-10 text-slate-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">장바구니가 비어있습니다</h3>
+        <p className="text-slate-600 dark:text-slate-400 mb-4">
+          AI와 대화하여 가상피팅에 사용할 옷 조합들을 추가해보세요
+        </p>
+        <Button>쇼핑 시작하기</Button>
+      </div>
+    );
+
   return (
-    <div className="h-48 p-4 overflow-hidden bg-white border-t border-gray-200">
-      <div className="relative h-full">
+    <div className="p-4 overflow-hidden">
+      <div>
         {/* 스크롤 컨테이너 */}
         <div className="flex gap-4 h-full overflow-x-auto overflow-y-hidden pb-2 scrollbar-hide">
           {carts.map((cart) => (
@@ -138,7 +152,7 @@ export default function ChatPanelCodination() {
               className="flex-shrink-0 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
             >
               {/* 카드 헤더 */}
-              <div className="p-3 border-b border-slate-200 dark:border-slate-700">
+              <div className="p-4 border-b border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-slate-900 dark:text-white text-lg">{cart.name}</h3>
                   <Button
@@ -156,7 +170,7 @@ export default function ChatPanelCodination() {
               </div>
 
               {/* 아이템 리스트 */}
-              <div className="flex-1 p-3 overflow-y-auto">
+              <div className="flex-1 p-3 overflow-y-auto max-h-48">
                 <div className="space-y-2">
                   {cart.items.map((item) => (
                     <div key={item.id} className="flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg">
@@ -197,30 +211,7 @@ export default function ChatPanelCodination() {
             </div>
           ))}
         </div>
-
-        {/* 스크롤 인디케이터 */}
-        {carts.length > 0 && (
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
-            {carts.map((_, index) => (
-              <div key={index} className="w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full" />
-            ))}
-          </div>
-        )}
       </div>
-
-      {/* 빈 상태 */}
-      {carts.length === 0 && (
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mb-3">
-            <ShoppingCart className="w-8 h-8 text-slate-400" />
-          </div>
-          <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">장바구니가 비어있습니다</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-            AI와 대화하여 가상피팅에 사용할 옷 조합들을 추가해보세요
-          </p>
-          <Button size="sm">쇼핑 시작하기</Button>
-        </div>
-      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { panelAtom } from '@/atoms/chatAtoms';
 import ChatPanelHeader from '@/components/chat/ChatPanelHeader';
 import ImagePanel from '@/components/chat/cloth/ImagePanel';
-import ChatPanelCodination from '@/components/chat/fitting/ChatPanelCodination';
+import ChatPanelCodination from '@/components/chat/ChatPanelCodination';
 import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import { useAtomValue } from 'jotai';
 
@@ -12,7 +12,7 @@ export default function ChatPanel() {
   return (
     <div className={`flex flex-col h-full w-full bg-beige border-l border-navy-200`}>
       <ChatPanelHeader />
-      <div className="flex justify-center">
+      <div className="flex-1 overflow-hidden">
         {panel == 'cloth' && <ImagePanel />}
         {panel == 'fitting' && <FittingPanel />}
       </div>

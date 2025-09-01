@@ -9,7 +9,7 @@ export default function ImagePanel() {
   const activeTabData = imageTabs.find((tab) => tab.src === activeImageTabId);
   if (!activeTabData) return null;
   return (
-    <div className="max-h-full bg-beige dark:bg-gray-800">
+    <div className="h-full bg-beige dark:bg-gray-800 overflow-y-auto">
       {/* 헤더 */}
       <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">패션 아이템 상세 정보</h2>
