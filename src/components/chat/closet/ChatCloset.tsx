@@ -1,5 +1,5 @@
 import { activeImageTabIdAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import { useChatHandlers } from '@/hooks/useChatHandler';
 import { cn } from '@/lib/utils';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
@@ -28,7 +28,7 @@ function TabButton({ tab }: { tab: any }) {
   );
 }
 
-export default function Closet({ tabs }: { tabs: string[] }) {
+export default function ChatCloset({ tabs }: { tabs: string[] }) {
   return (
     <div
       className={cn(

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import { useChatHandlers } from '@/hooks/useChatHandler';
 import { useWikiData } from '@/queries/useWiki';
 
 interface MessageParserProps {

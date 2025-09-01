@@ -1,5 +1,5 @@
 import { currentChatIdAtom, examplesAtomFamily } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import { useChatHandlers } from '@/hooks/useChatHandler';
 import { useAtomValue } from 'jotai';
 
 export default function ExampleSuggestions() {

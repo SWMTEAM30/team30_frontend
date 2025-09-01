@@ -3,20 +3,46 @@
 import { Button } from '@/components/ui/button';
 import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { useRef } from 'react';
+import { ChangeEvent, useCallback, useRef } from 'react';
 import Image from 'next/image';
-import { useAtom, useAtomValue } from 'jotai';
-import { inputValueAtom, inputProductAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/ChatContextProvider';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { inputValueAtom, inputProductAtom, isAIRespondingAtom, contentAtom } from '@/atoms/chatAtoms';
+import { useChatHandlers } from '@/hooks/useChatHandler';
+import { postChatUpload } from '@/api/chatAPI';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
-  const inputProduct = useAtomValue(inputProductAtom);
+  const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
+  const setContent = useSetAtom(contentAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
-  const { handleSendMessage, handleFileChange } = useChatHandlers();
+  const { sendMsg } = useChatHandlers();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleButtonClick = () => fileInputRef.current?.click();
+
+  const handleSendMessage = useCallback(() => {
+    if (!inputValue.trim()) return;
+    setContent('chat');
+    sendMsg(inputValue, inputProduct);
+  }, [inputValue, inputProduct, sendMsg, setInputValue, setInputProduct]);
+
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const formData = new FormData();
+      formData.append('file', files[0]);
+      const response = await postChatUpload(formData);
+      if (response.status === 'fail') {
+        console.error(response.message);
+        return;
+      }
+      const newMessageImage: Product = {
+        product_url: response.data,
+        product_id: 'user',
+      };
+      setInputProduct(newMessageImage);
+    }
+  };
 
   return (
     <div

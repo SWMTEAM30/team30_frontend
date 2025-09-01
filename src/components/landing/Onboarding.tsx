@@ -1,11 +1,9 @@
 'use client';
 
 import LucideIcon from '@/components/ui/icons/LucideIcon';
-import HeroSection from '@/components/landing/HeroSection';
 import SituationOption from '@/components/landing/SituationOption';
-import { matchThevalueinMessage } from '@/lib/validation';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 export default function Onboarding() {
   const [message, setMessage] = useState('');
@@ -29,111 +27,25 @@ export default function Onboarding() {
     { text: '운동/스포츠', icon: 'Dumbbell', description: '운동이나 스포츠 활동' },
   ];
 
-  const handleSituationSelect = (situation: string) => {
-    setShowOnboarding(true);
-    setChatHistory((onboardingMessages) => [
-      ...onboardingMessages,
-      { text: situation, type: 'user' },
-      {
-        text: '멋진 선택이네요! 더 정확한 추천을 위해 몇 가지 정보가 필요해요. 키를 알려주세요 (예: 170cm)',
-        type: 'bot',
-      },
-    ]);
-    setMessage('');
-  };
+  function handleKeyPress(event: any): void {
+    return;
+  }
 
-  const handleInitialMessage = () => {
-    if (!message.trim()) return;
-    setShowOnboarding(true);
-    setChatHistory((onboardingMessages) => [
-      ...onboardingMessages,
-      { text: message, type: 'user' },
-      {
-        text: '멋진 질문이네요! 더 정확한 추천을 위해 몇 가지 정보가 필요해요. 키를 알려주세요 (예: 170cm)',
-        type: 'bot',
-      },
-    ]);
-    setMessage('');
-  };
+  function handleInitialMessage(event: any): void {
+    return;
+  }
 
-  const handleOnboardingMessage = () => {
-    if (!message.trim()) return;
-    const newHistory = [...chatHistory, { text: message, type: 'user' }];
-    if (onboardingStep === 0) {
-      // 키 입력 검증
-      const height = matchThevalueinMessage(message);
-      if (height && height >= 100 && height <= 220) {
-        setUserInfo((prev) => ({ ...prev, height: height }));
-        newHistory.push({ text: '좋아요! 이제 몸무게를 알려주세요 (예: 60kg)', type: 'bot' });
-        setOnboardingStep(1);
-      } else {
-        newHistory.push({
-          text: '올바른 키를 입력해주세요. 100cm~220cm 사이의 숫자로 입력해주세요. (예: 170cm)',
-          type: 'bot',
-        });
-      }
-    } else if (onboardingStep === 1) {
-      // 몸무게 입력 검증
-      const weight = matchThevalueinMessage(message);
-      if (weight && weight >= 30 && weight <= 150) {
-        setUserInfo((prev) => ({ ...prev, weight: weight }));
-        newHistory.push({
-          text: '완료! 이제 당신만의 스타일 어시스턴트와 대화를 시작할 수 있어요. 채팅 페이지로 이동하시겠어요?',
-          type: 'bot',
-        });
-        setOnboardingStep(2);
-        console.log(userInfo, weight);
-      } else {
-        newHistory.push({
-          text: '올바른 몸무게를 입력해주세요. 30kg~150kg 사이의 숫자로 입력해주세요. (예: 60kg)',
-          type: 'bot',
-        });
-      }
-    } else {
-      // 온보딩 완료 - 채팅 버튼이 표시됨
-      setOnboardingStep(2);
-    }
+  function handleSituationSelect() {
+    return;
+  }
 
-    setChatHistory(newHistory);
-    setMessage('');
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      if (showOnboarding) handleOnboardingMessage();
-      else handleInitialMessage();
-    }
-  };
-
-  const handleBackToInitial = () => {
-    setShowOnboarding(false);
-    setOnboardingStep(0);
-    setUserInfo({ height: 0, weight: 0 });
-    setChatHistory(onboardingMessages);
-    setMessage('');
-  };
-
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [chatHistory]);
+  function handleOnboardingMessage() {
+    return;
+  }
 
   return (
     <>
       {/* 뒤로 가기 버튼 - 온보딩 중에만 표시 */}
-      {<HeroSection showOnboarding={showOnboarding} />}
-      {showOnboarding && (
-        <div className="mt-32 mb-8">
-          <button
-            onClick={handleBackToInitial}
-            className="inline-flex items-center px-4 py-2 bg-white/90 rounded-full shadow-lg hover:bg-white transition-colors text-gray-700"
-          >
-            <LucideIcon name={'ArrowLeft'} color="blue-500" className="w-5 h-5 mr-2" />
-            <span className="text-sm font-medium">뒤로 가기</span>
-          </button>
-        </div>
-      )}
 
       {/* Chat History - slides down when onboarding starts */}
       <div

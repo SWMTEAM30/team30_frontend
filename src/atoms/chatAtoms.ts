@@ -7,6 +7,10 @@ export const currentChatIdAtom = atom<number | null>(null);
 export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''>('');
 export const isSidebarOpenAtom = atom<boolean>(false);
 
+export const contentAtom = atom<'chat' | 'closet'>('chat');
+export const panelAtom = atom<'cloth' | 'fitting'>('cloth');
+export const codinationAtom = atom<any[]>([]);
+
 export const activePanelTypeAtom = atom<'image' | 'wiki' | 'fitting' | null>(null);
 export const imageTabsAtom = atom<MessageImage[]>([]);
 export const wikiTabsAtom = atom<MessageWiki[]>([]);

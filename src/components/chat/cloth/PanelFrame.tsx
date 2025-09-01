@@ -8,7 +8,7 @@ export default function PanelFrame<T>({
   detailNoExistsText?: string;
 }) {
   return (
-    <div className="flex-1 w-160 h-full overflow-y-auto">
+    <div className="w-full h-full flex overflow-y-auto justify-center">
       {activeTabData ? (
         <>{renderContent(activeTabData)}</>
       ) : (

@@ -14,33 +14,25 @@ import {
   isSidebarOpenAtom,
   messagesAtomFamily,
 } from '@/atoms/chatAtoms';
-import { ChangeEvent, createContext, ReactNode, useCallback, useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useChatRooms } from '@/queries/useChatRoom';
 import { useChatMessage } from '@/queries/useChatMessage';
 import { userAtom } from '@/atoms/authAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
-import { postChatUpload, getChatRoomsRoomIdMessages, getChatProduct } from '@/api/chatAPI';
+import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
 
 type ChatActionsContextType = {
-  handleSendMessage: () => void;
+  sendMsg: (inputValue: string, products?: Product) => void;
   handleNewChat: () => void;
   handleChatSelect: (chatId: number) => void;
   handleExampleSelect: (exampleText: string) => void;
   handleOpenTab: (data: any, type: 'image' | 'wiki') => void;
-  handleFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handleCloseTab: (targetTabId: string) => void;
   setIsSidebarOpen: (isOpen: boolean) => void;
   addExistingMessages: (chatId: number | null, existingMessages: Message[]) => void;
 };
-const ChatActionsContext = createContext<ChatActionsContextType | undefined>(undefined);
 
-export const useChatHandlers = () => {
-  const context = useContext(ChatActionsContext);
-  if (context === undefined) throw new Error('useChatActions must be used within a ChatProvider');
-  return context;
-};
-
-export default function ChatContextProvider({ children }: { children: ReactNode }) {
+export function useChatHandlers() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
   const [currentChatId, setCurrentChatId] = useAtom(currentChatIdAtom);
@@ -98,11 +90,6 @@ export default function ChatContextProvider({ children }: { children: ReactNode 
     [sendMsg],
   );
 
-  const handleSendMessage = useCallback(() => {
-    if (!inputValue.trim()) return;
-    sendMsg(inputValue, inputProduct);
-  }, [inputValue, inputProduct, sendMsg, setInputValue, setInputProduct]);
-
   const handleChatSelect = useCallback(
     async (chatId: number) => {
       const response = await getChatRoomsRoomIdMessages(chatId);
@@ -113,24 +100,6 @@ export default function ChatContextProvider({ children }: { children: ReactNode 
     },
     [setCurrentChatId, resetAtomState],
   );
-
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const formData = new FormData();
-      formData.append('file', files[0]);
-      const response = await postChatUpload(formData);
-      if (response.status === 'fail') {
-        console.error(response.message);
-        return;
-      }
-      const newMessageImage: Product = {
-        product_url: response.data,
-        product_id: 'user',
-      };
-      setInputProduct(newMessageImage);
-    }
-  };
 
   const handleNewChat = useCallback(() => {
     if (chatRoomError) return;
@@ -195,7 +164,6 @@ export default function ChatContextProvider({ children }: { children: ReactNode 
       setImageTabs,
       activeImageTabId,
       setActiveImageTabId,
-      handleFileChange,
       wikiTabs,
       setWikiTabs,
       activeWikiTabId,
@@ -205,10 +173,9 @@ export default function ChatContextProvider({ children }: { children: ReactNode 
   );
 
   const actionsValue: ChatActionsContextType = {
+    sendMsg,
     handleExampleSelect,
-    handleSendMessage,
     handleChatSelect,
-    handleFileChange,
     handleNewChat,
     handleOpenTab,
     handleCloseTab,
@@ -216,5 +183,5 @@ export default function ChatContextProvider({ children }: { children: ReactNode 
     addExistingMessages,
   };
 
-  return <ChatActionsContext.Provider value={actionsValue}>{children}</ChatActionsContext.Provider>;
+  return actionsValue;
 }
