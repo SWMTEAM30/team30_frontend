@@ -7,11 +7,11 @@ export default function ChatContentHeader() {
   const currentChatId = useAtomValue(currentChatIdAtom);
   const [content, setContent] = useAtom(contentAtom);
 
-  const handleContent = (con: 'chat' | 'closet') => {
+  const handleContent = (con: 'chat' | 'cloth') => {
     setContent(con);
   };
   return (
-    <header className="flex items-center justify-between px-4 py-6 mx-16 md:mx-auto w-[calc(100vw-68px)] lg:w-full bg-white">
+    <header className="flex items-center justify-between px-4 py-6 mx-16 md:mx-auto w-full bg-white">
       <div className="flex items-center gap-2">
         <button
           className={`btn cursor-pointer text-blue text-3xl ${content == 'chat' && 'font-bold'}`}
@@ -20,10 +20,10 @@ export default function ChatContentHeader() {
           Chat
         </button>
         <button
-          className={`btn cursor-pointer text-blue text-3xl ${content == 'closet' && 'font-bold'}`}
-          onClick={() => handleContent('closet')}
+          className={`btn cursor-pointer text-blue text-3xl ${content == 'cloth' && 'font-bold'}`}
+          onClick={() => handleContent('cloth')}
         >
-          Closet
+          Cloth
         </button>
       </div>
       <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">

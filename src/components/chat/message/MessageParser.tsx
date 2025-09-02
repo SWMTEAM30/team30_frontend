@@ -1,16 +1,25 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useChatHandlers } from '@/hooks/useChatHandler';
 import { useWikiData } from '@/queries/useWiki';
+import { activePanelTypeAtom, wikiTabsAtom, activeWikiTabIdAtom } from '@/atoms/chatAtoms';
+import { useAtom } from 'jotai';
 
-interface MessageParserProps {
-  text: string;
-}
-
-export default function MessageParser({ text }: MessageParserProps) {
+export default function MessageParser({ text }: { text: string }) {
   const { data: wikiIndex, isLoading } = useWikiData();
-  const { handleOpenTab } = useChatHandlers();
+
+  const [activePanelType, setActivePanelType] = useAtom(activePanelTypeAtom);
+  const [wikiTabs, setWikiTabs] = useAtom(wikiTabsAtom);
+  const [activeWikiTabId, setActiveWikiTabId] = useAtom(activeWikiTabIdAtom);
+
+  const handleOpenTab = (data: PanelData) => {
+    setWikiTabs((prevTabs) => {
+      if (prevTabs.some((tab) => tab.src === data.src)) return prevTabs;
+      return [...prevTabs, data];
+    });
+    setActiveWikiTabId(data.src);
+    setActivePanelType('wiki');
+  };
 
   const parsedText = useMemo(() => {
     if (isLoading || !wikiIndex) return [text];
@@ -30,7 +39,7 @@ export default function MessageParser({ text }: MessageParserProps) {
           return (
             <span
               key={index}
-              onClick={() => handleOpenTab(matchedWiki, 'wiki')}
+              onClick={() => handleOpenTab(matchedWiki)}
               className="font-semibold text-blue-600 hover:underline cursor-pointer"
             >
               {part}

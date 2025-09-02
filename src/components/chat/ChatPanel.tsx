@@ -2,21 +2,19 @@
 
 import { panelAtom } from '@/atoms/chatAtoms';
 import ChatPanelHeader from '@/components/chat/ChatPanelHeader';
-import ImagePanel from '@/components/chat/cloth/ImagePanel';
-import ChatPanelCodination from '@/components/chat/ChatPanelCodination';
 import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import { useAtomValue } from 'jotai';
+import ClosetPanel from '@/components/chat/closet/ClosetPanel';
 
 export default function ChatPanel() {
   const panel = useAtomValue(panelAtom);
   return (
     <div className={`flex flex-col h-full w-full bg-beige border-l border-navy-200`}>
       <ChatPanelHeader />
-      <div className="flex-1 overflow-hidden">
-        {panel == 'cloth' && <ImagePanel />}
+      <div className="h-[calc(100vh-5rem)]">
+        {panel == 'closet' && <ClosetPanel tabs={[]} />}
         {panel == 'fitting' && <FittingPanel />}
       </div>
-      <ChatPanelCodination />
     </div>
   );
 }

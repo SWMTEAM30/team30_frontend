@@ -5,7 +5,7 @@ import ChatInputBox from '@/components/chat/message/ChatInputBox';
 import ChatArea from '@/components/chat/message/ChatArea';
 import { useAtomValue } from 'jotai';
 import { contentAtom } from '@/atoms/chatAtoms';
-import ChatCloset from '@/components/chat/closet/ChatCloset';
+import ImagePanel from '@/components/chat/cloth/ImagePanel';
 
 export default function ChatContent() {
   const content = useAtomValue(contentAtom);
@@ -19,7 +19,7 @@ export default function ChatContent() {
           <ChatContentHeader />
           <div className="flex-1 min-h-0">
             {content == 'chat' && <ChatArea />}
-            {content == 'closet' && <ChatCloset tabs={[]} />}
+            {content == 'cloth' && <ImagePanel />}
           </div>
           <ChatInputBox />
         </div>

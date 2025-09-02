@@ -26,7 +26,6 @@ type ChatActionsContextType = {
   handleNewChat: () => void;
   handleChatSelect: (chatId: number) => void;
   handleExampleSelect: (exampleText: string) => void;
-  handleOpenTab: (data: any, type: 'image' | 'wiki') => void;
   handleCloseTab: (targetTabId: string) => void;
   setIsSidebarOpen: (isOpen: boolean) => void;
   addExistingMessages: (chatId: number | null, existingMessages: Message[]) => void;
@@ -107,26 +106,6 @@ export function useChatHandlers() {
     resetAtomState();
   }, [chatRoomError, setCurrentChatId, resetAtomState]);
 
-  const handleOpenTab = useCallback(
-    (data: PanelData, type: 'image' | 'wiki') => {
-      if (type === 'image') {
-        setImageTabs((prevTabs) => {
-          if (prevTabs.some((tab) => tab.src === data.src)) return prevTabs;
-          return [...prevTabs, data];
-        });
-        setActiveImageTabId(data.src);
-      } else {
-        setWikiTabs((prevTabs) => {
-          if (prevTabs.some((tab) => tab.src === data.src)) return prevTabs;
-          return [...prevTabs, data];
-        });
-        setActiveWikiTabId(data.src);
-      }
-      setActivePanelType(type);
-    },
-    [setImageTabs, setActiveImageTabId, setWikiTabs, setActiveWikiTabId, setActivePanelType],
-  );
-
   const handleCloseTab = useCallback(
     (targetTabId: string) => {
       // ✨ if 블록 안에서는 모든 변수가 'image' 관련 타입임이 보장됩니다.
@@ -177,7 +156,6 @@ export function useChatHandlers() {
     handleExampleSelect,
     handleChatSelect,
     handleNewChat,
-    handleOpenTab,
     handleCloseTab,
     setIsSidebarOpen,
     addExistingMessages,

@@ -1,17 +1,26 @@
 import { getChatProduct } from '@/api/chatAPI';
-import { useChatHandlers } from '@/hooks/useChatHandler';
 import MessageParser from '@/components/chat/message/MessageParser';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
+import { imageTabsAtom, activeImageTabIdAtom, contentAtom } from '@/atoms/chatAtoms';
+import { useAtom, useSetAtom } from 'jotai';
 
 export default function MessageBalloon({ message }: { message: Message }) {
-  const { handleOpenTab } = useChatHandlers();
   const isUserId = !!message.user;
+
+  const [imageTabs, setImageTabs] = useAtom(imageTabsAtom);
+  const [activeImageTabId, setActiveImageTabId] = useAtom(activeImageTabIdAtom);
+  const setContent = useSetAtom(contentAtom);
 
   const handleOpenImageTab = async (product: Product) => {
     const data = await getChatProduct(product);
     if (data.status == 'fail') return;
-    handleOpenTab(data.data, 'image');
+    setImageTabs((prevTabs) => {
+      if (prevTabs.some((tab) => tab.src === data.data.src)) return prevTabs;
+      return [...prevTabs, data.data];
+    });
+    setActiveImageTabId(data.data.src);
+    setContent('cloth');
   };
 
   return (
