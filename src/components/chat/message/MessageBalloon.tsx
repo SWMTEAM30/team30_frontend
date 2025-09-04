@@ -2,24 +2,24 @@ import { getChatProduct } from '@/api/chatAPI';
 import MessageParser from '@/components/chat/message/MessageParser';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
-import { imageTabsAtom, activeImageTabIdAtom, contentAtom } from '@/atoms/chatAtoms';
+import { activeClosetClothIdAtom, contentAtom, closetAtom } from '@/atoms/chatAtoms';
 import { useAtom, useSetAtom } from 'jotai';
 
 export default function MessageBalloon({ message }: { message: Message }) {
   const isUserId = !!message.user;
 
-  const [imageTabs, setImageTabs] = useAtom(imageTabsAtom);
-  const [activeImageTabId, setActiveImageTabId] = useAtom(activeImageTabIdAtom);
+  const [closet, setCloset] = useAtom(closetAtom);
+  const [activeClosetClothId, setActiveClosetClothId] = useAtom(activeClosetClothIdAtom);
   const setContent = useSetAtom(contentAtom);
 
-  const handleOpenImageTab = async (product: Product) => {
+  const handleOpenCloset = async (product: Product) => {
     const data = await getChatProduct(product);
     if (data.status == 'fail') return;
-    setImageTabs((prevTabs) => {
-      if (prevTabs.some((tab) => tab.src === data.data.src)) return prevTabs;
+    setCloset((prevTabs) => {
+      if (prevTabs.some((tab) => tab.id === data.data.id)) return prevTabs;
       return [...prevTabs, data.data];
     });
-    setActiveImageTabId(data.data.src);
+    setActiveClosetClothId(data.data.id);
     setContent('cloth');
   };
 
@@ -52,7 +52,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
                     src={product.product_url}
                     alt={product.product_id}
                     className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
-                    onClick={() => handleOpenImageTab(product)}
+                    onClick={() => handleOpenCloset(product)}
                   />
                 ))}
           </div>

@@ -12,7 +12,7 @@ export default function ChatPanel() {
     <div className={`flex flex-col h-full w-full bg-beige border-l border-navy-200`}>
       <ChatPanelHeader />
       <div className="h-[calc(100vh-5rem)]">
-        {panel == 'closet' && <ClosetPanel tabs={[]} />}
+        {panel == 'closet' && <ClosetPanel />}
         {panel == 'fitting' && <FittingPanel />}
       </div>
     </div>

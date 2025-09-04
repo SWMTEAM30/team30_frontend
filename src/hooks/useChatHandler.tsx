@@ -7,12 +7,12 @@ import {
   currentChatIdAtom,
   isAIRespondingAtom,
   activePanelTypeAtom,
-  imageTabsAtom,
   wikiTabsAtom,
-  activeImageTabIdAtom,
   activeWikiTabIdAtom,
   isSidebarOpenAtom,
   messagesAtomFamily,
+  closetAtom,
+  activeClosetClothIdAtom,
 } from '@/atoms/chatAtoms';
 import { useCallback, useEffect } from 'react';
 import { useChatRooms } from '@/queries/useChatRoom';
@@ -39,9 +39,9 @@ export function useChatHandlers() {
   const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom);
 
   const [activePanelType, setActivePanelType] = useAtom(activePanelTypeAtom);
-  const [imageTabs, setImageTabs] = useAtom(imageTabsAtom);
+  const [closet, setCloset] = useAtom(closetAtom);
   const [wikiTabs, setWikiTabs] = useAtom(wikiTabsAtom);
-  const [activeImageTabId, setActiveImageTabId] = useAtom(activeImageTabIdAtom);
+  const [activeClosetClothId, setActiveClosetClothId] = useAtom(activeClosetClothIdAtom);
   const [activeWikiTabId, setActiveWikiTabId] = useAtom(activeWikiTabIdAtom);
 
   const user = useAtomValue(userAtom);
@@ -110,14 +110,14 @@ export function useChatHandlers() {
     (targetTabId: string) => {
       // ✨ if 블록 안에서는 모든 변수가 'image' 관련 타입임이 보장됩니다.
       if (activePanelType === 'image') {
-        const remainingTabs = imageTabs.filter((tab) => tab.src !== targetTabId);
-        setImageTabs(remainingTabs);
+        const remainingTabs = closet.filter((tab) => tab.url !== targetTabId);
+        setCloset(remainingTabs);
 
-        if (activeImageTabId === targetTabId) {
+        if (activeClosetClothId === targetTabId) {
           if (remainingTabs.length > 0) {
-            setActiveImageTabId(remainingTabs[remainingTabs.length - 1].src);
+            setActiveClosetClothId(remainingTabs[remainingTabs.length - 1].url);
           } else {
-            setActiveImageTabId(null);
+            setActiveClosetClothId(null);
             setActivePanelType(null);
           }
         }
@@ -139,10 +139,10 @@ export function useChatHandlers() {
     },
     [
       activePanelType,
-      imageTabs,
-      setImageTabs,
-      activeImageTabId,
-      setActiveImageTabId,
+      closet,
+      setCloset,
+      activeClosetClothId,
+      setActiveClosetClothId,
       wikiTabs,
       setWikiTabs,
       activeWikiTabId,

@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAtomValue } from 'jotai';
-import { activeImageTabIdAtom, imageTabsAtom } from '@/atoms/chatAtoms';
+import { activeClosetClothIdAtom, closetAtom } from '@/atoms/chatAtoms';
 
 export default function ImagePanel() {
-  const imageTabs = useAtomValue(imageTabsAtom);
-  const activeImageTabId = useAtomValue(activeImageTabIdAtom);
-  const activeTabData = imageTabs.find((tab) => tab.src === activeImageTabId);
+  const closet = useAtomValue(closetAtom);
+  const activeClosetClothId = useAtomValue(activeClosetClothIdAtom);
+  const activeTabData = closet.find((tab) => tab.id === activeClosetClothId);
   if (!activeTabData) return null;
   return (
     <div className="h-full bg-beige dark:bg-gray-800 overflow-y-auto">
@@ -20,7 +20,7 @@ export default function ImagePanel() {
         {/* 이미지 */}
         <div className="mb-4 flex items-center justify-center min-h-[200px]">
           <Image
-            src={activeTabData.src}
+            src={activeTabData.url}
             alt={activeTabData.name}
             width={288}
             height={384}
@@ -32,7 +32,7 @@ export default function ImagePanel() {
         <div className="space-y-4 max-w-[288px] mx-auto">
           <div>
             <h3 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">{activeTabData.name}</h3>
-            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">{activeTabData.content.content}</p>
+            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">{activeTabData.description}</p>
           </div>
 
           {/* 태그 */}
@@ -54,7 +54,7 @@ export default function ImagePanel() {
         </div>
 
         <div className="pt-auto mt-8">
-          <Link href={`https://www.musinsa.com/products/${activeTabData.content.product_id}`} target="_blank">
+          <Link href={`https://www.musinsa.com/products/${activeTabData.id}`} target="_blank">
             <button className="w-full btn rounded-md p-5 bg-beige text-blue text-xl font-bold">
               구매페이지로 이동하기
             </button>

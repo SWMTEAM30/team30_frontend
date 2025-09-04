@@ -1,77 +1,32 @@
+import { activeCodinationIdAtom, closetAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
 import { cn } from '@/lib/utils';
+import { useAtom, useSetAtom } from 'jotai';
 import Image from 'next/image';
 import { useState } from 'react';
 
-interface ClothingItem {
-  id: string;
-  name: string;
-  image: string;
-  isSelected?: boolean;
-}
-
-// 샘플 옷 데이터
-const sampleClothes: ClothingItem[] = [
-  {
-    id: '1',
-    name: '베이직 티셔츠',
-    image: '/cloth1.jpg',
-  },
-  {
-    id: '2',
-    name: '데님 팬츠',
-    image: '/cloth2.jpg',
-  },
-  {
-    id: '3',
-    name: '옥스포드 셔츠',
-    image: '/cloth3.jpg',
-  },
-  {
-    id: '4',
-    name: '슬랙스',
-    image: '/cloth4.jpg',
-  },
-  {
-    id: '5',
-    name: '후드티',
-    image: '/cloth5.jpg',
-  },
-  {
-    id: '6',
-    name: '레깅스',
-    image: '/cloth6.jpg',
-  },
-  {
-    id: '7',
-    name: '블라우스',
-    image: '/cloth7.jpg',
-  },
-  {
-    id: '8',
-    name: '미디 스커트',
-    image: '/cloth8.jpg',
-  },
-  {
-    id: '9',
-    name: '니트 베스트',
-    image: '/cloth9.jpg',
-  },
-];
-
-function ClothingCard({ item, isSelected, onClick }: { item: ClothingItem; isSelected: boolean; onClick: () => void }) {
+function ClothingCard({
+  item,
+  codination,
+  onClick,
+}: {
+  item: ClosetCloth;
+  codination: Codination;
+  onClick: () => void;
+}) {
+  const isSelected = codination.items.some((e) => e.id == item.id);
   return (
     <div
       onClick={onClick}
       className={cn(
-        'relative bg-beige-200 border-2 cursor-pointer transition-all duration-200 hover:shadow-md group',
+        'h-128 flex flex-col relative  bg-beige-200 border-2 cursor-pointer transition-all duration-200 hover:shadow-md group',
         isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-blue-100 hover:border-blue-300',
       )}
     >
       {/* 이미지 */}
-      <div className="relative aspect-square w-full overflow-hidden">
+      <div className="relative aspect-square w-full h-full flex-grow overflow-hidden">
         <Image
-          src={item.image}
-          alt={item.name}
+          src={item.url}
+          alt={item.id}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-200"
         />
@@ -94,40 +49,53 @@ function ClothingCard({ item, isSelected, onClick }: { item: ClothingItem; isSel
 
       {/* 정보 */}
       <div className="p-3">
-        <h3 className="font-medium text-gray-900 text-sm mb-1 truncate">{item.name}</h3>
+        <h3 className="font-medium text-gray-900 text-lg mb-1 truncate">{item.name}</h3>
       </div>
     </div>
   );
 }
 
-export default function ClosetPanel({ tabs }: { tabs: string[] }) {
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-  const [filterCategory, setFilterCategory] = useState<string>('전체');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+export default function ClosetPanel() {
+  const setPanel = useSetAtom(panelAtom);
+  const [closet, setCloset] = useAtom(closetAtom);
+  const [codinations, setCodinations] = useAtom(codinationsAtom);
+  const [activeCodinationId, setActiveCodinationId] = useAtom(activeCodinationIdAtom);
+  const [codination, setCodination] = useState<Codination>({ id: activeCodinationId, items: [] });
 
-  const handleItemClick = (itemId: string) => {
-    const newSelected = new Set(selectedItems);
-    if (newSelected.has(itemId)) {
-      newSelected.delete(itemId);
-    } else {
-      newSelected.add(itemId);
-    }
-    setSelectedItems(newSelected);
+  const handleItemClick = (item: ClosetCloth) => {
+    setCodination((prev) => {
+      const newItems = prev.items.filter((e) => e.id != item.id);
+      return { id: activeCodinationId, items: [...newItems, item] };
+    });
+  };
+
+  const handleSubmitFitting = () => {
+    setPanel('fitting');
+    setActiveCodinationId((prev) => prev + 1);
+    setCodinations((prev) => {
+      const newCodinations = prev.filter((e) => e.id != codination.id);
+      return [...newCodinations, codination];
+    });
   };
 
   return (
     <div className="h-full flex flex-col">
-      <div className="overflow-y-auto p-4 grid grid-cols-3 gap-3">
-        {sampleClothes.map((item) => (
-          <ClothingCard
-            key={item.id}
-            item={item}
-            isSelected={selectedItems.has(item.id)}
-            onClick={() => handleItemClick(item.id)}
-          />
-        ))}
+      <div className="overflow-y-auto p-4 h-11/12">
+        <div className="grid grid-cols-3 gap-3 ">
+          {closet.map((item, key) => (
+            <ClothingCard key={key} item={item} codination={codination} onClick={() => handleItemClick(item)} />
+          ))}
+        </div>
       </div>
-      <button className="h-1/12 btn bg-navy text-2xl text-white">피팅하기</button>
+      <button
+        className={`cursor-pointer h-1/12 btn bg-navy text-2xl text-white`}
+        disabled={false}
+        onClick={() => {
+          handleSubmitFitting();
+        }}
+      >
+        피팅하기
+      </button>
     </div>
   );
 }

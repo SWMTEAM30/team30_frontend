@@ -9,13 +9,13 @@ export const isSidebarOpenAtom = atom<boolean>(false);
 
 export const contentAtom = atom<'chat' | 'cloth'>('chat');
 export const panelAtom = atom<'closet' | 'fitting'>('fitting');
-export const codinationsAtom = atom<any[]>([]);
-export const activeCodiAtom = atom<any>(undefined);
+export const codinationsAtom = atom<Codination[]>([]);
+export const activeCodinationIdAtom = atom<number>(0);
 
 export const activePanelTypeAtom = atom<'image' | 'wiki' | 'fitting' | null>(null);
-export const imageTabsAtom = atom<MessageImage[]>([]);
+export const closetAtom = atom<ClosetCloth[]>([]);
 export const wikiTabsAtom = atom<MessageWiki[]>([]);
-export const activeImageTabIdAtom = atom<string | null>(null);
+export const activeClosetClothIdAtom = atom<string | null>(null);
 export const activeWikiTabIdAtom = atom<string | null>(null);
 
 export const messagesAtomFamily = atomFamily((chatId: number | null) => atom<Message[]>([]));

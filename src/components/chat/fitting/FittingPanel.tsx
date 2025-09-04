@@ -1,10 +1,11 @@
 import Image from 'next/image';
 import { useAtom } from 'jotai';
-import { activeCodiAtom } from '@/atoms/chatAtoms';
+import { activeCodinationIdAtom, codinationsAtom } from '@/atoms/chatAtoms';
 import ChatPanelCodination from '@/components/chat/ChatPanelCodination';
 
 export default function FittingPanel() {
-  const [codination, setCodination] = useAtom(activeCodiAtom);
+  const [codinations, setCodinations] = useAtom(codinationsAtom);
+  const [activeCodinationId, setActiveCodinationId] = useAtom(activeCodinationIdAtom);
 
   return (
     <>
@@ -21,8 +22,8 @@ export default function FittingPanel() {
             <h3 className="text-4xl font-bold text-navy-500 dark:text-white my-6">구성 아이템</h3>
             <h4 className="text-2xl font-semibold text-navy-500 dark:text-white mt-8 mb-4"></h4>
             <div className="space-y-2">
-              {codination
-                ? codination.items.map((item: any, index: number) => (
+              {codinations[activeCodinationId]
+                ? codinations[activeCodinationId].items.map((item: any, index: number) => (
                     <div key={index} className="flex-col justify-between p-2 bg-beige-500">
                       <Image src={'/cloth1.jpg'} className="h-full" alt={''} width={64} height={64} />
                       <p className="font-medium text-navy-500 dark:text-white text-lg">{item.name}</p>
