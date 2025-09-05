@@ -10,12 +10,16 @@ export const isSidebarOpenAtom = atom<boolean>(false);
 export const contentAtom = atom<'chat' | 'cloth'>('chat');
 export const panelAtom = atom<'closet' | 'fitting'>('fitting');
 export const codinationsAtom = atom<Codination[]>([]);
-export const activeCodinationIdAtom = atom<number>(0);
+export const activeCodinationAtom = atom<Codination>({
+  id: new Date().toString(),
+  fitting_image: null,
+  items: [],
+});
 
 export const activePanelTypeAtom = atom<'image' | 'wiki' | 'fitting' | null>(null);
 export const closetAtom = atom<ClosetCloth[]>([]);
 export const wikiTabsAtom = atom<MessageWiki[]>([]);
-export const activeClosetClothIdAtom = atom<string | null>(null);
+export const activeClothAtom = atom<ClosetCloth | null>(null);
 export const activeWikiTabIdAtom = atom<string | null>(null);
 
 export const messagesAtomFamily = atomFamily((chatId: number | null) => atom<Message[]>([]));

@@ -2,24 +2,18 @@ import { getChatProduct } from '@/api/chatAPI';
 import MessageParser from '@/components/chat/message/MessageParser';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
-import { activeClosetClothIdAtom, contentAtom, closetAtom } from '@/atoms/chatAtoms';
+import { activeClothAtom, contentAtom } from '@/atoms/chatAtoms';
 import { useAtom, useSetAtom } from 'jotai';
 
 export default function MessageBalloon({ message }: { message: Message }) {
   const isUserId = !!message.user;
-
-  const [closet, setCloset] = useAtom(closetAtom);
-  const [activeClosetClothId, setActiveClosetClothId] = useAtom(activeClosetClothIdAtom);
+  const [activeCloth, setActiveCloth] = useAtom(activeClothAtom);
   const setContent = useSetAtom(contentAtom);
 
   const handleOpenCloset = async (product: Product) => {
     const data = await getChatProduct(product);
     if (data.status == 'fail') return;
-    setCloset((prevTabs) => {
-      if (prevTabs.some((tab) => tab.id === data.data.id)) return prevTabs;
-      return [...prevTabs, data.data];
-    });
-    setActiveClosetClothId(data.data.id);
+    setActiveCloth(data.data);
     setContent('cloth');
   };
 
@@ -40,7 +34,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
         <p className="text-xs opacity-70 mt-2">{message.createdAt.toLocaleTimeString()}</p>
         {/* AI 메시지에만 사진 첨부 */}
         {!isUserId && (
-          <div className="mt-4 flex flex-row gap-2 overflow-x-hidden">
+          <div className="mt-4 flex flex-row gap-2 overflow-x-auto overflow-y-hidden">
             {message.products &&
               message.products
                 .filter((product) => !!product.product_url)
