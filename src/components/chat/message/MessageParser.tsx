@@ -2,24 +2,10 @@
 
 import { useMemo } from 'react';
 import { useWikiData } from '@/queries/useWiki';
-import { activePanelTypeAtom, wikiTabsAtom, activeWikiTabIdAtom } from '@/atoms/chatAtoms';
-import { useAtom } from 'jotai';
+import WikiModal from '@/components/chat/message/WikiModal';
 
 export default function MessageParser({ text }: { text: string }) {
   const { data: wikiIndex, isLoading } = useWikiData();
-
-  const [activePanelType, setActivePanelType] = useAtom(activePanelTypeAtom);
-  const [wikiTabs, setWikiTabs] = useAtom(wikiTabsAtom);
-  const [activeWikiTabId, setActiveWikiTabId] = useAtom(activeWikiTabIdAtom);
-
-  const handleOpenTab = (data: PanelData) => {
-    setWikiTabs((prevTabs) => {
-      if (prevTabs.some((tab) => tab.src === data.src)) return prevTabs;
-      return [...prevTabs, data];
-    });
-    setActiveWikiTabId(data.src);
-    setActivePanelType('wiki');
-  };
 
   const parsedText = useMemo(() => {
     if (isLoading || !wikiIndex) return [text];
@@ -37,13 +23,9 @@ export default function MessageParser({ text }: { text: string }) {
 
         if (matchedWiki) {
           return (
-            <span
-              key={index}
-              onClick={() => handleOpenTab(matchedWiki)}
-              className="font-semibold text-blue-600 hover:underline cursor-pointer"
-            >
-              {part}
-            </span>
+            <WikiModal key={index} wiki={matchedWiki}>
+              <span className="font-semibold text-blue-600 hover:underline cursor-pointer">{part}</span>
+            </WikiModal>
           );
         }
         return <span key={index}>{part}</span>;

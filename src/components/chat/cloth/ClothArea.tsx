@@ -1,11 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { activeClothAtom, closetAtom, contentAtom, panelAtom } from '@/atoms/chatAtoms';
+import { activeClothAtom, closetAtom, panelAtom } from '@/atoms/chatAtoms';
 
 export default function ClothArea() {
   const [closet, setCloset] = useAtom(closetAtom);
-  const setContent = useSetAtom(contentAtom);
   const setPanel = useSetAtom(panelAtom);
   const activeCloth = useAtomValue(activeClothAtom);
 
@@ -14,7 +13,6 @@ export default function ClothArea() {
       if (!activeCloth || prevTabs.some((tab) => tab.id === activeCloth.id)) return prevTabs;
       return [...prevTabs, activeCloth];
     });
-    setContent('chat');
     setPanel('closet');
   };
 

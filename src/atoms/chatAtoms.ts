@@ -7,8 +7,7 @@ export const currentChatIdAtom = atom<number | null>(null);
 export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''>('');
 export const isSidebarOpenAtom = atom<boolean>(false);
 
-export const contentAtom = atom<'chat' | 'cloth'>('chat');
-export const panelAtom = atom<'closet' | 'fitting'>('fitting');
+export const panelAtom = atom<'chat' | 'closet' | 'fitting'>('closet');
 export const codinationsAtom = atom<Codination[]>([]);
 export const activeCodinationAtom = atom<Codination>({
   id: new Date().toString(),

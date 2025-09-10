@@ -6,14 +6,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { ChangeEvent, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { inputValueAtom, inputProductAtom, isAIRespondingAtom, contentAtom } from '@/atoms/chatAtoms';
+import { inputValueAtom, inputProductAtom, isAIRespondingAtom, panelAtom } from '@/atoms/chatAtoms';
 import { useChatHandlers } from '@/hooks/useChatHandler';
 import { postChatUpload } from '@/api/chatAPI';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
-  const setContent = useSetAtom(contentAtom);
+  const setPanel = useSetAtom(panelAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
   const { sendMsg } = useChatHandlers();
 
@@ -22,7 +22,7 @@ export default function ChatInputBox() {
 
   const handleSendMessage = useCallback(() => {
     if (!inputValue.trim()) return;
-    setContent('chat');
+    setPanel('chat');
     sendMsg(inputValue, inputProduct);
   }, [inputValue, inputProduct, sendMsg, setInputValue, setInputProduct]);
 

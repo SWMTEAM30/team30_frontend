@@ -1,21 +1,10 @@
-import { getChatProduct } from '@/api/chatAPI';
 import MessageParser from '@/components/chat/message/MessageParser';
+import PhotoModal from '@/components/chat/message/PhotoModal';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
-import { activeClothAtom, contentAtom } from '@/atoms/chatAtoms';
-import { useAtom, useSetAtom } from 'jotai';
 
 export default function MessageBalloon({ message }: { message: Message }) {
   const isUserId = !!message.user;
-  const [activeCloth, setActiveCloth] = useAtom(activeClothAtom);
-  const setContent = useSetAtom(contentAtom);
-
-  const handleOpenCloset = async (product: Product) => {
-    const data = await getChatProduct(product);
-    if (data.status == 'fail') return;
-    setActiveCloth(data.data);
-    setContent('cloth');
-  };
 
   return (
     <div className={`flex ${isUserId ? 'justify-end' : 'justify-start'}`}>
@@ -36,19 +25,17 @@ export default function MessageBalloon({ message }: { message: Message }) {
         {!isUserId && (
           <div className="mt-4 flex flex-row gap-2 overflow-x-auto overflow-y-hidden">
             {message.products &&
-              message.products
-                .filter((product) => !!product.product_url)
-                .map((product, key) => (
+              message.products.map((product, key) => (
+                <PhotoModal key={key} product={product}>
                   <Image
-                    key={key}
                     width={300}
                     height={400}
                     src={product.product_url}
                     alt={product.product_id}
                     className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
-                    onClick={() => handleOpenCloset(product)}
                   />
-                ))}
+                </PhotoModal>
+              ))}
           </div>
         )}
       </div>
