@@ -11,16 +11,19 @@ interface WikiModalProps {
 
 export default function WikiModal({ wiki, children }: WikiModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const handleOpenChange = useCallback(async (open: boolean) => {
-    if (open) {
-      // 모달을 열 때 API 호출하여 상품 데이터 가져오기
-      setIsOpen(true);
-      console.log(wiki);
-    } else {
-      // 모달을 닫을 때
-      setIsOpen(false);
-    }
-  }, []);
+  const handleOpenChange = useCallback(
+    async (open: boolean) => {
+      if (open) {
+        // 모달을 열 때 API 호출하여 상품 데이터 가져오기
+        setIsOpen(true);
+        console.log(wiki);
+      } else {
+        // 모달을 닫을 때
+        setIsOpen(false);
+      }
+    },
+    [wiki],
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>

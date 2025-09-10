@@ -6,13 +6,8 @@ import {
   inputProductAtom,
   currentChatIdAtom,
   isAIRespondingAtom,
-  activePanelTypeAtom,
-  wikiTabsAtom,
-  activeWikiTabIdAtom,
   isSidebarOpenAtom,
   messagesAtomFamily,
-  closetAtom,
-  activeClothAtom,
 } from '@/atoms/chatAtoms';
 import { useCallback, useEffect } from 'react';
 import { useChatRooms } from '@/queries/useChatRoom';

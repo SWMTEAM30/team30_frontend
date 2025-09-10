@@ -44,7 +44,7 @@ export default function PhotoModal({ product, children }: PhotoModalProps) {
     });
     setPanel('closet');
     setIsOpen(false);
-  }, [setCloset, setCloset, setPanel, activeCloth]);
+  }, [setCloset, setPanel, activeCloth]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>

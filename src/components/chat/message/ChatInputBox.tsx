@@ -24,7 +24,7 @@ export default function ChatInputBox() {
     if (!inputValue.trim()) return;
     setPanel('chat');
     sendMsg(inputValue, inputProduct);
-  }, [inputValue, inputProduct, sendMsg, setInputValue, setInputProduct]);
+  }, [inputValue, inputProduct, sendMsg, setPanel]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
