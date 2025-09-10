@@ -1,8 +1,8 @@
-import { activePanelTypeAtom, currentChatIdAtom, isSidebarOpenAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/components/chat/area/ChatContextProvider';
+import { currentChatIdAtom, isSidebarOpenAtom } from '@/atoms/chatAtoms';
+import { useChatHandlers } from '@/hooks/useChatHandler';
 import { useChatRooms } from '@/queries/useChatRoom';
 import { cn } from '@/lib/utils';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { Plus, MessageSquare, Settings } from 'lucide-react';
 
 export default function SidebarContent({ className = '' }: { className?: string }) {

@@ -1,16 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useChatHandlers } from '@/components/chat/area/ChatContextProvider';
 import { useWikiData } from '@/queries/useWiki';
+import WikiModal from '@/components/chat/modal/WikiModal';
 
-interface MessageParserProps {
-  text: string;
-}
-
-export default function MessageParser({ text }: MessageParserProps) {
+export default function MessageParser({ text }: { text: string }) {
   const { data: wikiIndex, isLoading } = useWikiData();
-  const { handleOpenTab } = useChatHandlers();
 
   const parsedText = useMemo(() => {
     if (isLoading || !wikiIndex) return [text];
@@ -28,13 +23,9 @@ export default function MessageParser({ text }: MessageParserProps) {
 
         if (matchedWiki) {
           return (
-            <span
-              key={index}
-              onClick={() => handleOpenTab(matchedWiki, 'wiki')}
-              className="font-semibold text-blue-600 hover:underline cursor-pointer"
-            >
-              {part}
-            </span>
+            <WikiModal key={index} wiki={matchedWiki}>
+              <span className="font-semibold text-blue-600 hover:underline cursor-pointer">{part}</span>
+            </WikiModal>
           );
         }
         return <span key={index}>{part}</span>;

@@ -7,11 +7,12 @@ export const currentChatIdAtom = atom<number | null>(null);
 export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''>('');
 export const isSidebarOpenAtom = atom<boolean>(false);
 
-export const activePanelTypeAtom = atom<'image' | 'wiki' | 'fitting' | null>(null);
-export const imageTabsAtom = atom<MessageImage[]>([]);
-export const wikiTabsAtom = atom<MessageWiki[]>([]);
-export const activeImageTabIdAtom = atom<string | null>(null);
-export const activeWikiTabIdAtom = atom<string | null>(null);
+export const panelAtom = atom<'chat' | 'closet' | 'fitting'>('closet');
+export const codinationsAtom = atom<Codination[]>([]);
+export const activeCodinationAtom = atom<Codination | null>(null);
+export const closetCodinationAtom = atom<Codination | null>(null);
+export const closetAtom = atom<ClosetCloth[]>([]);
+export const activeClothAtom = atom<ClosetCloth | null>(null);
 
 export const messagesAtomFamily = atomFamily((chatId: number | null) => atom<Message[]>([]));
 export const examplesAtomFamily = atomFamily((chatId: number | null) =>

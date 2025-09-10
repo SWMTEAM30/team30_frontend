@@ -1,11 +1,12 @@
-import ExampleSuggestions from '@/components/chat/area/ExampleSuggestion';
+import ExampleSuggestions from '@/components/chat/message/ExampleSuggestion';
+import Image from 'next/image';
 
 export default function EmptyChatStart() {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-4">
       {/* 로고 */}
       <div className="mb-8">
-        <img src="/TFT_icon.svg" alt="The First Take" className="w-24 h-24 mx-auto mb-4" />
+        <Image src="/TFT_icon.svg" alt="The First Take" width={96} height={96} className="w-24 h-24 mx-auto mb-4" />
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">The First Take</h1>
         <p className="text-lg text-gray-600 dark:text-gray-300">패션 AI 어시스턴트</p>
       </div>

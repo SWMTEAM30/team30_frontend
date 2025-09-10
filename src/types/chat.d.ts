@@ -38,6 +38,15 @@ interface MessageImage extends PanelData {
     content: string;
   };
 }
+
+interface ClosetCloth {
+  id: string;
+  name: string;
+  url: string;
+  description: string;
+  tags: string[];
+}
+
 interface MessageWiki extends PanelData {
   content: MDXRemoteSerializeResult<Record<string, unknown>, Record<string, unknown>>;
 }
@@ -56,4 +65,10 @@ type RoomHistory = {
 
 type RoomIdMessages = {
   messages: Message[];
+};
+
+type Codination = {
+  id: string;
+  fitting_image: string | null;
+  cloths: ClosetCloth[];
 };
