@@ -59,7 +59,7 @@ export default function PhotoModal({ product, children }: PhotoModalProps) {
                   src={activeCloth.url}
                   alt={activeCloth.id}
                   fill
-                  className="object-contain rounded-lg"
+                  className="object-cover rounded-lg"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
                 />
               </div>

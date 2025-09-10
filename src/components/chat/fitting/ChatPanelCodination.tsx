@@ -39,7 +39,7 @@ export default function ChatPanelCodination() {
           <div className="p-4 h-1/7 border-b border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-slate-900 dark:text-white text-lg">
-                {codination.items.length}개 아이템
+                {codination.cloths.length}개 아이템
               </h3>
               <Button
                 size="icon"
@@ -55,7 +55,7 @@ export default function ChatPanelCodination() {
           {/* 아이템 리스트 */}
           <div className="h-5/7 flex-1 p-3 overflow-y-auto">
             <div className="space-y-2">
-              {codination.items.map((product: ClosetCloth, key: number) => (
+              {codination.cloths.map((product: ClosetCloth, key: number) => (
                 <div key={key} className="flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg">
                   {/* 아이템 이미지 */}
                   <Image className="w-16 h-16" src={product.url} alt={product.name} width={16} height={16} />
@@ -87,5 +87,3 @@ export default function ChatPanelCodination() {
     </div>
   );
 }
-
-

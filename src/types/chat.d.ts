@@ -70,5 +70,5 @@ type RoomIdMessages = {
 type Codination = {
   id: string;
   fitting_image: string | null;
-  items: ClosetCloth[];
+  cloths: ClosetCloth[];
 };

@@ -1,5 +1,5 @@
 import MessageParser from '@/components/chat/message/MessageParser';
-import PhotoModal from '@/components/chat/message/PhotoModal';
+import ClothModal from '@/components/chat/modal/ClothModal';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
 
@@ -26,7 +26,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
           <div className="mt-4 flex flex-row gap-2 overflow-x-auto overflow-y-hidden">
             {message.products &&
               message.products.map((product, key) => (
-                <PhotoModal key={key} product={product}>
+                <ClothModal key={key} product={product}>
                   <Image
                     width={300}
                     height={400}
@@ -34,7 +34,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
                     alt={product.product_id}
                     className="w-72 h-90 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
                   />
-                </PhotoModal>
+                </ClothModal>
               ))}
           </div>
         )}

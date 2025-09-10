@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useWikiData } from '@/queries/useWiki';
-import WikiModal from '@/components/chat/message/WikiModal';
+import WikiModal from '@/components/chat/modal/WikiModal';
 
 export default function MessageParser({ text }: { text: string }) {
   const { data: wikiIndex, isLoading } = useWikiData();
