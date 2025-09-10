@@ -9,11 +9,8 @@ export const isSidebarOpenAtom = atom<boolean>(false);
 
 export const panelAtom = atom<'chat' | 'closet' | 'fitting'>('closet');
 export const codinationsAtom = atom<Codination[]>([]);
-export const activeCodinationAtom = atom<Codination>({
-  id: new Date().toString(),
-  fitting_image: null,
-  cloths: [],
-});
+export const activeCodinationAtom = atom<Codination | null>(null);
+export const closetCodinationAtom = atom<Codination | null>(null);
 export const closetAtom = atom<ClosetCloth[]>([]);
 export const activeClothAtom = atom<ClosetCloth | null>(null);
 

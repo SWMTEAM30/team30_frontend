@@ -1,96 +1,49 @@
-import { activeCodinationAtom, closetAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
-import { cn } from '@/lib/utils';
-import { useAtom, useSetAtom } from 'jotai';
-import Image from 'next/image';
-
-function ClothCard({ cloth }: { cloth: ClosetCloth }) {
-  const [activeCodination, setActiveCodination] = useAtom(activeCodinationAtom);
-  const isSelected = activeCodination.cloths.some((c) => c.id == cloth.id);
-  const handleItemClick = () => {
-    if (!isSelected)
-      setActiveCodination((prev) => {
-        return {
-          id: prev.id,
-          fitting_image: prev.fitting_image,
-          cloths: [...prev.cloths, cloth],
-        };
-      });
-    else
-      setActiveCodination((prev) => {
-        return {
-          id: prev.id,
-          fitting_image: prev.fitting_image,
-          cloths: prev.cloths.filter((c) => c.id !== cloth.id),
-        };
-      });
-  };
-  return (
-    <div
-      onClick={() => handleItemClick()}
-      className={cn(
-        'h-128 flex flex-col relative  bg-beige-200 border-2 cursor-pointer transition-all duration-200 hover:shadow-md group',
-        isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-blue-100 hover:border-blue-300',
-      )}
-    >
-      {/* 이미지 */}
-      <div className="relative aspect-square w-full h-full flex-grow overflow-hidden">
-        <Image
-          src={cloth.url}
-          alt={cloth.id}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-200"
-        />
-
-        {/* 선택 상태 오버레이 */}
-        {isSelected && (
-          <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 정보 */}
-      <div className="p-3">
-        <h3 className="font-medium text-gray-900 text-lg mb-1 truncate">{cloth.name}</h3>
-      </div>
-    </div>
-  );
-}
+import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
+import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 export default function ClosetPanel() {
   const setPanel = useSetAtom(panelAtom);
-  const [closet, setCloset] = useAtom(closetAtom);
-  const [codinations, setCodinations] = useAtom(codinationsAtom);
-  const [activeCodination, setActiveCodination] = useAtom(activeCodinationAtom);
+  const closet = useAtomValue(closetAtom);
+  const setCodinations = useSetAtom(codinationsAtom);
+  const setActiveCodination = useSetAtom(activeCodinationAtom);
+  const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
+  const isDisabled = !closetCodination || closetCodination.cloths.length == 0;
 
   const handleSubmitFitting = () => {
+    if (isDisabled) return;
     setPanel('fitting');
+    setActiveCodination(closetCodination);
+    setClosetCodination(null);
     setCodinations((prev) => {
-      const newCodinations = prev.filter((e) => e.id !== activeCodination.id);
-      return [...newCodinations, activeCodination];
+      if (!prev) return [closetCodination];
+      const newCodinations = prev.filter((e) => e.id !== closetCodination.id);
+      return [...newCodinations, closetCodination];
     });
   };
 
   return (
     <div className="h-full flex flex-col">
       <div className="overflow-y-auto p-4 h-11/12">
-        <div className="grid grid-cols-3 gap-3 ">
-          {closet.map((cloth, key) => (
-            <ClothCard key={key} cloth={cloth} />
-          ))}
-        </div>
+        {closet.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">옷장이 비어있습니다</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">AI와 대화하여 패션 아이템을 옷장에 추가해보세요</p>
+            <p className="text-sm text-gray-500 dark:text-gray-500">
+              추천받은 아이템을 클릭하면 옷장에 자동으로 추가됩니다
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-3 ">
+            {closet.map((cloth, key) => (
+              <ClosetClothCard key={key} cloth={cloth} />
+            ))}
+          </div>
+        )}
       </div>
       <button
         className={`cursor-pointer h-1/12 btn bg-navy text-2xl text-white disabled:bg-blue-50`}
-        disabled={activeCodination.cloths.length == 0}
+        disabled={isDisabled}
         onClick={() => {
           handleSubmitFitting();
         }}
