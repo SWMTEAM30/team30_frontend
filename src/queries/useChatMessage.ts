@@ -1,8 +1,8 @@
 import { getChatReceive, postChatSend } from '@/api/chatAPI';
-import { currentChatIdAtom, isAIRespondingAtom, messagesAtomFamily } from '@/atoms/chatAtoms';
+import { currentChatIdAtom, isAIRespondingAtom, messagesAtom } from '@/atoms/chatAtoms';
 import { queryKeys } from '@/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useAtomValue, useStore } from 'jotai';
+import { useAtom, useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useChatMessage = () => {
@@ -41,12 +41,12 @@ export const useChatMessage = () => {
     else if (isAIResponding == 'color') setIsAIResponding('codi');
     else if (isAIResponding == 'codi') setIsAIResponding('');
 
-    store.set(messagesAtomFamily(chatId), (oldMessages = []) => {
+    store.set(messagesAtom, (oldMessages = []) => {
       const newMessage = queryResult.data;
       if (oldMessages.some((msg) => msg.id === newMessage.id)) return oldMessages;
       return [...oldMessages, newMessage];
     });
-  }, [queryResult, status, queryClient, chatId]);
+  }, [queryResult, status, queryClient]);
 
   // 메시지 보내기 mutation
   const { mutate, isPending: isSending } = useMutation({
@@ -54,7 +54,7 @@ export const useChatMessage = () => {
     onSuccess: (responseFromServer, newMessage) => {
       if (responseFromServer.status === 'fail') return;
       const newChatId = responseFromServer.data;
-      store.set(messagesAtomFamily(newChatId), (oldMessages) => [...oldMessages, newMessage]);
+      store.set(messagesAtom, (oldMessages) => [...oldMessages, newMessage]);
       if (!chatId && newChatId) {
         setChatId(newChatId);
         queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.all() });
@@ -70,7 +70,7 @@ export const useChatMessage = () => {
     (chatId: number | null, existingMessages: Message[]) => {
       if (!chatId || !existingMessages.length) return;
 
-      store.set(messagesAtomFamily(chatId), (currentMessages = []) => {
+      store.set(messagesAtom, (currentMessages = []) => {
         const existingIds = new Set(currentMessages.map((msg) => msg.id));
         const newMessages = existingMessages.filter((msg) => !existingIds.has(msg.id));
         return [...currentMessages, ...newMessages].sort(

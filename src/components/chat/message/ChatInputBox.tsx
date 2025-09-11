@@ -6,25 +6,20 @@ import { Textarea } from '@/components/ui/textarea';
 import { ChangeEvent, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { inputValueAtom, inputProductAtom, isAIRespondingAtom, panelAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/hooks/useChatHandler';
+import { inputValueAtom, inputProductAtom, panelAtom } from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
+import { useChatHandlers } from '@/hooks/useChatHandler';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
   const setPanel = useSetAtom(panelAtom);
-  const isAIResponding = useAtomValue(isAIRespondingAtom);
-  const { sendMsg } = useChatHandlers();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { sendMessage } = useChatHandlers();
+
+  const disabled = false;
 
   const handleButtonClick = () => fileInputRef.current?.click();
-
-  const handleSendMessage = useCallback(() => {
-    if (!inputValue.trim()) return;
-    setPanel('chat');
-    sendMsg(inputValue, inputProduct);
-  }, [inputValue, inputProduct, sendMsg, setPanel]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -43,6 +38,10 @@ export default function ChatInputBox() {
       console.log(newMessageImage);
       setInputProduct(newMessageImage);
     }
+  };
+
+  const handleSendMessage = async () => {
+    sendMessage(inputValue, inputProduct);
   };
 
   return (
@@ -65,7 +64,7 @@ export default function ChatInputBox() {
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="패션에 대해 마음대로 물어보세요!"
         onKeyDown={(event) => {
-          if (event.key == 'Enter' && !event.shiftKey && inputValue.trim() != '' && !isAIResponding) {
+          if (event.key == 'Enter' && !event.shiftKey && inputValue.trim() != '') {
             event.preventDefault();
             handleSendMessage();
           }
@@ -79,7 +78,7 @@ export default function ChatInputBox() {
       dark:text-white
     "
         rows={1}
-        disabled={isAIResponding.length > 0}
+        disabled={disabled}
       />
       <div className="flex space-x-5">
         <input
@@ -88,7 +87,7 @@ export default function ChatInputBox() {
           onChange={handleFileChange}
           className="hidden"
           accept="image/*"
-          disabled={isAIResponding.length > 0}
+          disabled={disabled}
         />
         <Button
           onClick={handleButtonClick}
@@ -102,13 +101,13 @@ export default function ChatInputBox() {
       transition-all duration-200
       mb-1
     "
-          disabled={isAIResponding.length > 0}
+          disabled={disabled}
         >
           <Plus />
         </Button>
         <Button
           onClick={handleSendMessage}
-          disabled={inputValue.trim() === '' || isAIResponding.length > 0}
+          disabled={inputValue.trim() === '' || disabled}
           className="
       flex-shrink-0 
       flex items-center justify-center

@@ -1,11 +1,10 @@
-import { currentChatIdAtom, examplesAtomFamily } from '@/atoms/chatAtoms';
+import { examplesAtom } from '@/atoms/chatAtoms';
 import { useChatHandlers } from '@/hooks/useChatHandler';
 import { useAtomValue } from 'jotai';
 
 export default function ExampleSuggestions() {
   const { handleExampleSelect } = useChatHandlers();
-  const currentChatId = useAtomValue(currentChatIdAtom);
-  const messageExamples = useAtomValue(examplesAtomFamily(currentChatId));
+  const messageExamples = useAtomValue(examplesAtom);
 
   return (
     <div className="mt-8 max-w-2xl mx-auto">
