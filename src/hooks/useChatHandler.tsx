@@ -16,16 +16,14 @@ import { userAtom } from '@/atoms/authAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
 import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
 
-type ChatActionsContextType = {
+export function useChatHandlers(): {
   sendMsg: (inputValue: string, products?: Product) => void;
   handleNewChat: () => void;
   handleChatSelect: (chatId: number) => void;
   handleExampleSelect: (exampleText: string) => void;
   setIsSidebarOpen: (isOpen: boolean) => void;
   addExistingMessages: (chatId: number | null, existingMessages: Message[]) => void;
-};
-
-export function useChatHandlers() {
+} {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
   const [currentChatId, setCurrentChatId] = useAtom(currentChatIdAtom);
@@ -94,7 +92,7 @@ export function useChatHandlers() {
     resetAtomState();
   }, [chatRoomError, setCurrentChatId, resetAtomState]);
 
-  const actionsValue: ChatActionsContextType = {
+  return {
     sendMsg,
     handleExampleSelect,
     handleChatSelect,
@@ -102,6 +100,4 @@ export function useChatHandlers() {
     setIsSidebarOpen,
     addExistingMessages,
   };
-
-  return actionsValue;
 }

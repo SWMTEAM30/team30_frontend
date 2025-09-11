@@ -1,13 +1,13 @@
 import ChatContent from '@/components/chat/ChatContent';
+import ChatHeader from '@/components/chat/ChatHeader';
 import ChatPanel from '@/components/chat/ChatPanel';
 
 export default function Chat() {
   return (
-    <div className="flex">
-      <div className="flex min-h-screen w-1/2">
+    <div className="flex flex-col">
+      <ChatHeader />
+      <div className="flex h-[calc(100vh-5rem)]">
         <ChatContent />
-      </div>
-      <div className="w-1/2">
         <ChatPanel />
       </div>
     </div>

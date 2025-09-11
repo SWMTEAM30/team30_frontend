@@ -2,8 +2,8 @@ import { isAIRespondingAtom } from '@/atoms/chatAtoms';
 import { messageColor } from '@/styles/chat';
 import { useAtomValue } from 'jotai';
 
-export default // AI 응답 준비 중 스피너 컴포넌트
-function AILoadingSpinner() {
+// AI 응답 준비 중 스피너 컴포넌트
+export default function AILoadingSpinner() {
   const isAIResponding = useAtomValue(isAIRespondingAtom);
   const agentnameParser = () => {
     if (isAIResponding == 'style') return '스타일 분석가';
@@ -11,6 +11,7 @@ function AILoadingSpinner() {
     if (isAIResponding == 'color') return '컬러 전문가';
     if (isAIResponding == 'codi') return '핏팅 코디네이터';
   };
+
   return (
     <>
       {/* 첫 번째 AI 스피너 */}

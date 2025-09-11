@@ -3,7 +3,7 @@
 import { useAtom, useSetAtom } from 'jotai';
 import { activeCodinationAtom, panelAtom } from '@/atoms/chatAtoms';
 
-export default function ChatPanelHeader() {
+export default function ChatHeader() {
   const [panel, setPanel] = useAtom(panelAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
 
@@ -32,6 +32,9 @@ export default function ChatPanelHeader() {
         >
           Fitting
         </button>
+      </div>
+      <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
+        U
       </div>
     </header>
   );

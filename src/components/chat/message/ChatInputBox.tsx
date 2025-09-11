@@ -16,8 +16,8 @@ export default function ChatInputBox() {
   const setPanel = useSetAtom(panelAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
   const { sendMsg } = useChatHandlers();
-
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleButtonClick = () => fileInputRef.current?.click();
 
   const handleSendMessage = useCallback(() => {
@@ -40,6 +40,7 @@ export default function ChatInputBox() {
         product_url: response.data,
         product_id: 'user',
       };
+      console.log(newMessageImage);
       setInputProduct(newMessageImage);
     }
   };

@@ -21,8 +21,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
           {isUserId ? message.content : <MessageParser text={message.content} />}
         </p>
         <p className="text-xs opacity-70 mt-2">{message.createdAt.toLocaleTimeString()}</p>
-        {/* AI 메시지에만 사진 첨부 */}
-        {!isUserId && (
+        {
           <div className="mt-4 flex flex-row gap-2 overflow-x-auto overflow-y-hidden">
             {message.products &&
               message.products.map((product, key) => (
@@ -37,7 +36,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
                 </ClothModal>
               ))}
           </div>
-        )}
+        }
       </div>
     </div>
   );
