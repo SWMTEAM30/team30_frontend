@@ -1,3 +1,5 @@
+'use client';
+
 import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
 import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';

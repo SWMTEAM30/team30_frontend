@@ -5,50 +5,59 @@ import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { ChangeEvent, useCallback, useRef } from 'react';
 import Image from 'next/image';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { inputValueAtom, inputProductAtom, panelAtom } from '@/atoms/chatAtoms';
+import { useAtom } from 'jotai';
+import { inputValueAtom, inputProductAtom } from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
-import { useChatHandlers } from '@/hooks/useChatHandler';
+import { useChatStream } from '@/queries/useChatStream';
+import { useSearchParams } from 'next/navigation';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
-  const setPanel = useSetAtom(panelAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { sendMessage } = useChatHandlers();
+  //const { sendMessage } = useChatHandlers();
+  const { mutate } = useChatStream();
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get('roomID');
 
   const disabled = false;
 
-  const handleButtonClick = () => fileInputRef.current?.click();
+  const handleButtonClick = () =>
+    useCallback(() => {
+      fileInputRef.current?.click();
+    }, [fileInputRef]);
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const formData = new FormData();
-      formData.append('file', files[0]);
-      const response = await postChatUpload(formData);
-      if (response.status === 'fail') {
-        console.error(response.message);
-        return;
+  const handleFileChange = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        const formData = new FormData();
+        formData.append('file', files[0]);
+        const response = await postChatUpload(formData);
+        if (response.status === 'fail') {
+          console.error(response.message);
+          return;
+        }
+        const newMessageImage: Product = {
+          product_url: response.data,
+          product_id: 'user',
+        };
+        console.log(newMessageImage);
+        setInputProduct(newMessageImage);
       }
-      const newMessageImage: Product = {
-        product_url: response.data,
-        product_id: 'user',
-      };
-      console.log(newMessageImage);
-      setInputProduct(newMessageImage);
-    }
-  };
+    },
+    [setInputProduct],
+  );
 
-  const handleSendMessage = async () => {
-    sendMessage(inputValue, inputProduct);
+  const handleSendMessage = () => {
+    mutate({ roomId, inputValue, products: inputProduct });
   };
 
   return (
     <div
       className="
     shrink-0
-    flex flex-col items-end gap-2 w-full max-w-7xl mx-auto 
+    flex flex-col items-end gap-2 w-full mx-auto 
     bg-white dark:bg-blue-800 
     rounded-t-2xl border border-blue-500 dark:border-blue-800 
     focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-800

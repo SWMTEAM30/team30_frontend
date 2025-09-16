@@ -1,28 +1,16 @@
 'use client';
 
-import { messagesAtom, streamingResponseAtom } from '@/atoms/chatAtoms';
+import { messagesAtom, streamingMessageAtom } from '@/atoms/chatAtoms';
 import EmptyChatStart from '@/components/chat/message/EmptyChatStart';
 import MessageBalloon from '@/components/chat/message/MessageBalloon';
-import { useChatStreamMutation } from '@/queries/useChatStream';
+import { useChatStream } from '@/queries/useChatStream';
 import { useAtom, useAtomValue } from 'jotai';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function ChatArea() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const [streamingResponse, setStreamingResponse] = useAtom(streamingResponseAtom);
+  const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
   const messages = useAtomValue(messagesAtom);
-
-  const chatMutation = useChatStreamMutation({
-    onContent: (payload) => {
-      const { agent_name, message } = payload;
-      setStreamingResponse((prev) => ({
-        ...prev,
-        [agent_name]: (prev[agent_name] || '') + message,
-      }));
-    },
-  });
-
-  const isStreaming = Object.keys(streamingResponse).length > 0;
 
   // 채팅방이 비어있고 로딩 중이 아닐 때 시작 화면 표시
   if (messages.length === 0) {
@@ -48,9 +36,12 @@ export default function ChatArea() {
                 ))}
               </>
             )}
-            {Object.entries(streamingResponse).map(([agent, content]) => (
-              <MessageBalloon key={agent} message={content} />
-            ))}
+            {Object.entries(streamingMessage).map(
+              ([agent, content]) => (
+                <span>{content}</span>
+              ),
+              //<MessageBalloon key={agent} message={content} />
+            )}
           </div>
         </div>
       </div>

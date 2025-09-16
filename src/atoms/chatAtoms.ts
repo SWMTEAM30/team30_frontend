@@ -2,9 +2,8 @@ import { atom } from 'jotai';
 
 export const inputValueAtom = atom<string>('');
 export const inputProductAtom = atom<Product | undefined>(undefined);
-export const currentChatIdAtom = atom<number | null>(null);
 export const messagesAtom = atom<Message[]>([]);
-export const streamingResponseAtom = atom<Record<string, Message>>({});
+export const streamingMessageAtom = atom<Map<string, Message>>(new Map());
 export const examplesAtom = atom<string[]>([
   '소개팅을 가야 하는 상황이야.',
   '조금 특별한 데이트를 하고 싶은데, 입을 만한 옷을 추천해줘.',

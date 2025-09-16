@@ -64,7 +64,7 @@ export const getChatProduct = async (product: Product): Promise<APIResponse<Clos
 };
 
 // POST
-export const postChatSend = async (roomId: number | null, message: Message) => {
+export const postChatSend = async (roomId: string | null, message: Message) => {
   return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', {
     content: message.content,
     imageUrl: message.products[0]?.product_url,

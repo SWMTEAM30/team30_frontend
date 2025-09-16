@@ -1,77 +1,167 @@
-import { userAtom } from '@/atoms/authAtoms';
-import { messagesAtom } from '@/atoms/chatAtoms';
-import { tmpUserId, tmpUsername } from '@/queries/useUser';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useMutation } from '@tanstack/react-query';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { inputProductAtom, inputValueAtom, messagesAtom, streamingMessageAtom } from '../atoms/chatAtoms';
+import { tmpUserId, tmpUsername } from '@/queries/useUser';
+import { userAtom } from '@/atoms/authAtoms';
+import { useSearchParams } from 'next/navigation';
 
-// 1. 훅에 전달할 콜백 함수들의 타입을 명확하게 정의합니다.
-interface ChatStreamCallbacks {
-  onConnect?: (data: any) => void;
-  onContent?: (data: any) => void;
-  onComplete?: (data: any) => void; // complete 이벤트도 콜백으로 처리 가능
+interface ConnectResponse {
+  message: string;
+  type: 'connect';
+  timestamp: any;
 }
 
-interface StreamParams {
-  userInput: string;
-  callbacks: ChatStreamCallbacks; // 2. 범용 onData 대신 콜백 객체를 받습니다.
+interface ContentResponse {
+  agent_id: string;
+  agent_name: string;
+  message: string;
+  type: 'content';
+  timestamp: any;
 }
 
-const streamChat = ({ userInput, callbacks }: StreamParams) => {
-  return new Promise((resolve, reject) => {
-    const url = `/api/chat/rooms/125/messages/stream?user_input=${encodeURIComponent(userInput)}`;
-    const eventSource = new EventSource(url);
+interface CompleteResponse {
+  agent_id: string;
+  agent_name: string;
+  message: string;
+  products: Product[];
+  timestamp: any;
+}
 
-    // 3. 각 이벤트 리스너가 type 분기 없이, 해당하는 콜백을 직접 호출합니다.
-    eventSource.addEventListener('connect', (event) => {
-      const parsedData = JSON.parse(event.data);
-      callbacks.onConnect?.(parsedData.data);
-    });
-
-    eventSource.addEventListener('content', (event) => {
-      const parsedData = JSON.parse(event.data);
-      if (parsedData.status === 'success') {
-        callbacks.onContent?.(parsedData.data);
-      }
-    });
-
-    eventSource.addEventListener('complete', (event) => {
-      const finalData = JSON.parse(event.data);
-      if (finalData.status === 'success') {
-        callbacks.onComplete?.(finalData.data);
-        resolve(finalData.data);
-      } else {
-        reject(new Error(finalData.message || 'Stream completed with an error.'));
-      }
-      eventSource.close();
-    });
-
-    eventSource.addEventListener('error', (error) => {
-      console.error('EventSource failed:', error);
-      reject(new Error('Failed to connect to the event stream.'));
-      eventSource.close();
-    });
+const startChatStream = ({
+  roomId,
+  inputValue,
+  products,
+  onConnect,
+  onContent,
+  onComplete,
+  onError,
+}: {
+  roomId: string | null;
+  inputValue: string;
+  products?: Product;
+  onConnect: (data: ConnectResponse) => void;
+  onContent: (data: ContentResponse) => void;
+  onComplete: (data: CompleteResponse) => void;
+  onError: (error: Event) => void;
+}) => {
+  const queryParams = new URLSearchParams({
+    user_input: inputValue,
+    // ...(userProfile && { user_profile: userProfile }),
   });
+
+  const eventSource = new EventSource(
+    `${process.env.NEXT_PUBLIC_TFT_BACKEND_URL}/api/chat/rooms/${roomId}/messages/stream?${queryParams}`,
+  );
+  eventSource.addEventListener('connect', (event) => {
+    const parsedData = JSON.parse(event.data);
+    if (parsedData.status === 'success') {
+      onConnect(parsedData.data);
+    }
+  });
+
+  eventSource.addEventListener('content', (event) => {
+    const parsedData = JSON.parse(event.data);
+    if (parsedData.status === 'success') {
+      onContent(parsedData.data);
+    }
+  });
+
+  eventSource.addEventListener('complete', (event) => {
+    const parsedData = JSON.parse(event.data);
+    if (parsedData.status === 'success') {
+      onComplete(parsedData.data);
+    }
+    eventSource.close();
+  });
+
+  eventSource.addEventListener('error', (error) => {
+    onError(error);
+    eventSource.close();
+  });
+
+  return eventSource;
 };
 
 export const useChatStream = () => {
-  const user = useAtomValue(userAtom);
+  const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
   const setMessages = useSetAtom(messagesAtom);
-  const sendMessage = async (inputValue: string, products?: Product) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: inputValue,
-      user: { userId: user?.userId || tmpUserId, username: user?.username || tmpUsername },
-      agent: null,
-      message_type: 'USER',
-      products: products ? [products] : [],
-      createdAt: new Date(),
-    };
+  const setInputValue = useSetAtom(inputValueAtom);
+  const setInputProduct = useSetAtom(inputProductAtom);
+  const user = useAtomValue(userAtom);
 
-    setMessages((prev) => [...prev, userMessage]);
-  };
+  const mutation = useMutation({
+    mutationFn: ({
+      roomId,
+      inputValue,
+      products,
+    }: {
+      roomId: string | null;
+      inputValue: string;
+      products?: Product;
+    }) => {
+      return new Promise((resolve, reject) => {
+        startChatStream({
+          roomId,
+          inputValue,
+          products,
+          onConnect: (data: ConnectResponse) => {
+            console.log(data);
+          },
+          onContent: (data: ContentResponse) => {
+            console.log(data.message);
+            //console.log(streamingMessage);
+            setStreamingMessage((prev: Map<string, Message>) => {
+              const next = prev;
+              let newMessage = next.get(data.agent_id);
+              if (!newMessage)
+                newMessage = {
+                  id: Date.now().toString(),
+                  content: '',
+                  user: null,
+                  agent: {
+                    agentname: data.agent_name,
+                    agentType: data.agent_id,
+                  },
+                  message_type: 'AGENT',
+                  products: [],
+                  createdAt: new Date(),
+                };
+              next.set(data.agent_id, { ...newMessage, content: newMessage.content + data.message });
+              console.log(newMessage.content + data.message);
+              return next;
+            });
+          },
+          onComplete: (data: any) => {
+            console.log(data);
+            resolve(data);
+          },
+          onError: (error: any) => {
+            console.error('SSE Error:', error);
+            reject(error);
+          },
+        });
+      });
+    },
+    onMutate: ({ inputValue, products }: { inputValue: string; products?: Product }) => {
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        content: inputValue,
+        user: { userId: user?.userId || tmpUserId, username: user?.username || tmpUsername },
+        agent: null,
+        message_type: 'USER',
+        products: products ? [products] : [],
+        createdAt: new Date(),
+      };
+      setInputValue('');
+      setInputProduct(undefined);
+      setMessages((prev) => [...prev, userMessage]);
+      setStreamingMessage(new Map());
+    },
+    onSettled: () => {
+      //setMessages((prev)=>[...prev, ])
+      console.log('채팅 끝');
+    },
+  });
 
-  return {
-    sendMessage,
-    streamChat,
-  };
+  return mutation;
 };
