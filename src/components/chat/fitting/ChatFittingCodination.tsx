@@ -1,3 +1,5 @@
+'use client';
+
 import { activeCodinationAtom, closetCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
 import { useAtom, useSetAtom } from 'jotai';
 import { Button } from '@/components/ui/button';

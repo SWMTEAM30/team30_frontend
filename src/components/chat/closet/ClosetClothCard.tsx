@@ -1,3 +1,5 @@
+'use client';
+
 import { closetCodinationAtom } from '@/atoms/chatAtoms';
 import { useCodination } from '@/hooks/useCodination';
 import { cn } from '@/lib/utils';

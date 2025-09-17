@@ -1,3 +1,5 @@
+'use client';
+
 import { examplesAtom } from '@/atoms/chatAtoms';
 import { useChatHandlers } from '@/hooks/useChatHandler';
 import { useAtomValue } from 'jotai';
