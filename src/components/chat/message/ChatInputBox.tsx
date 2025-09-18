@@ -15,17 +15,15 @@ export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  //const { sendMessage } = useChatHandlers();
   const { mutate } = useChatStream();
   const searchParams = useSearchParams();
   const roomId = searchParams.get('roomID');
 
   const disabled = false;
 
-  const handleButtonClick = () =>
-    useCallback(() => {
-      fileInputRef.current?.click();
-    }, [fileInputRef]);
+  const handleButtonClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, [fileInputRef]);
 
   const handleFileChange = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {

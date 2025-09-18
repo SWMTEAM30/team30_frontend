@@ -6,12 +6,9 @@ import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import ChatPanel from '@/components/chat/message/ChatPanel';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { panelAtom } from '@/atoms/chatAtoms';
-import { useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 
 export default function Chat() {
-  const searchParams = useSearchParams();
-  const roomId = searchParams.get('roomID');
   const panel = useAtomValue(panelAtom);
   const setPanel = useSetAtom(panelAtom);
 
@@ -34,44 +31,46 @@ export default function Chat() {
   }, [panel, setPanel]);
 
   return (
-    <div className="flex flex-col">
-      {/* 모바일/태블릿에서는 상단에 헤더 표시 */}
-      <div className="lg:hidden">
-        <ChatHeader />
-      </div>
-      <div className="flex h-[calc(100vh-5rem)] lg:h-[100vh]">
-        {/* 데스크톱: 좌우 분할 레이아웃 */}
-        <div className="hidden lg:flex w-full lg:w-1/2 h-full lg:transition-all lg:duration-300">
-          <ChatPanel />
+    <Suspense>
+      <div className="flex flex-col">
+        {/* 모바일/태블릿에서는 상단에 헤더 표시 */}
+        <div className="lg:hidden">
+          <ChatHeader />
         </div>
-        {panel === 'closet' && (
-          <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 bg-beige border-l border-navy-200">
-            <div className="flex-shrink-0">
-              <ChatHeader />
-            </div>
-            <div className="flex-1 min-h-0">
-              <ClosetPanel />
-            </div>
+        <div className="flex h-[calc(100vh-5rem)] lg:h-[100vh]">
+          {/* 데스크톱: 좌우 분할 레이아웃 */}
+          <div className="hidden lg:flex w-full lg:w-1/2 h-full lg:transition-all lg:duration-300">
+            <ChatPanel />
           </div>
-        )}
-        {panel === 'fitting' && (
-          <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 bg-beige border-l border-navy-200">
-            <div className="flex-shrink-0">
-              <ChatHeader />
+          {panel === 'closet' && (
+            <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 bg-beige border-l border-navy-200">
+              <div className="flex-shrink-0">
+                <ChatHeader />
+              </div>
+              <div className="flex-1 min-h-0">
+                <ClosetPanel />
+              </div>
             </div>
-            <div className="flex-1 min-h-0">
-              <FittingPanel />
+          )}
+          {panel === 'fitting' && (
+            <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 bg-beige border-l border-navy-200">
+              <div className="flex-shrink-0">
+                <ChatHeader />
+              </div>
+              <div className="flex-1 min-h-0">
+                <FittingPanel />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 모바일/태블릿: 단일 패널 레이아웃 */}
-        <div className="lg:hidden w-full h-[calc(100vh-5rem)]">
-          {panel === 'chat' && <ChatPanel />}
-          {panel === 'closet' && <ClosetPanel />}
-          {panel === 'fitting' && <FittingPanel />}
+          {/* 모바일/태블릿: 단일 패널 레이아웃 */}
+          <div className="lg:hidden w-full h-[calc(100vh-5rem)]">
+            {panel === 'chat' && <ChatPanel />}
+            {panel === 'closet' && <ClosetPanel />}
+            {panel === 'fitting' && <FittingPanel />}
+          </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   );
 }

@@ -1,12 +1,11 @@
 import { getChatReceive, postChatSend } from '@/api/chatAPI';
-import { currentChatIdAtom, isAIRespondingAtom, messagesAtom } from '@/atoms/chatAtoms';
+import { isAIRespondingAtom, messagesAtom } from '@/atoms/chatAtoms';
 import { queryKeys } from '@/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 
-export const useChatMessage = () => {
-  const [chatId, setChatId] = useAtom(currentChatIdAtom);
+export const useChatMessage = (chatId: string | null) => {
   const [isAIResponding, setIsAIResponding] = useAtom(isAIRespondingAtom);
   const queryClient = useQueryClient();
   const [pollCount, setPollCount] = useState(0);
@@ -56,7 +55,7 @@ export const useChatMessage = () => {
       const newChatId = responseFromServer.data;
       store.set(messagesAtom, (oldMessages) => [...oldMessages, newMessage]);
       if (!chatId && newChatId) {
-        setChatId(newChatId);
+        //setChatId(newChatId);
         queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.all() });
       }
     },

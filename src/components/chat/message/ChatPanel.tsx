@@ -6,7 +6,7 @@ import ChatArea from '@/components/chat/message/ChatArea';
 export default function ChatPanel() {
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex-1 min-h-0">
+      <div className="flex h-[calc(100vh)] overflow-hidden">
         <ChatArea />
       </div>
       <ChatInputBox />

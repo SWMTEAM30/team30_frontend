@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { inputProductAtom, inputValueAtom, messagesAtom, streamingMessageAtom } from '../atoms/chatAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
 import { userAtom } from '@/atoms/authAtoms';
-import { useSearchParams } from 'next/navigation';
+import { useRef } from 'react';
 
 interface ConnectResponse {
   message: string;
@@ -46,11 +46,12 @@ const startChatStream = ({
 }) => {
   const queryParams = new URLSearchParams({
     user_input: inputValue,
+    room_id: roomId ?? '',
     // ...(userProfile && { user_profile: userProfile }),
   });
 
   const eventSource = new EventSource(
-    `${process.env.NEXT_PUBLIC_TFT_BACKEND_URL}/api/chat/rooms/${roomId}/messages/stream?${queryParams}`,
+    `${process.env.NEXT_PUBLIC_TFT_BACKEND_URL}/api/chat/rooms/messages/stream?${queryParams}`,
   );
   eventSource.addEventListener('connect', (event) => {
     const parsedData = JSON.parse(event.data);
@@ -89,6 +90,9 @@ export const useChatStream = () => {
   const setInputProduct = useSetAtom(inputProductAtom);
   const user = useAtomValue(userAtom);
 
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const completedAgentsRef = useRef<Set<string>>(new Set());
+
   const mutation = useMutation({
     mutationFn: ({
       roomId,
@@ -100,20 +104,19 @@ export const useChatStream = () => {
       products?: Product;
     }) => {
       return new Promise((resolve, reject) => {
-        startChatStream({
+        const eventSource = startChatStream({
           roomId,
           inputValue,
           products,
           onConnect: (data: ConnectResponse) => {
-            console.log(data);
+            //console.log('SSE Connected:', data);
           },
           onContent: (data: ContentResponse) => {
-            console.log(data.message);
-            //console.log(streamingMessage);
-            setStreamingMessage((prev: Map<string, Message>) => {
-              const next = prev;
+            setStreamingMessage((prev) => {
+              const next = new Map(prev);
               let newMessage = next.get(data.agent_id);
-              if (!newMessage)
+
+              if (!newMessage) {
                 newMessage = {
                   id: Date.now().toString(),
                   content: '',
@@ -126,23 +129,55 @@ export const useChatStream = () => {
                   products: [],
                   createdAt: new Date(),
                 };
-              next.set(data.agent_id, { ...newMessage, content: newMessage.content + data.message });
-              console.log(newMessage.content + data.message);
+              }
+              next.set(data.agent_id, {
+                ...newMessage,
+                content: newMessage.content + data.message,
+              });
               return next;
             });
           },
           onComplete: (data: any) => {
-            console.log(data);
+            //console.log('SSE Complete:', data);
+            const completedMessage = {
+              id: Date.now().toString(),
+              content: data.message,
+              user: null,
+              agent: {
+                agentname: data.agent_name,
+                agentType: data.agent_id,
+              },
+              message_type: 'AGENT',
+              products: data.products || [],
+              createdAt: new Date(),
+            };
+
+            setMessages((prev) => [...prev, completedMessage]);
+            completedAgentsRef.current.add(data.agent_id);
+
+            setStreamingMessage((prev) => {
+              const next = new Map(prev);
+              next.delete(data.agent_id);
+              return new Map(next);
+            });
+
+            eventSourceRef.current = null;
             resolve(data);
           },
           onError: (error: any) => {
             console.error('SSE Error:', error);
+            eventSourceRef.current = null;
             reject(error);
           },
         });
+        eventSourceRef.current = eventSource;
       });
     },
     onMutate: ({ inputValue, products }: { inputValue: string; products?: Product }) => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+
       const userMessage: Message = {
         id: Date.now().toString(),
         content: inputValue,
@@ -156,10 +191,16 @@ export const useChatStream = () => {
       setInputProduct(undefined);
       setMessages((prev) => [...prev, userMessage]);
       setStreamingMessage(new Map());
+      completedAgentsRef.current.clear();
     },
     onSettled: () => {
-      //setMessages((prev)=>[...prev, ])
-      console.log('채팅 끝');
+      setMessages((prevMessages) => {
+        const finalStreamingMessages = Array.from(streamingMessage.values()).filter(
+          (message) => !completedAgentsRef.current.has(message.agent?.agentType || ''),
+        );
+        return [...prevMessages, ...finalStreamingMessages];
+      });
+      setStreamingMessage(new Map());
     },
   });
 

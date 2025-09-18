@@ -2,7 +2,7 @@ import { requestAPI } from '@/api/API';
 import { formatMessage } from '@/lib/chat_formatter';
 
 // GET
-export const getChatReceive = async (roomId: number | null): Promise<APIResponse<Message>> => {
+export const getChatReceive = async (roomId: string | null): Promise<APIResponse<Message>> => {
   if (!roomId)
     return {
       status: 'fail',
