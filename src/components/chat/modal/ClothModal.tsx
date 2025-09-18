@@ -23,9 +23,24 @@ export default function PhotoModal({ product, children }: PhotoModalProps) {
   const handleOpenChange = useCallback(
     async (open: boolean) => {
       if (open) {
-        // 모달을 열 때 API 호출하여 상품 데이터 가져오기
+        // 모달을 열 때
+        if (product.product_id == 'user') {
+          setActiveCloth({
+            id: 'user',
+            description: '사용자의 모델입니다.',
+            name: '유저 모델',
+            tags: ['피팅모델'],
+            url: product.product_url,
+          });
+          setIsOpen(true);
+          return;
+        }
+
         const data = await getChatProduct(product);
-        if (data.status === 'fail') return;
+        if (data.status === 'fail') {
+          console.log(data.message);
+          return;
+        }
         setActiveCloth(data.data);
         setIsOpen(true);
       } else {
@@ -39,8 +54,8 @@ export default function PhotoModal({ product, children }: PhotoModalProps) {
 
   const handleAddClosetCloth = useCallback(() => {
     setCloset((prevTabs) => {
-      if (!activeCloth || prevTabs.some((tab) => tab.id === activeCloth.id)) return prevTabs;
-      return [...prevTabs, activeCloth];
+      if (!activeCloth) return prevTabs;
+      return [...prevTabs.filter((tab) => tab.id !== activeCloth.id), activeCloth];
     });
     setPanel('closet');
     setIsOpen(false);

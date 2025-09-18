@@ -5,50 +5,57 @@ import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { ChangeEvent, useCallback, useRef } from 'react';
 import Image from 'next/image';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { inputValueAtom, inputProductAtom, isAIRespondingAtom, panelAtom } from '@/atoms/chatAtoms';
-import { useChatHandlers } from '@/hooks/useChatHandler';
+import { useAtom } from 'jotai';
+import { inputValueAtom, inputProductAtom } from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
+import { useChatStream } from '@/queries/useChatStream';
+import { useSearchParams } from 'next/navigation';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
-  const setPanel = useSetAtom(panelAtom);
-  const isAIResponding = useAtomValue(isAIRespondingAtom);
-  const { sendMsg } = useChatHandlers();
-
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const handleButtonClick = () => fileInputRef.current?.click();
+  const { mutate } = useChatStream();
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get('roomID');
 
-  const handleSendMessage = useCallback(() => {
-    if (!inputValue.trim()) return;
-    setPanel('chat');
-    sendMsg(inputValue, inputProduct);
-  }, [inputValue, inputProduct, sendMsg, setPanel]);
+  const disabled = false;
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const formData = new FormData();
-      formData.append('file', files[0]);
-      const response = await postChatUpload(formData);
-      if (response.status === 'fail') {
-        console.error(response.message);
-        return;
+  const handleButtonClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, [fileInputRef]);
+
+  const handleFileChange = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        const formData = new FormData();
+        formData.append('file', files[0]);
+        const response = await postChatUpload(formData);
+        if (response.status === 'fail') {
+          console.error(response.message);
+          return;
+        }
+        const newMessageImage: Product = {
+          product_url: response.data,
+          product_id: 'user',
+        };
+        console.log(newMessageImage);
+        setInputProduct(newMessageImage);
       }
-      const newMessageImage: Product = {
-        product_url: response.data,
-        product_id: 'user',
-      };
-      setInputProduct(newMessageImage);
-    }
+    },
+    [setInputProduct],
+  );
+
+  const handleSendMessage = () => {
+    mutate({ roomId, inputValue, products: inputProduct });
   };
 
   return (
     <div
       className="
     shrink-0
-    flex flex-col items-end gap-2 w-full max-w-7xl mx-auto 
+    flex flex-col items-end gap-2 w-full mx-auto 
     bg-white dark:bg-blue-800 
     rounded-t-2xl border border-blue-500 dark:border-blue-800 
     focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-800
@@ -64,7 +71,7 @@ export default function ChatInputBox() {
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="패션에 대해 마음대로 물어보세요!"
         onKeyDown={(event) => {
-          if (event.key == 'Enter' && !event.shiftKey && inputValue.trim() != '' && !isAIResponding) {
+          if (event.key == 'Enter' && !event.shiftKey && inputValue.trim() != '') {
             event.preventDefault();
             handleSendMessage();
           }
@@ -78,7 +85,7 @@ export default function ChatInputBox() {
       dark:text-white
     "
         rows={1}
-        disabled={isAIResponding.length > 0}
+        disabled={disabled}
       />
       <div className="flex space-x-5">
         <input
@@ -87,7 +94,7 @@ export default function ChatInputBox() {
           onChange={handleFileChange}
           className="hidden"
           accept="image/*"
-          disabled={isAIResponding.length > 0}
+          disabled={disabled}
         />
         <Button
           onClick={handleButtonClick}
@@ -101,13 +108,13 @@ export default function ChatInputBox() {
       transition-all duration-200
       mb-1
     "
-          disabled={isAIResponding.length > 0}
+          disabled={disabled}
         >
           <Plus />
         </Button>
         <Button
           onClick={handleSendMessage}
-          disabled={inputValue.trim() === '' || isAIResponding.length > 0}
+          disabled={inputValue.trim() === '' || disabled}
           className="
       flex-shrink-0 
       flex items-center justify-center

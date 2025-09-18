@@ -3,9 +3,13 @@
 import { useAtom, useSetAtom } from 'jotai';
 import { activeCodinationAtom, panelAtom } from '@/atoms/chatAtoms';
 
-export default function ChatPanelHeader() {
+export default function ChatHeader() {
   const [panel, setPanel] = useAtom(panelAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
+
+  const handleChat = () => {
+    setPanel('chat');
+  };
 
   const handleCloset = () => {
     setPanel('closet');
@@ -18,8 +22,14 @@ export default function ChatPanelHeader() {
   };
 
   return (
-    <header className="h-20 flex items-center justify-between px-4 py-6 mx-16 md:mx-auto w-[calc(100vw-68px)] lg:w-full bg-white">
+    <header className="h-20 flex items-center justify-between px-4 py-6 mx-16 lg:mx-auto w-[calc(100vw-68px)] lg:w-full bg-white">
       <div className="flex items-center gap-2">
+        <button
+          className={`lg:hidden btn cursor-pointer text-blue text-3xl ${panel == 'chat' && 'font-bold'}`}
+          onClick={() => handleChat()}
+        >
+          Chat
+        </button>
         <button
           className={`btn cursor-pointer text-blue text-3xl ${panel == 'closet' && 'font-bold'}`}
           onClick={() => handleCloset()}
@@ -32,6 +42,9 @@ export default function ChatPanelHeader() {
         >
           Fitting
         </button>
+      </div>
+      <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
+        U
       </div>
     </header>
   );
