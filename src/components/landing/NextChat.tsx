@@ -14,25 +14,15 @@ export default function NextChat() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!inputValue.trim()) return;
-
     setIsLoading(true);
-
     try {
       // 채팅방 생성
       const response = await postChatRooms();
-
-      if (response.status === 'success' && response.data) {
-        // 생성된 roomId로 채팅 페이지로 이동
-        router.push(`/chat?roomID=${response.data.id}`);
-      } else {
-        console.error('Failed to create chat room:', response.message);
-        // 에러 처리 (토스트 메시지 등)
-      }
+      if (response.status === 'success' && response.data) router.push(`/chat?roomID=${response.data.id}`);
+      else console.error('Failed to create chat room:', response.message);
     } catch (error) {
       console.error('Error creating chat room:', error);
-      // 에러 처리
     } finally {
       setIsLoading(false);
     }
