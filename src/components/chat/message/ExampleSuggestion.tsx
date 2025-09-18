@@ -2,7 +2,7 @@
 
 import { examplesAtom } from '@/atoms/chatAtoms';
 import { useChatHandlers } from '@/hooks/useChatHandler';
-import { useChatStream } from '@/queries/useChatStream';
+import { useChatStream } from '@/hooks/useChatStream';
 import { useAtomValue } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 

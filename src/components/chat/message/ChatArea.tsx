@@ -16,7 +16,7 @@ export default function ChatArea() {
   useEffect(() => {
     const currentSize = streamingMessage.size;
     const prevSize = prevStreamingSizeRef.current;
-    
+
     // 이전에 0이었고 현재 0보다 클 때만 스크롤
     if (prevSize === 0 && currentSize > 0 && scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({
@@ -24,7 +24,7 @@ export default function ChatArea() {
         behavior: 'smooth',
       });
     }
-    
+
     prevStreamingSizeRef.current = currentSize;
   }, [streamingMessage]);
 

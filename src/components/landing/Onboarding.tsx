@@ -122,7 +122,7 @@ export default function Onboarding() {
   return (
     <>
       {/* 뒤로 가기 버튼 - 온보딩 중에만 표시 */}
-      {<HeroSection showOnboarding={showOnboarding} />}
+      <HeroSection />
       {showOnboarding && (
         <div className="mt-32 mb-8">
           <button
