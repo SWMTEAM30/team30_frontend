@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useAtom } from 'jotai';
 import { inputValueAtom, inputProductAtom } from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
-import { useChatStream } from '@/queries/useChatStream';
+import { useChatStream } from '@/hooks/useChatStream';
 import { useSearchParams } from 'next/navigation';
 
 export default function ChatInputBox() {

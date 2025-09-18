@@ -1,12 +1,8 @@
 import LucideIcon from '@/components/ui/icons/LucideIcon';
 
-export default function HeroSection({ showOnboarding }: { showOnboarding: boolean }) {
+export default function HeroSection() {
   return (
-    <div
-      className={`text-center transition-all duration-700 ease-out ${
-        showOnboarding ? 'hidden' : 'transform translate-y-0 opacity-100'
-      }`}
-    >
+    <div className={`text-center transition-all duration-700 ease-out 'transform translate-y-0 opacity-100`}>
       <div className="my-16">
         <div className="inline-flex items-center px-6 py-3 bg-white/80 text-blue rounded-full text-lg font-medium shadow-sm">
           <LucideIcon name={'Clock'} color={'blue-500'} className="w-5 h-5 mr-2 dark" />

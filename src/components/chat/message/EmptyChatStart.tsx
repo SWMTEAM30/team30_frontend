@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function EmptyChatStart() {
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center px-4">
+    <div className="w-full flex flex-col items-center justify-center h-full text-center px-4">
       {/* 로고 */}
       <div className="mb-8">
         <Image src="/TFT_icon.svg" alt="The First Take" width={96} height={96} className="w-24 h-24 mx-auto mb-4" />

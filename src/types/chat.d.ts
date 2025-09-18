@@ -56,7 +56,7 @@ type WikiIndex = Record<string, MessageWiki>;
 type ChatRoom = {
   id: number;
   title: string;
-  timestamp: Date;
+  createdAt: Date;
 };
 
 type RoomHistory = {
