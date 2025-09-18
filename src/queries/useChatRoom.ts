@@ -19,7 +19,7 @@ export const useChatRooms = () => {
         return result.data.all_rooms.map((chatRoom) => ({
           id: chatRoom.id,
           title: chatRoom.title,
-          timestamp: new Date(chatRoom.createdAt),
+          createdAt: new Date(chatRoom.createdAt),
         }));
       } else
         // 만약 error가 있다면 에러를 표기
