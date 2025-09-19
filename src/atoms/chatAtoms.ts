@@ -1,8 +1,10 @@
 import { atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 
 export const inputValueAtom = atom<string>('');
 export const inputProductAtom = atom<Product | undefined>(undefined);
-export const messagesAtom = atom<Message[]>([]);
+export const roomIdAtom = atom<string | null>(null);
+export const messagesAtomFamily = atomFamily(() => atom<Message[]>([]));
 export const streamingMessageAtom = atom<Map<string, Message>>(new Map());
 export const examplesAtom = atom<string[]>([
   '소개팅을 가야 하는 상황이야.',
@@ -14,7 +16,7 @@ export const examplesAtom = atom<string[]>([
 export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''>('');
 export const isSidebarOpenAtom = atom<boolean>(false);
 
-export const panelAtom = atom<'chat' | 'closet' | 'fitting'>('closet');
+export const panelAtom = atom<'chat' | 'closet' | 'fitting'>('chat');
 export const codinationsAtom = atom<Codination[]>([]);
 export const activeCodinationAtom = atom<Codination | null>(null);
 export const closetCodinationAtom = atom<Codination | null>(null);

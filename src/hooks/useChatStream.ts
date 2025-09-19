@@ -1,9 +1,16 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useMutation } from '@tanstack/react-query';
-import { inputProductAtom, inputValueAtom, messagesAtom, streamingMessageAtom } from '../atoms/chatAtoms';
+import {
+  inputProductAtom,
+  inputValueAtom,
+  messagesAtomFamily,
+  roomIdAtom,
+  streamingMessageAtom,
+} from '../atoms/chatAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
 import { userAtom } from '@/atoms/authAtoms';
 import { useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 interface ConnectResponse {
   message: string;
@@ -42,7 +49,7 @@ const startChatStream = ({
   onConnect: (data: ConnectResponse) => void;
   onContent: (data: ContentResponse) => void;
   onComplete: (data: CompleteResponse) => void;
-  onError: (error: Event) => void;
+  onError: (error: any) => void;
 }) => {
   const queryParams = new URLSearchParams({
     user_input: inputValue,
@@ -63,6 +70,11 @@ const startChatStream = ({
   eventSource.addEventListener('content', (event) => {
     const parsedData = JSON.parse(event.data);
     if (parsedData.status === 'success') {
+      if (parsedData?.data?.message?.includes('Claude API 스트리밍 호출 실패')) {
+        onError(new Error('Claude API 스트리밍 호출 실패'));
+        eventSource.close();
+        return;
+      }
       onContent(parsedData.data);
     }
   });
@@ -84,8 +96,9 @@ const startChatStream = ({
 };
 
 export const useChatStream = () => {
+  const roomId = useAtomValue(roomIdAtom);
+  const setMessages = useSetAtom(messagesAtomFamily(roomId));
   const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
-  const setMessages = useSetAtom(messagesAtom);
   const setInputValue = useSetAtom(inputValueAtom);
   const setInputProduct = useSetAtom(inputProductAtom);
   const user = useAtomValue(userAtom);
@@ -109,9 +122,10 @@ export const useChatStream = () => {
           inputValue,
           products,
           onConnect: (data: ConnectResponse) => {
-            //console.log('SSE Connected:', data);
+            console.log('SSE Connected:', data);
           },
           onContent: (data: ContentResponse) => {
+            console.log('SSE content', data);
             setStreamingMessage((prev) => {
               const next = new Map(prev);
               let newMessage = next.get(data.agent_id);
@@ -138,7 +152,7 @@ export const useChatStream = () => {
             });
           },
           onComplete: (data: any) => {
-            //console.log('SSE Complete:', data);
+            console.log('SSE Complete:', data);
             const completedMessage = {
               id: Date.now().toString(),
               content: data.message,
@@ -164,8 +178,23 @@ export const useChatStream = () => {
             eventSourceRef.current = null;
             resolve(data);
           },
-          onError: (error: any) => {
+          onError: (error: ErrorEvent) => {
             console.error('SSE Error:', error);
+
+            const completedMessage = {
+              id: Date.now().toString(),
+              content: 'SSE 처리 중 에러가 발생했습니다: ' + error.message,
+              user: null,
+              agent: {
+                agentname: '에러 감지기',
+                agentType: 'error detector',
+              },
+              message_type: 'AGENT',
+              products: [],
+              createdAt: new Date(),
+            };
+
+            setMessages((prev) => [...prev, completedMessage]);
             eventSourceRef.current = null;
             reject(error);
           },

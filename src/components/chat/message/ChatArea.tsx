@@ -1,6 +1,7 @@
 'use client';
 
-import { messagesAtom, streamingMessageAtom } from '@/atoms/chatAtoms';
+import { postChatRooms } from '@/api/chatAPI';
+import { messagesAtomFamily, roomIdAtom, streamingMessageAtom } from '@/atoms/chatAtoms';
 import EmptyChatStart from '@/components/chat/message/EmptyChatStart';
 import MessageBalloon from '@/components/chat/message/MessageBalloon';
 import { useAtom, useAtomValue } from 'jotai';
@@ -9,7 +10,8 @@ import { useEffect, useRef } from 'react';
 export default function ChatArea() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
-  const messages = useAtomValue(messagesAtom);
+  const [roomId, setRoomId] = useAtom(roomIdAtom);
+  const messages = useAtomValue(messagesAtomFamily(roomId));
   const prevStreamingSizeRef = useRef(0);
 
   // 스트리밍 메시지가 0에서 새로 생긴 상황에서만 자동 스크롤
@@ -38,13 +40,24 @@ export default function ChatArea() {
     }
   }, [messages.length]);
 
-  // 스트리밍 메시지 변경 시 로그 출력
-  // useEffect(() => {
-  //   console.log(streamingMessage);
-  // }, [streamingMessage]);
+  useEffect(() => {
+    if (roomId === null) {
+      (async () => {
+        try {
+          const response = await postChatRooms();
+          console.log(response.data);
+          if (response.status === 'success' && response.data) {
+            setRoomId(response.data.id);
+          } else console.error('Failed to create chat room:', response.message);
+        } catch (error) {
+          console.error('Error creating chat room:', error);
+        }
+      })();
+    }
+  }, [roomId]);
 
   // 채팅방이 비어있고 로딩 중이 아닐 때 시작 화면 표시
-  if (messages.length === 0) {
+  if (messages.length + streamingMessage.size === 0) {
     return <EmptyChatStart />;
   }
 
