@@ -12,9 +12,9 @@ export default function Chat() {
   const panel = useAtomValue(panelAtom);
   const setPanel = useSetAtom(panelAtom);
 
-  // md 이상일 때 panel이 'chat'이면 자동으로 'closet'으로 전환
+  // lg 이상일 때 panel이 'chat'이면 자동으로 'closet'으로 전환
   useEffect(() => {
-    const mq = window.matchMedia('(min-width: 768px)');
+    const mq = window.matchMedia('(min-width: 1024px)');
     const enforceDesktopPanel = (matches: boolean) => {
       if (matches && panel === 'chat') {
         setPanel('closet');
