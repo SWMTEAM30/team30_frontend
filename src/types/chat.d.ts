@@ -54,7 +54,7 @@ interface MessageWiki extends PanelData {
 type WikiIndex = Record<string, MessageWiki>;
 
 type ChatRoom = {
-  id: number;
+  id: string;
   title: string;
   createdAt: Date;
 };

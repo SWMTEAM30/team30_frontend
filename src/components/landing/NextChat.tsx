@@ -6,21 +6,31 @@ import { postChatRooms } from '@/api/chatAPI';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import LucideIcon from '@/components/ui/icons/LucideIcon';
+import { useChatStream } from '@/hooks/useChatStream';
+import { getDefaultStore, useSetAtom } from 'jotai';
+import { roomIdAtom } from '@/atoms/chatAtoms';
 
 export default function NextChat() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { mutate } = useChatStream();
   const router = useRouter();
+  const setRoomId = useSetAtom(roomIdAtom);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
     setIsLoading(true);
+
     try {
       // 채팅방 생성
       const response = await postChatRooms();
-      if (response.status === 'success' && response.data) router.push(`/chat?roomID=${response.data.id}`);
-      else console.error('Failed to create chat room:', response.message);
+      console.log(response.data);
+      if (response.status === 'success' && response.data) {
+        router.push(`/chat`);
+        setRoomId(response.data.id);
+        mutate({ roomId: response.data.id, inputValue });
+      } else console.error('Failed to create chat room:', response.message);
     } catch (error) {
       console.error('Error creating chat room:', error);
     } finally {

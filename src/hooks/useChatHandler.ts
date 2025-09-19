@@ -1,20 +1,18 @@
 'use client';
 
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { inputValueAtom, inputProductAtom, messagesAtom } from '@/atoms/chatAtoms';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { inputValueAtom, inputProductAtom, messagesAtomFamily, roomIdAtom } from '@/atoms/chatAtoms';
 import { useCallback } from 'react';
 import { userAtom } from '@/atoms/authAtoms';
 import { tmpUserId, tmpUsername } from '@/queries/useUser';
 import { postChatSend } from '@/api/chatAPI';
-import { useSearchParams } from 'next/navigation';
 
 export function useChatHandlers(): {
   sendMessage: (inputValue: string, products?: Product) => void;
   handleExampleSelect: (exampleText: string) => void;
 } {
-  const searchParams = useSearchParams();
-  const roomId = searchParams.get('roomID');
-  const setMessages = useSetAtom(messagesAtom);
+  const roomId = useAtomValue(roomIdAtom);
+  const setMessages = useSetAtom(messagesAtomFamily(roomId));
   const setInputValue = useSetAtom(inputValueAtom);
   const setInputProduct = useSetAtom(inputProductAtom);
   const user = useAtomValue(userAtom);

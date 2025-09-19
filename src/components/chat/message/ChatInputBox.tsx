@@ -15,9 +15,9 @@ export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { mutate } = useChatStream();
   const searchParams = useSearchParams();
   const roomId = searchParams.get('roomID');
+  const { mutate } = useChatStream();
 
   const disabled = false;
 
