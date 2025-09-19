@@ -29,6 +29,7 @@ export default function NextChat() {
       if (response.status === 'success' && response.data) {
         router.push(`/chat`);
         setRoomId(response.data.id);
+        console.log(response.data.id);
         mutate({ roomId: response.data.id, inputValue });
       } else console.error('Failed to create chat room:', response.message);
     } catch (error) {
