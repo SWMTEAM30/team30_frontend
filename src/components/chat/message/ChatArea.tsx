@@ -45,7 +45,6 @@ export default function ChatArea() {
       (async () => {
         try {
           const response = await postChatRooms();
-          console.log(response.data);
           if (response.status === 'success' && response.data) {
             setRoomId(response.data.id);
           } else console.error('Failed to create chat room:', response.message);

@@ -23,7 +23,7 @@ type APIRoomIdMessage = {
 
 type APIRoomHistory = {
   all_rooms: {
-    id: number;
+    id: string;
     title: string;
     createdAt: string;
   }[];
