@@ -38,10 +38,6 @@ export const useChatMessage = (chatId: string | null) => {
       return;
     }
 
-    if (isAIResponding == 'style') setIsAIResponding('color');
-    else if (isAIResponding == 'color') setIsAIResponding('codi');
-    else if (isAIResponding == 'codi') setIsAIResponding('');
-
     store.set(messagesAtomFamily(roomId), (oldMessages = []) => {
       const newMessage = queryResult.data;
       if (oldMessages.some((msg) => msg.id === newMessage.id)) return oldMessages;

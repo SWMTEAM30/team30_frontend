@@ -1,22 +1,47 @@
-import Image from 'next/image';
+'use client';
+
+import { getKakaoAuthUrl, getKakaoConfig } from '@/lib/kakao-auth';
 
 export default function SigninSNSForm() {
+  // 카카오 설정 확인
+  const config = getKakaoConfig();
+  const kakaoAuthUrl = getKakaoAuthUrl();
+  
+  // 환경변수가 없으면 에러 표시
+  if (!config || !kakaoAuthUrl) {
+    return (
+      <div className="text-red-500 text-center p-4">
+        카카오 로그인 설정이 완료되지 않았습니다.
+        <br />
+        <small className="text-xs">
+          NEXT_PUBLIC_AUTH_KAKAO_ID와 NEXT_PUBLIC_AUTH_KAKAO_REDIRECT_URL을 확인해주세요.
+        </small>
+      </div>
+    );
+  }
+  
+  console.log('Kakao Config:', config);
+  console.log('Full Kakao Auth URL:', kakaoAuthUrl);
+
   return (
     <div className="grid grid-cols-3 gap-4">
-      <button className="flex justify-center items-center p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 shadow-sm hover:shadow-md">
+      {/* <button className="flex justify-center items-center p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 shadow-sm hover:shadow-md">
         <Image
           src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
           alt="Google"
           className="w-6 h-6"
+          width={300}
+          height={300}
         />
       </button>
 
       <button className="flex justify-center items-center p-3 rounded-xl bg-[#03C75A] hover:bg-[#02b350] transition-all duration-200 shadow-sm hover:shadow-md">
         <span className="text-white font-bold text-lg w-6 h-6 flex items-center justify-center">N</span>
-      </button>
+      </button> */}
 
       <form
-        action={`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.AUTH_KAKAO_ID}&redirect_uri=${process.env.AUTH_KAKAO_REDIRECT_URL}&response_type=code`}
+        className="w-full"
+        action={kakaoAuthUrl}
         method="GET"
       >
         <button className="w-full flex justify-center items-center p-3 rounded-xl bg-[#FEE500] hover:bg-[#FDD835] transition-all duration-200 shadow-sm hover:shadow-md">

@@ -3,14 +3,13 @@ import { useMutation } from '@tanstack/react-query';
 import {
   inputProductAtom,
   inputValueAtom,
+  isAIRespondingAtom,
   messagesAtomFamily,
   roomIdAtom,
   streamingMessageAtom,
 } from '../atoms/chatAtoms';
-import { tmpUserId, tmpUsername } from '@/queries/useUser';
 import { userAtom } from '@/atoms/authAtoms';
 import { useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
 
 interface ConnectResponse {
   message: string;
@@ -34,6 +33,13 @@ interface CompleteResponse {
   timestamp: any;
 }
 
+interface FinalCompleteResponse {
+  total_experts: number;
+  message: string;
+  type: 'final_complete';
+  timestamp: any;
+}
+
 const startChatStream = ({
   roomId,
   inputValue,
@@ -41,6 +47,7 @@ const startChatStream = ({
   onConnect,
   onContent,
   onComplete,
+  onFinalComplete,
   onError,
 }: {
   roomId: string | null;
@@ -49,6 +56,7 @@ const startChatStream = ({
   onConnect: (data: ConnectResponse) => void;
   onContent: (data: ContentResponse) => void;
   onComplete: (data: CompleteResponse) => void;
+  onFinalComplete: (data: FinalCompleteResponse) => void;
   onError: (error: any) => void;
 }) => {
   const queryParams = new URLSearchParams({
@@ -84,6 +92,13 @@ const startChatStream = ({
     if (parsedData.status === 'success') {
       onComplete(parsedData.data);
     }
+  });
+
+  eventSource.addEventListener('final_complete', (event) => {
+    const parsedData = JSON.parse(event.data);
+    if (parsedData.status === 'success') {
+      onFinalComplete(parsedData.data);
+    }
     eventSource.close();
   });
 
@@ -101,6 +116,7 @@ export const useChatStream = () => {
   const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
   const setInputValue = useSetAtom(inputValueAtom);
   const setInputProduct = useSetAtom(inputProductAtom);
+  const setIsAIResponding = useSetAtom(isAIRespondingAtom);
   const user = useAtomValue(userAtom);
 
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -122,10 +138,11 @@ export const useChatStream = () => {
           inputValue,
           products,
           onConnect: (data: ConnectResponse) => {
-            console.log('SSE Connected:', data);
+            //console.log('SSE Connected:', data);
+            setIsAIResponding(true);
           },
           onContent: (data: ContentResponse) => {
-            console.log('SSE content', data);
+            //console.log('SSE content', data);
             setStreamingMessage((prev) => {
               const next = new Map(prev);
               let newMessage = next.get(data.agent_id);
@@ -152,7 +169,7 @@ export const useChatStream = () => {
             });
           },
           onComplete: (data: any) => {
-            console.log('SSE Complete:', data);
+            //console.log('SSE Complete:', data);
             const completedMessage = {
               id: Date.now().toString(),
               content: data.message,
@@ -174,7 +191,10 @@ export const useChatStream = () => {
               next.delete(data.agent_id);
               return new Map(next);
             });
-
+          },
+          onFinalComplete: (data: FinalCompleteResponse) => {
+            //console.log('SSE Final Complete:', data);
+            setIsAIResponding(false);
             eventSourceRef.current = null;
             resolve(data);
           },
@@ -195,6 +215,7 @@ export const useChatStream = () => {
             };
 
             setMessages((prev) => [...prev, completedMessage]);
+            setIsAIResponding(false);
             eventSourceRef.current = null;
             reject(error);
           },
@@ -206,11 +227,12 @@ export const useChatStream = () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }
+      if (user === null) return;
 
       const userMessage: Message = {
         id: Date.now().toString(),
         content: inputValue,
-        user: { userId: user?.userId || tmpUserId, username: user?.username || tmpUsername },
+        user: user,
         agent: null,
         message_type: 'USER',
         products: products ? [products] : [],
@@ -221,6 +243,7 @@ export const useChatStream = () => {
       setMessages((prev) => [...prev, userMessage]);
       setStreamingMessage(new Map());
       completedAgentsRef.current.clear();
+      setIsAIResponding(false); // 새로운 요청 시작 시 초기화
     },
     onSettled: () => {
       setMessages((prevMessages) => {
