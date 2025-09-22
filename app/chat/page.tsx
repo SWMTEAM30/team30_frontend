@@ -7,10 +7,14 @@ import ChatPanel from '@/components/chat/message/ChatPanel';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { panelAtom } from '@/atoms/chatAtoms';
 import { Suspense, useEffect } from 'react';
+import { userAtom } from '@/atoms/authAtoms';
+import { useRouter } from 'next/navigation';
 
 export default function Chat() {
   const panel = useAtomValue(panelAtom);
   const setPanel = useSetAtom(panelAtom);
+  const user = useAtomValue(userAtom);
+  const router = useRouter();
 
   // lg 이상일 때 panel이 'chat'이면 자동으로 'closet'으로 전환
   useEffect(() => {
@@ -29,6 +33,18 @@ export default function Chat() {
     return () => mq.removeEventListener('change', handler);
   }, [panel, setPanel]);
 
+  useEffect(() => {
+    console.log(user);
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      router.push('/signin');
+    }
+  }, [user, router]);
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <Suspense>
       <div className="flex flex-col">
@@ -41,26 +57,16 @@ export default function Chat() {
           <div className="hidden lg:flex w-full lg:w-1/2 h-full lg:transition-all lg:duration-300">
             <ChatPanel />
           </div>
-          {panel === 'closet' && (
-            <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 bg-beige border-l border-navy-200">
-              <div className="flex-shrink-0">
-                <ChatHeader />
-              </div>
-              <div className="flex-1 min-h-0">
-                <ClosetPanel />
-              </div>
+
+          <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 bg-beige border-l border-navy-200">
+            <div className="flex-shrink-0">
+              <ChatHeader />
             </div>
-          )}
-          {panel === 'fitting' && (
-            <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 bg-beige border-l border-navy-200">
-              <div className="flex-shrink-0">
-                <ChatHeader />
-              </div>
-              <div className="flex-1 min-h-0">
-                <FittingPanel />
-              </div>
+            <div className="flex-1 min-h-0">
+              {panel === 'closet' && <ClosetPanel />}
+              {panel === 'fitting' && <FittingPanel />}
             </div>
-          )}
+          </div>
 
           {/* 모바일/태블릿: 단일 패널 레이아웃 */}
           <div className="lg:hidden w-full h-[calc(100vh-5rem)]">

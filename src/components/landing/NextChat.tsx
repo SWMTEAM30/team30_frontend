@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import LucideIcon from '@/components/ui/icons/LucideIcon';
 import { useChatStream } from '@/hooks/useChatStream';
-import { getDefaultStore, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { roomIdAtom } from '@/atoms/chatAtoms';
+import { userAtom } from '@/atoms/authAtoms';
 
 export default function NextChat() {
   const [inputValue, setInputValue] = useState('');
@@ -16,6 +17,7 @@ export default function NextChat() {
   const { mutate } = useChatStream();
   const router = useRouter();
   const setRoomId = useSetAtom(roomIdAtom);
+  const user = useAtomValue(userAtom);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +56,14 @@ export default function NextChat() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
+            onClick={() => {
+              console.log(user);
+              if (!user) {
+                alert('로그인이 필요합니다.');
+                router.push('/signin');
+                return;
+              }
+            }}
             placeholder="패션에 대해 마음대로 물어보세요! 예: '데이트룩 추천해줘'"
             className="
               w-full min-h-[60px] max-h-[120px] 

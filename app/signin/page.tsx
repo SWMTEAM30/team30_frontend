@@ -1,6 +1,4 @@
-import SigninForm from '@/components/auth/SigninForm';
 import SigninSNSForm from '@/components/auth/SigninSNSForm';
-import Link from 'next/link';
 
 export default function SigninPage() {
   return (
@@ -14,25 +12,7 @@ export default function SigninPage() {
         </div>
 
         <div className="space-y-6">
-          <SigninForm />
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white/80 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400">또는</span>
-            </div>
-          </div>
-
           <SigninSNSForm />
-        </div>
-
-        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-          계정이 없으신가요?{' '}
-          <Link href="/signup" className="font-medium text-navy hover:text-blue dark:text-indigo-400">
-            회원가입
-          </Link>
         </div>
       </div>
     </div>

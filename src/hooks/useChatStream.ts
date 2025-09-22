@@ -7,10 +7,8 @@ import {
   roomIdAtom,
   streamingMessageAtom,
 } from '../atoms/chatAtoms';
-import { tmpUserId, tmpUsername } from '@/queries/useUser';
 import { userAtom } from '@/atoms/authAtoms';
 import { useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
 
 interface ConnectResponse {
   message: string;
@@ -206,11 +204,12 @@ export const useChatStream = () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }
+      if (user === null) return;
 
       const userMessage: Message = {
         id: Date.now().toString(),
         content: inputValue,
-        user: { userId: user?.userId || tmpUserId, username: user?.username || tmpUsername },
+        user: user,
         agent: null,
         message_type: 'USER',
         products: products ? [products] : [],
