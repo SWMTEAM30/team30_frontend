@@ -5,8 +5,8 @@ import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { ChangeEvent, useCallback, useRef } from 'react';
 import Image from 'next/image';
-import { useAtom } from 'jotai';
-import { inputValueAtom, inputProductAtom } from '@/atoms/chatAtoms';
+import { useAtom, useAtomValue } from 'jotai';
+import { inputValueAtom, inputProductAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
 import { useChatStream } from '@/hooks/useChatStream';
 import { useSearchParams } from 'next/navigation';
@@ -14,12 +14,13 @@ import { useSearchParams } from 'next/navigation';
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
+  const isAIResponding = useAtomValue(isAIRespondingAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
   const roomId = searchParams.get('roomID');
   const { mutate } = useChatStream();
 
-  const disabled = false;
+  const disabled = isAIResponding;
 
   const handleButtonClick = useCallback(() => {
     fileInputRef.current?.click();

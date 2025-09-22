@@ -13,7 +13,7 @@ export const examplesAtom = atom<string[]>([
   '꾸민 듯 안 꾸민 듯한 꾸안꾸 패션을 추구해보고 싶어.',
 ]);
 
-export const isAIRespondingAtom = atom<'style' | 'trend' | 'color' | 'codi' | ''>('');
+export const isAIRespondingAtom = atom<boolean>(false);
 export const isSidebarOpenAtom = atom<boolean>(false);
 
 export const panelAtom = atom<'chat' | 'closet' | 'fitting'>('chat');

@@ -1,9 +1,10 @@
 'use client';
 
 import { postChatRooms } from '@/api/chatAPI';
-import { messagesAtomFamily, roomIdAtom, streamingMessageAtom } from '@/atoms/chatAtoms';
+import { messagesAtomFamily, roomIdAtom, streamingMessageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
 import EmptyChatStart from '@/components/chat/message/EmptyChatStart';
 import MessageBalloon from '@/components/chat/message/MessageBalloon';
+import MessageSpinner from '@/components/chat/message/MessageSpinner';
 import { useAtom, useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 
@@ -12,6 +13,7 @@ export default function ChatArea() {
   const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
   const [roomId, setRoomId] = useAtom(roomIdAtom);
   const messages = useAtomValue(messagesAtomFamily(roomId));
+  const isAIResponding = useAtomValue(isAIRespondingAtom);
   const prevStreamingSizeRef = useRef(0);
 
   // 스트리밍 메시지가 0에서 새로 생긴 상황에서만 자동 스크롤
@@ -76,6 +78,9 @@ export default function ChatArea() {
           {[...streamingMessage].map(([agent, content]) => (
             <MessageBalloon key={agent} message={content} />
           ))}
+
+          {/* AI 응답 중일 때 로딩 메시지 표시 */}
+          {isAIResponding && streamingMessage.size === 0 && <MessageSpinner />}
         </div>
       </div>
     </div>
