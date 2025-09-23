@@ -4,10 +4,11 @@ import ChatHeader from '@/components/chat/ChatHeader';
 import ClosetPanel from '@/components/chat/closet/ClosetPanel';
 import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import ChatPanel from '@/components/chat/message/ChatPanel';
-import { useAtom } from 'jotai';
-import { panelAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
-import { Suspense, useEffect, useState } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { messagesAtomFamily, panelAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useChatStream } from '@/hooks/useChatStream';
+import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
 
 interface ChatRoomPageProps {
   params: Promise<{
@@ -18,6 +19,7 @@ interface ChatRoomPageProps {
 export default function ChatRoomPage({ params }: ChatRoomPageProps) {
   const [panel, setPanel] = useAtom(panelAtom);
   const [roomId, setRoomId] = useAtom(roomIdAtom);
+  const setMessages = useSetAtom(messagesAtomFamily(roomId));
   const [tempMessage, setTempMessage] = useAtom(tempMessageAtom);
   const [isFetchingOlder, setIsFetchingOlder] = useState(false);
   const [canLoadOlder, setCanLoadOlder] = useState(true);
@@ -30,8 +32,34 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
     });
   }, [params, setRoomId]);
 
+  // 단일 로더: beforeDate 유무에 따라 초기/이전 메시지 로드
+  const loadMessages = useCallback(
+    async (beforeDate?: Date) => {
+      if (!roomId) return;
+      const hasOlderFetch = !!beforeDate;
+      if (hasOlderFetch) {
+        if (isFetchingOlder || !canLoadOlder) return;
+        setIsFetchingOlder(true);
+      }
+      try {
+        const response = await getChatRoomsRoomIdMessages(roomId, beforeDate);
+        if (response.status === 'success' && response.data?.messages) {
+          const fetched = response.data.messages;
+          setMessages((prev) => [...fetched, ...prev]);
+          if (fetched.length === 0) setCanLoadOlder(false);
+        }
+      } catch (error) {
+        console.error('Failed to load messages:', error);
+      } finally {
+        setIsFetchingOlder(false);
+      }
+    },
+    [roomId, isFetchingOlder, canLoadOlder, setMessages],
+  );
+
   // roomId가 변경되고 나서 리셋해야 함
   useEffect(() => {
+    loadMessages();
     if (tempMessage?.roomId != roomId || !tempMessage?.userMessage) return;
     setCanLoadOlder(true);
     setIsFetchingOlder(false);

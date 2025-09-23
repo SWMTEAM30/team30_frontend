@@ -93,7 +93,7 @@ export default function ChatArea() {
   }, [messages.length]);
 
   // 채팅방이 비어있고 로딩 중이 아닐 때 시작 화면 표시
-  if (messages.length + streamingMessage.size === 0) {
+  if (!roomId || messages.length + streamingMessage.size === 0) {
     return <EmptyChatStart />;
   }
 
