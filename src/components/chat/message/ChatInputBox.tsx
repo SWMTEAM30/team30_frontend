@@ -3,21 +3,18 @@
 import { Button } from '@/components/ui/button';
 import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { ChangeEvent, useCallback, useRef } from 'react';
+import { ChangeEvent, useCallback, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useAtom, useAtomValue } from 'jotai';
-import { inputValueAtom, inputProductAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
+import { inputValueAtom, inputProductAtom, isAIRespondingAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
 import { useChatStream } from '@/hooks/useChatStream';
-import { useSearchParams } from 'next/navigation';
 
 export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const searchParams = useSearchParams();
-  const roomId = searchParams.get('roomID');
   const { mutate } = useChatStream();
 
   const disabled = isAIResponding;
@@ -48,9 +45,10 @@ export default function ChatInputBox() {
     [setInputProduct],
   );
 
-  const handleSendMessage = () => {
-    mutate({ roomId, inputValue, products: inputProduct });
-  };
+  const handleSendMessage = useCallback(() => {
+    if (!inputValue.trim()) return;
+    mutate({ inputValue, products: inputProduct });
+  }, [mutate, inputValue, inputProduct]);
 
   return (
     <div

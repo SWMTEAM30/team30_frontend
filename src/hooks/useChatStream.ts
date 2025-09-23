@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useMutation } from '@tanstack/react-query';
 import {
+  globalEventSourceAtom,
   inputProductAtom,
   inputValueAtom,
   isAIRespondingAtom,
@@ -9,7 +10,8 @@ import {
   streamingMessageAtom,
 } from '../atoms/chatAtoms';
 import { userAtom } from '@/atoms/authAtoms';
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface ConnectResponse {
   message: string;
@@ -112,27 +114,53 @@ const startChatStream = ({
 
 export const useChatStream = () => {
   const roomId = useAtomValue(roomIdAtom);
-  const setMessages = useSetAtom(messagesAtomFamily(roomId));
-  const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
   const setInputValue = useSetAtom(inputValueAtom);
   const setInputProduct = useSetAtom(inputProductAtom);
   const setIsAIResponding = useSetAtom(isAIRespondingAtom);
+  const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
+  const [globalEventSource, setGlobalEventSource] = useAtom(globalEventSourceAtom);
   const user = useAtomValue(userAtom);
-
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const sseInFlightRef = useRef(false);
+  const pathname = usePathname();
+  const setMessages = useSetAtom(messagesAtomFamily(roomId));
   const completedAgentsRef = useRef<Set<string>>(new Set());
 
   const mutation = useMutation({
-    mutationFn: ({
-      roomId,
-      inputValue,
-      products,
-    }: {
-      roomId: string | null;
-      inputValue: string;
-      products?: Product;
-    }) => {
+    mutationFn: ({ inputValue, products }: { inputValue: string; products?: Product }) => {
       return new Promise((resolve, reject) => {
+        if (!roomId) {
+          reject(new Error('roomId is required'));
+          return;
+        }
+
+        // 현재 페이지가 /chat 가 아닐 경우 SSE 시작하지 않음
+        if (!pathname || !pathname.startsWith('/chat')) {
+          console.log('useChatStream - not in /chat page, skip SSE');
+          resolve({});
+          return;
+        }
+
+        if (sseInFlightRef.current) {
+          console.log('useChatStream - skip duplicate mutation while in-flight');
+          resolve({});
+          return;
+        }
+        sseInFlightRef.current = true;
+
+        // 사용자 메시지 추가
+        if (!user) return;
+        console.log(roomId);
+        const userMessage: Message = {
+          id: Date.now().toString(),
+          content: inputValue,
+          user: user,
+          agent: null,
+          message_type: 'USER',
+          products: products ? [products] : [],
+          createdAt: new Date(),
+        };
+        setMessages((prev) => [...prev, userMessage]);
+
         const eventSource = startChatStream({
           roomId,
           inputValue,
@@ -169,7 +197,6 @@ export const useChatStream = () => {
             });
           },
           onComplete: (data: any) => {
-            //console.log('SSE Complete:', data);
             const completedMessage = {
               id: Date.now().toString(),
               content: data.message,
@@ -182,7 +209,6 @@ export const useChatStream = () => {
               products: data.products || [],
               createdAt: new Date(),
             };
-
             setMessages((prev) => [...prev, completedMessage]);
             completedAgentsRef.current.add(data.agent_id);
 
@@ -195,11 +221,12 @@ export const useChatStream = () => {
           onFinalComplete: (data: FinalCompleteResponse) => {
             //console.log('SSE Final Complete:', data);
             setIsAIResponding(false);
-            eventSourceRef.current = null;
+            setGlobalEventSource(null);
+            sseInFlightRef.current = false;
             resolve(data);
           },
           onError: (error: ErrorEvent) => {
-            console.error('SSE Error:', error);
+            console.error('SSE Error for roomId:', error);
 
             const completedMessage = {
               id: Date.now().toString(),
@@ -216,34 +243,25 @@ export const useChatStream = () => {
 
             setMessages((prev) => [...prev, completedMessage]);
             setIsAIResponding(false);
-            eventSourceRef.current = null;
+            setGlobalEventSource(null);
+            sseInFlightRef.current = false;
             reject(error);
           },
         });
-        eventSourceRef.current = eventSource;
+        setGlobalEventSource(eventSource);
       });
     },
     onMutate: ({ inputValue, products }: { inputValue: string; products?: Product }) => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
+      if (globalEventSource && typeof globalEventSource.close === 'function') {
+        globalEventSource.close();
+        setGlobalEventSource(null);
       }
-      if (user === null) return;
 
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        content: inputValue,
-        user: user,
-        agent: null,
-        message_type: 'USER',
-        products: products ? [products] : [],
-        createdAt: new Date(),
-      };
       setInputValue('');
       setInputProduct(undefined);
-      setMessages((prev) => [...prev, userMessage]);
       setStreamingMessage(new Map());
       completedAgentsRef.current.clear();
-      setIsAIResponding(false); // 새로운 요청 시작 시 초기화
+      setIsAIResponding(false);
     },
     onSettled: () => {
       setMessages((prevMessages) => {
@@ -253,6 +271,7 @@ export const useChatStream = () => {
         return [...prevMessages, ...finalStreamingMessages];
       });
       setStreamingMessage(new Map());
+      sseInFlightRef.current = false;
     },
   });
 

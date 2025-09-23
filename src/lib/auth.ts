@@ -36,3 +36,4 @@ export const getAuthFetchOptions = (method: string = 'GET', body?: any): Request
 export const isAuthenticated = (): boolean => {
   return getAuthJWT() !== null;
 };
+

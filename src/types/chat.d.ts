@@ -64,7 +64,16 @@ type RoomHistory = {
 };
 
 type RoomIdMessages = {
-  messages: Message[];
+  messages: {
+    id: string;
+    content: string;
+    image_url: string | null;
+    message_type: string;
+    created_at: string;
+    agent_type: string | null;
+    agent_name: string | null;
+    product_image_url: string[] | null;
+  }[];
 };
 
 type Codination = {

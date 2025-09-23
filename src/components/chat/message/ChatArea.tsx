@@ -1,22 +1,72 @@
 'use client';
 
-import { postChatRooms } from '@/api/chatAPI';
-import { messagesAtomFamily, roomIdAtom, streamingMessageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
+import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
+import {
+  messagesAtomFamily,
+  roomIdAtom,
+  streamingMessageAtom,
+  isAIRespondingAtom,
+  tempMessageAtom,
+} from '@/atoms/chatAtoms';
 import EmptyChatStart from '@/components/chat/message/EmptyChatStart';
 import MessageBalloon from '@/components/chat/message/MessageBalloon';
 import MessageSpinner from '@/components/chat/message/MessageSpinner';
 import { useAtom, useAtomValue } from 'jotai';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function ChatArea() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
-  const [roomId, setRoomId] = useAtom(roomIdAtom);
-  const messages = useAtomValue(messagesAtomFamily(roomId));
+  const streamingMessage = useAtomValue(streamingMessageAtom);
+  const roomId = useAtomValue(roomIdAtom);
+  const [messages, setMessages] = useAtom(messagesAtomFamily(roomId));
   const isAIResponding = useAtomValue(isAIRespondingAtom);
   const prevStreamingSizeRef = useRef(0);
+  const [isFetchingOlder, setIsFetchingOlder] = useState(false);
+  const [canLoadOlder, setCanLoadOlder] = useState(true);
 
-  // 스트리밍 메시지가 0에서 새로 생긴 상황에서만 자동 스크롤
+  // 단일 로더: beforeDate 유무에 따라 초기/이전 메시지 로드
+  const loadMessages = useCallback(
+    async (beforeDate?: Date) => {
+      if (!roomId) return;
+      const hasOlderFetch = !!beforeDate;
+      if (hasOlderFetch) {
+        if (isFetchingOlder || !canLoadOlder) return;
+        setIsFetchingOlder(true);
+      }
+      try {
+        const response = await getChatRoomsRoomIdMessages(roomId, beforeDate);
+        if (response.status === 'success' && response.data?.messages) {
+          const fetched = response.data.messages;
+          setMessages((prev) => [...fetched, ...prev]);
+          if (fetched.length === 0) setCanLoadOlder(false);
+        }
+      } catch (error) {
+        console.error('Failed to load messages:', error);
+      } finally {
+        setIsFetchingOlder(false);
+      }
+    },
+    [roomId, isFetchingOlder, canLoadOlder, setMessages],
+  );
+
+  // 스크롤 감지 이벤트
+  useEffect(() => {
+    const scrollArea = scrollAreaRef.current;
+    if (!scrollArea) return;
+
+    const handleScroll = () => {
+      // 스크롤이 맨 위에 가까이 있을 때 (50px 이내)
+      if (scrollArea.scrollTop <= 50 && !isFetchingOlder && canLoadOlder) {
+        const oldest = messages[0];
+        if (oldest?.createdAt) loadMessages(oldest.createdAt);
+      }
+    };
+
+    scrollArea.addEventListener('scroll', handleScroll);
+    return () => scrollArea.removeEventListener('scroll', handleScroll);
+  }, [messages, loadMessages, isFetchingOlder, canLoadOlder]);
+
+  // 스트리밍 메시지가 0에서 새로 생긴 상황에서 자동 스크롤
   useEffect(() => {
     const currentSize = streamingMessage.size;
     const prevSize = prevStreamingSizeRef.current;
@@ -32,7 +82,7 @@ export default function ChatArea() {
     prevStreamingSizeRef.current = currentSize;
   }, [streamingMessage]);
 
-  // 메시지가 추가될 때도 스크롤 (사용자 메시지 전송 시)
+  // 사용자 메시지 전송 시 메시지가 추가될 때 스크롤
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({
@@ -41,21 +91,6 @@ export default function ChatArea() {
       });
     }
   }, [messages.length]);
-
-  useEffect(() => {
-    if (roomId === null) {
-      (async () => {
-        try {
-          const response = await postChatRooms();
-          if (response.status === 'success' && response.data) {
-            setRoomId(response.data.id);
-          } else console.error('Failed to create chat room:', response.message);
-        } catch (error) {
-          console.error('Error creating chat room:', error);
-        }
-      })();
-    }
-  }, [roomId]);
 
   // 채팅방이 비어있고 로딩 중이 아닐 때 시작 화면 표시
   if (messages.length + streamingMessage.size === 0) {
@@ -66,15 +101,17 @@ export default function ChatArea() {
     <div className={`flex flex-col transition-all duration-500 ease-in-out flex-1`}>
       <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto chat-scroll">
         <div className="space-y-6 mx-auto max-w-[960px]">
-          {messages.length == 0 ? (
-            <div>대화 내용을 불러오는 중...</div>
-          ) : (
-            <>
-              {messages.map((message, i) => (
-                <MessageBalloon key={i} message={message} />
-              ))}
-            </>
+          {/* 이전 메시지 로딩 인디케이터 */}
+          {isFetchingOlder && (
+            <div className="flex justify-center py-4">
+              <div className="text-gray-500">이전 메시지를 불러오는 중...</div>
+            </div>
           )}
+          <>
+            {messages.map((message, i) => (
+              <MessageBalloon key={i} message={message} />
+            ))}
+          </>
           {[...streamingMessage].map(([agent, content]) => (
             <MessageBalloon key={agent} message={content} />
           ))}

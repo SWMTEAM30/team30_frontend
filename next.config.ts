@@ -3,6 +3,7 @@ import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
   experimental: {},
+  reactStrictMode: false,
   //output: 'export',
   images: {
     unoptimized: true,

@@ -104,3 +104,4 @@ export const getJWTIssuedTime = (token: string): number | null => {
 
   return payload.iat * 1000; // 초를 밀리초로 변환
 };
+

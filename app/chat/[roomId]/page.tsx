@@ -4,39 +4,40 @@ import ChatHeader from '@/components/chat/ChatHeader';
 import ClosetPanel from '@/components/chat/closet/ClosetPanel';
 import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import ChatPanel from '@/components/chat/message/ChatPanel';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { panelAtom, roomIdAtom } from '@/atoms/chatAtoms';
-import { Suspense, useEffect } from 'react';
-import { userAtom } from '@/atoms/authAtoms';
-import { useRouter } from 'next/navigation';
-import { postChatRooms } from '@/api/chatAPI';
+import { useAtom } from 'jotai';
+import { panelAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
+import { Suspense, useEffect, useState } from 'react';
+import { useChatStream } from '@/hooks/useChatStream';
 
-export default function Chat() {
-  const panel = useAtomValue(panelAtom);
-  const setPanel = useSetAtom(panelAtom);
-  const user = useAtomValue(userAtom);
-  const router = useRouter();
-  const setRoomId = useSetAtom(roomIdAtom);
+interface ChatRoomPageProps {
+  params: Promise<{
+    roomId: string;
+  }>;
+}
 
-  // 새로운 채팅방 생성
+export default function ChatRoomPage({ params }: ChatRoomPageProps) {
+  const [panel, setPanel] = useAtom(panelAtom);
+  const [roomId, setRoomId] = useAtom(roomIdAtom);
+  const [tempMessage, setTempMessage] = useAtom(tempMessageAtom);
+  const [isFetchingOlder, setIsFetchingOlder] = useState(false);
+  const [canLoadOlder, setCanLoadOlder] = useState(true);
+  const { mutate } = useChatStream();
+
+  // params에서 roomId 추출
   useEffect(() => {
-    const createNewRoom = async () => {
-      try {
-        const response = await postChatRooms();
-        if (response.status === 'success' && response.data) {
-          console.log('Creating new room:', response.data.id);
-          setRoomId(response.data.id);
-          router.push(`/chat/${response.data.id}`);
-        } else {
-          console.error('Failed to create chat room:', response.message);
-        }
-      } catch (error) {
-        console.error('Error creating chat room:', error);
-      }
-    };
+    params.then((resolvedParams) => {
+      setRoomId(resolvedParams.roomId);
+    });
+  }, [params, setRoomId]);
 
-    createNewRoom();
-  }, [router, setRoomId]);
+  // roomId가 변경되고 나서 리셋해야 함
+  useEffect(() => {
+    if (tempMessage?.roomId != roomId || !tempMessage?.userMessage) return;
+    setCanLoadOlder(true);
+    setIsFetchingOlder(false);
+    mutate({ inputValue: tempMessage.userMessage });
+    setTempMessage(null);
+  }, [roomId]);
 
   // lg 이상일 때 panel이 'chat'이면 자동으로 'closet'으로 전환
   useEffect(() => {
@@ -54,18 +55,6 @@ export default function Chat() {
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
   }, [panel, setPanel]);
-
-  // useEffect(() => {
-  //   console.log(user);
-  //   if (!user) {
-  //     alert('로그인이 필요합니다.');
-  //     router.push('/signin');
-  //   }
-  // }, [user, router]);
-
-  // if (!user) {
-  //   return null;
-  // }
 
   return (
     <Suspense>
