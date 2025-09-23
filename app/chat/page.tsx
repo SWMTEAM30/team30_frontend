@@ -5,16 +5,38 @@ import ClosetPanel from '@/components/chat/closet/ClosetPanel';
 import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import ChatPanel from '@/components/chat/message/ChatPanel';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { panelAtom } from '@/atoms/chatAtoms';
+import { panelAtom, roomIdAtom } from '@/atoms/chatAtoms';
 import { Suspense, useEffect } from 'react';
 import { userAtom } from '@/atoms/authAtoms';
 import { useRouter } from 'next/navigation';
+import { postChatRooms } from '@/api/chatAPI';
 
 export default function Chat() {
   const panel = useAtomValue(panelAtom);
   const setPanel = useSetAtom(panelAtom);
   const user = useAtomValue(userAtom);
   const router = useRouter();
+  const setRoomId = useSetAtom(roomIdAtom);
+
+  // 새로운 채팅방 생성
+  useEffect(() => {
+    const createNewRoom = async () => {
+      try {
+        const response = await postChatRooms();
+        if (response.status === 'success' && response.data) {
+          console.log('Creating new room:', response.data.id);
+          setRoomId(response.data.id);
+          router.push(`/chat/${response.data.id}`);
+        } else {
+          console.error('Failed to create chat room:', response.message);
+        }
+      } catch (error) {
+        console.error('Error creating chat room:', error);
+      }
+    };
+
+    createNewRoom();
+  }, [router, setRoomId]);
 
   // lg 이상일 때 panel이 'chat'이면 자동으로 'closet'으로 전환
   useEffect(() => {

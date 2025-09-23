@@ -6,17 +6,15 @@ import { postChatRooms } from '@/api/chatAPI';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import LucideIcon from '@/components/ui/icons/LucideIcon';
-import { useChatStream } from '@/hooks/useChatStream';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { roomIdAtom } from '@/atoms/chatAtoms';
+import { tempMessageAtom } from '@/atoms/chatAtoms';
 import { userAtom } from '@/atoms/authAtoms';
 
 export default function NextChat() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { mutate } = useChatStream();
   const router = useRouter();
-  const setRoomId = useSetAtom(roomIdAtom);
+  const setTempMessage = useSetAtom(tempMessageAtom);
   const user = useAtomValue(userAtom);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,13 +25,28 @@ export default function NextChat() {
     try {
       // 채팅방 생성
       const response = await postChatRooms();
-      console.log(response.data);
+      console.log('NextChat - room creation response:', response.data);
       if (response.status === 'success' && response.data) {
-        router.push(`/chat`);
-        setRoomId(response.data.id);
-        console.log(response.data.id);
-        mutate({ roomId: response.data.id, inputValue });
-      } else console.error('Failed to create chat room:', response.message);
+        const newRoomId = response.data.id.toString();
+        console.log('NextChat - setting roomId to:', newRoomId);
+
+        // 사용자 메시지 생성
+        if (!user) {
+          console.error('User is not logged in');
+          return;
+        }
+
+        // 임시 저장소에 메시지 저장
+        setTempMessage({
+          roomId: newRoomId,
+          userMessage: inputValue,
+        });
+
+        // 페이지 이동
+        router.push(`/chat/${newRoomId}`);
+      } else {
+        console.error('Failed to create chat room:', response.message);
+      }
     } catch (error) {
       console.error('Error creating chat room:', error);
     } finally {
@@ -97,7 +110,7 @@ export default function NextChat() {
             {isLoading ? (
               <>
                 <LucideIcon name={'LoaderCircle'} color="beige-50" className="mr-3 w-5 h-5 animate-spin" />
-                생성 중...
+                채팅방 생성 중...
               </>
             ) : (
               <>

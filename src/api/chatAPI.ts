@@ -1,5 +1,5 @@
 import { requestAPI } from '@/api/API';
-import { formatMessage } from '@/lib/chat_formatter';
+import { formatMessage, formatRoomMessage } from '@/lib/chat_formatter';
 
 // GET
 export const getChatReceive = async (roomId: string | null): Promise<APIResponse<Message>> => {
@@ -27,8 +27,14 @@ export const getChatReceive = async (roomId: string | null): Promise<APIResponse
 
 export const getChatRoomsHistory = async () => requestAPI<APIRoomHistory>(`/api/chat/rooms/history`, 'GET');
 
-export const getChatRoomsRoomIdMessages = async (roomId: number): Promise<APIResponse<RoomIdMessages>> => {
-  const response = await requestAPI<APIRoomIdMessages>(`/api/chat/rooms/${roomId}/messages`, 'GET');
+export const getChatRoomsRoomIdMessages = async (
+  roomId: string,
+  before?: Date,
+): Promise<APIResponse<{ messages: Message[] }>> => {
+  const response = await requestAPI<APIRoomIdMessages>(
+    `/api/chat/rooms/${roomId}/messages${before ? `?before=${before.toISOString()}` : ''}`,
+    'GET',
+  );
   if (response.status === 'fail') {
     console.error(new Error(response.message));
     return response;
@@ -38,7 +44,7 @@ export const getChatRoomsRoomIdMessages = async (roomId: number): Promise<APIRes
     status: response.status,
     message: response.message,
     data: {
-      messages: response.data.messages.map((e) => formatMessage(e)),
+      messages: response.data.messages.map((e) => formatRoomMessage(e)),
     },
   };
 };

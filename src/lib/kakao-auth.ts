@@ -49,3 +49,4 @@ export const getKakaoAuthUrl = (): string | null => {
   
   return generateKakaoAuthUrl(config);
 };
+
