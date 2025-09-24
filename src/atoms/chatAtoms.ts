@@ -32,3 +32,4 @@ export const activeCodinationAtom = atom<Codination | null>(null);
 export const closetCodinationAtom = atom<Codination | null>(null);
 export const closetAtom = atom<ClosetCloth[]>([]);
 export const activeClothAtom = atom<ClosetCloth | null>(null);
+export const userModelImageAtom = atom<string | null>('/model.png');

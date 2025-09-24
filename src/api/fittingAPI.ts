@@ -9,6 +9,14 @@ export const getFittingStatusTaskId = async (taskId: string) =>
 export const getFittingProxyTest = async () => requestAPI<APIFitting>('/api/fitting/proxy-test', 'GET');
 
 /// POST
-export const postFittingTryon = async () => requestAPI<APIFitting>('/api/fitting/try-on', 'POST');
+export const postFittingTryon = async (userImageUrl: string, clothImageUrl: string) => 
+  requestAPI<APIFitting>('/api/fitting/try-on', 'POST', {
+    userImageUrl,
+    clothImageUrl
+  });
 
-export const postFittingTryonCombo = async () => requestAPI<APIFitting>('/api/fitting/try-on/combo', 'POST');
+export const postFittingTryonCombo = async (userImageUrl: string, clothImageUrls: string[]) => 
+  requestAPI<APIFitting>('/api/fitting/try-on/combo', 'POST', {
+    userImageUrl,
+    clothImageUrls
+  });

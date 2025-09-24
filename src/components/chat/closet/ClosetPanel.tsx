@@ -1,8 +1,10 @@
 'use client';
 
-import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
+import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom, userModelImageAtom } from '@/atoms/chatAtoms';
 import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { postFittingTryonCombo } from '@/api/fittingAPI';
+import { useState } from 'react';
 
 export default function ClosetPanel() {
   const setPanel = useSetAtom(panelAtom);
@@ -10,10 +12,35 @@ export default function ClosetPanel() {
   const setCodinations = useSetAtom(codinationsAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
+  const userModelImage = useAtomValue(userModelImageAtom);
+  const [isFittingLoading, setIsFittingLoading] = useState(false);
   const isDisabled = !closetCodination || closetCodination.cloths.length == 0;
 
-  const handleSubmitFitting = () => {
+  const handleSubmitFitting = async () => {
     if (isDisabled) return;
+    
+    // 가상피팅 실행
+    if (userModelImage) {
+      setIsFittingLoading(true);
+      try {
+        const clothImageUrls = closetCodination.cloths.map(cloth => cloth.url);
+        const response = await postFittingTryonCombo(userModelImage, clothImageUrls);
+        
+        if (response.status === 'success') {
+          alert('가상피팅이 완료되었습니다!');
+          console.log('가상피팅 결과:', response.data);
+        } else {
+          alert('가상피팅에 실패했습니다: ' + response.message);
+        }
+      } catch (error) {
+        console.error('가상피팅 오류:', error);
+        alert('가상피팅 중 오류가 발생했습니다.');
+      } finally {
+        setIsFittingLoading(false);
+      }
+    }
+    
+    // 기존 코디 추가 로직
     setPanel('fitting');
     setActiveCodination(closetCodination);
     setClosetCodination(null);
@@ -45,12 +72,10 @@ export default function ClosetPanel() {
       </div>
       <button
         className={`cursor-pointer h-1/12 btn bg-navy text-2xl text-white disabled:bg-blue-50`}
-        disabled={isDisabled}
-        onClick={() => {
-          handleSubmitFitting();
-        }}
+        disabled={isDisabled || isFittingLoading}
+        onClick={handleSubmitFitting}
       >
-        코디 추가하기
+        {isFittingLoading ? '가상피팅 중...' : '코디 추가하기'}
       </button>
     </div>
   );

@@ -25,19 +25,19 @@ export default function ChatHeader() {
     <header className="h-20 flex items-center justify-between px-4 py-6 mx-16 lg:mx-auto w-[calc(100vw-68px)] lg:w-full bg-white">
       <div className="flex items-center gap-2">
         <button
-          className={`lg:hidden btn cursor-pointer text-blue text-3xl ${panel == 'chat' && 'font-bold'}`}
+          className={`lg:hidden btn cursor-pointer text-blue text-3xl ${panel == 'chat' ? 'font-bold' : ''}`}
           onClick={() => handleChat()}
         >
           Chat
         </button>
         <button
-          className={`btn cursor-pointer text-blue text-3xl ${panel == 'closet' && 'font-bold'}`}
+          className={`btn cursor-pointer text-blue text-3xl ${panel == 'closet' ? 'font-bold' : ''}`}
           onClick={() => handleCloset()}
         >
           Closet
         </button>
         <button
-          className={`btn cursor-pointer text-blue text-3xl ${panel == 'fitting' && 'font-bold'}`}
+          className={`btn cursor-pointer text-blue text-3xl ${panel == 'fitting' ? 'font-bold' : ''}`}
           onClick={() => handleFitting()}
         >
           Fitting

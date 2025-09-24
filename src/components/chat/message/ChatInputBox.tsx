@@ -5,8 +5,8 @@ import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { ChangeEvent, useCallback, useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useAtom, useAtomValue } from 'jotai';
-import { inputValueAtom, inputProductAtom, isAIRespondingAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { inputValueAtom, inputProductAtom, isAIRespondingAtom, roomIdAtom, tempMessageAtom, userModelImageAtom } from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
 import { useChatStream } from '@/hooks/useChatStream';
 
@@ -15,6 +15,7 @@ export default function ChatInputBox() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
   const [inputProduct, setInputProduct] = useAtom(inputProductAtom);
   const isAIResponding = useAtomValue(isAIRespondingAtom);
+  const setUserModelImage = useSetAtom(userModelImageAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutate } = useChatStream();
   const [disabled, setDisabled] = useState(false);
@@ -44,9 +45,10 @@ export default function ChatInputBox() {
         };
         console.log(newMessageImage);
         setInputProduct(newMessageImage);
+        setUserModelImage(response.data);
       }
     },
-    [setInputProduct],
+    [setInputProduct, setUserModelImage],
   );
 
   const handleSendMessage = useCallback(() => {

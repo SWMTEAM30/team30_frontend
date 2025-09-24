@@ -12,15 +12,24 @@ export default function SigninSNSForm() {
   // 팝업 창에서 메시지 수신 처리
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      console.log('Received message from popup:', event.data);
+      console.log('Message origin:', event.origin);
+      console.log('Current origin:', window.location.origin);
+      
       // 보안을 위해 origin 확인
-      if (event.origin !== window.location.origin) return;
+      if (event.origin !== window.location.origin) {
+        console.warn('Message origin mismatch, ignoring message');
+        return;
+      }
       
       if (event.data.type === 'KAKAO_LOGIN_SUCCESS') {
+        console.log('Kakao login success, reloading page');
         // 로그인 성공 시 페이지 새로고침 또는 리다이렉트
         window.location.reload();
       } else if (event.data.type === 'KAKAO_LOGIN_ERROR') {
         console.error('Kakao login error:', event.data.error);
-        alert('카카오 로그인에 실패했습니다.');
+        console.error('Error details:', event.data.details);
+        alert(`카카오 로그인에 실패했습니다: ${event.data.error}`);
       }
     };
 
