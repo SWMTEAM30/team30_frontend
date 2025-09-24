@@ -9,10 +9,10 @@ export default function HeroSection() {
           패션을 잘 모르겠다면?
         </div>
 
-        <h2 className="text-7xl font-bold text-gray-900 my-24 leading-tight">
+        <h2 className="text-7xl font-bold text-gray-900 my-16 leading-tight">
           <span className="text-blue font-">The First Take</span>
         </h2>
-        <div className="text-2xl font-bold text-gray-900 mb-32 leading-tight font-sans">
+        <div className="text-2xl font-bold text-gray-900 mb-16 leading-tight font-sans">
           패션 전문가가 아니더라도
           <br />
           완벽한 한 벌을 찾을 수 있어요
