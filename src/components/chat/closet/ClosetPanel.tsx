@@ -1,8 +1,18 @@
 'use client';
 
-import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
+import {
+  activeCodinationAtom,
+  closetAtom,
+  closetCodinationAtom,
+  codinationsAtom,
+  panelAtom,
+  userModelImageAtom,
+  virtualFittingStatusAtom,
+} from '@/atoms/chatAtoms';
 import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useVirtualFitting } from '@/queries/useVirtualFitting';
+import { useEffect } from 'react';
 
 export default function ClosetPanel() {
   const setPanel = useSetAtom(panelAtom);
@@ -10,10 +20,45 @@ export default function ClosetPanel() {
   const setCodinations = useSetAtom(codinationsAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
+  const userModelImage = useAtomValue(userModelImageAtom);
+  const setVirtualFittingStatus = useSetAtom(virtualFittingStatusAtom);
+  const virtualFitting = useVirtualFitting();
   const isDisabled = !closetCodination || closetCodination.cloths.length == 0;
 
-  const handleSubmitFitting = () => {
+  // react-query 상태를 atom에 동기화
+  useEffect(() => {
+    if (closetCodination) {
+      setVirtualFittingStatus({
+        codinationId: closetCodination.id,
+        status: virtualFitting.status as any,
+        resultUrl: virtualFitting.resultUrl || null,
+        errorMessage: virtualFitting.error?.message || null,
+      });
+    }
+  }, [
+    virtualFitting.status,
+    virtualFitting.resultUrl,
+    virtualFitting.error,
+    closetCodination,
+    setVirtualFittingStatus,
+  ]);
+
+  const handleSubmitFitting = async () => {
     if (isDisabled) return;
+
+    // 가상피팅 요청 시작 (비동기로 실행)
+    if (userModelImage) {
+      try {
+        await virtualFitting.startVirtualFitting(
+          userModelImage,
+          closetCodination.cloths.map((cloth) => cloth.url),
+        );
+      } catch (error) {
+        console.error('가상피팅 요청 실패:', error);
+      }
+    }
+
+    // 즉시 fitting 패널로 이동
     setPanel('fitting');
     setActiveCodination(closetCodination);
     setClosetCodination(null);
@@ -46,9 +91,7 @@ export default function ClosetPanel() {
       <button
         className={`cursor-pointer h-1/12 btn bg-navy text-2xl text-white disabled:bg-blue-50`}
         disabled={isDisabled}
-        onClick={() => {
-          handleSubmitFitting();
-        }}
+        onClick={handleSubmitFitting}
       >
         코디 추가하기
       </button>
