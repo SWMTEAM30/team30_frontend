@@ -3,10 +3,9 @@
 import { getKakaoAuthUrl, getKakaoConfig } from '@/lib/kakao-auth';
 
 export default function SigninSNSForm() {
-  // 카카오 설정 확인
   const config = getKakaoConfig();
   const kakaoAuthUrl = getKakaoAuthUrl();
-  
+
   // 환경변수가 없으면 에러 표시
   if (!config || !kakaoAuthUrl) {
     return (
@@ -19,7 +18,7 @@ export default function SigninSNSForm() {
       </div>
     );
   }
-  
+
   console.log('Kakao Config:', config);
   console.log('Full Kakao Auth URL:', kakaoAuthUrl);
 
@@ -39,11 +38,7 @@ export default function SigninSNSForm() {
         <span className="text-white font-bold text-lg w-6 h-6 flex items-center justify-center">N</span>
       </button> */}
 
-      <form
-        className="w-full"
-        action={kakaoAuthUrl}
-        method="GET"
-      >
+      <form className="w-full" action={kakaoAuthUrl} method="GET">
         <button className="w-full flex justify-center items-center p-3 rounded-xl bg-[#FEE500] hover:bg-[#FDD835] transition-all duration-200 shadow-sm hover:shadow-md">
           <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
