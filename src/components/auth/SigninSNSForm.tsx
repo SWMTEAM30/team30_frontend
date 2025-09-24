@@ -15,10 +15,16 @@ export default function SigninSNSForm() {
       console.log('Received message from popup:', event.data);
       console.log('Message origin:', event.origin);
       console.log('Current origin:', window.location.origin);
-      
-      // 보안을 위해 origin 확인
-      if (event.origin !== window.location.origin) {
-        console.warn('Message origin mismatch, ignoring message');
+
+      // 보안을 위해 origin 화이트리스트로 확인 (로컬/프로덕션 모두 허용)
+      const allowedOrigins = new Set([
+        window.location.origin,
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'https://the-first-take.com',
+      ]);
+      if (!allowedOrigins.has(event.origin)) {
+        console.warn('Message origin not allowed, ignoring');
         return;
       }
       
@@ -53,14 +59,40 @@ export default function SigninSNSForm() {
       return;
     }
 
-    // 팝업이 닫혔는지 주기적으로 확인
-    const checkClosed = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkClosed);
-        // 팝업이 닫혔지만 메시지를 받지 못한 경우 처리
-        console.log('Kakao login popup closed');
+    // 팝업에서 URL 변경 감지
+    const checkUrl = setInterval(() => {
+      try {
+        const popupUrl = popup.location.href;
+        
+        // 성공 페이지로 리다이렉트된 경우
+        if (popupUrl.includes('/auth/kakao/success')) {
+          clearInterval(checkUrl);
+          popup.close();
+          window.location.reload();
+        }
+        
+        // 에러 페이지로 리다이렉트된 경우
+        if (popupUrl.includes('/auth/kakao/error') || popupUrl.includes('/auth/error')) {
+          clearInterval(checkUrl);
+          popup.close();
+          alert('카카오 로그인에 실패했습니다.');
+        }
+        
+        // 메인 페이지로 리다이렉트된 경우 (백엔드에서 직접 처리)
+        if (popupUrl.includes(window.location.origin) && !popupUrl.includes('/auth/kakao/')) {
+          clearInterval(checkUrl);
+          popup.close();
+          window.location.reload();
+        }
+      } catch (e) {
+        // Cross-origin 에러는 무시 (카카오 도메인에서 발생)
       }
     }, 1000);
+
+    // 5분 후 자동으로 체크 중단
+    setTimeout(() => {
+      clearInterval(checkUrl);
+    }, 300000);
   };
 
   // 환경변수가 없으면 에러 표시

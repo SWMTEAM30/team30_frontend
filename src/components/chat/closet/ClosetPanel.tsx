@@ -1,10 +1,18 @@
 'use client';
 
-import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom, userModelImageAtom } from '@/atoms/chatAtoms';
+import {
+  activeCodinationAtom,
+  closetAtom,
+  closetCodinationAtom,
+  codinationsAtom,
+  panelAtom,
+  userModelImageAtom,
+  virtualFittingStatusAtom,
+} from '@/atoms/chatAtoms';
 import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { postFittingTryonCombo } from '@/api/fittingAPI';
-import { useState } from 'react';
+import { useVirtualFitting } from '@/queries/useVirtualFitting';
+import { useEffect } from 'react';
 
 export default function ClosetPanel() {
   const setPanel = useSetAtom(panelAtom);
@@ -13,34 +21,44 @@ export default function ClosetPanel() {
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
   const userModelImage = useAtomValue(userModelImageAtom);
-  const [isFittingLoading, setIsFittingLoading] = useState(false);
+  const setVirtualFittingStatus = useSetAtom(virtualFittingStatusAtom);
+  const virtualFitting = useVirtualFitting();
   const isDisabled = !closetCodination || closetCodination.cloths.length == 0;
+
+  // react-query 상태를 atom에 동기화
+  useEffect(() => {
+    if (closetCodination) {
+      setVirtualFittingStatus({
+        codinationId: closetCodination.id,
+        status: virtualFitting.status as any,
+        resultUrl: virtualFitting.resultUrl || null,
+        errorMessage: virtualFitting.error?.message || null,
+      });
+    }
+  }, [
+    virtualFitting.status,
+    virtualFitting.resultUrl,
+    virtualFitting.error,
+    closetCodination,
+    setVirtualFittingStatus,
+  ]);
 
   const handleSubmitFitting = async () => {
     if (isDisabled) return;
-    
-    // 가상피팅 실행
+
+    // 가상피팅 요청 시작 (비동기로 실행)
     if (userModelImage) {
-      setIsFittingLoading(true);
       try {
-        const clothImageUrls = closetCodination.cloths.map(cloth => cloth.url);
-        const response = await postFittingTryonCombo(userModelImage, clothImageUrls);
-        
-        if (response.status === 'success') {
-          alert('가상피팅이 완료되었습니다!');
-          console.log('가상피팅 결과:', response.data);
-        } else {
-          alert('가상피팅에 실패했습니다: ' + response.message);
-        }
+        await virtualFitting.startVirtualFitting(
+          userModelImage,
+          closetCodination.cloths.map((cloth) => cloth.url),
+        );
       } catch (error) {
-        console.error('가상피팅 오류:', error);
-        alert('가상피팅 중 오류가 발생했습니다.');
-      } finally {
-        setIsFittingLoading(false);
+        console.error('가상피팅 요청 실패:', error);
       }
     }
-    
-    // 기존 코디 추가 로직
+
+    // 즉시 fitting 패널로 이동
     setPanel('fitting');
     setActiveCodination(closetCodination);
     setClosetCodination(null);
@@ -72,10 +90,10 @@ export default function ClosetPanel() {
       </div>
       <button
         className={`cursor-pointer h-1/12 btn bg-navy text-2xl text-white disabled:bg-blue-50`}
-        disabled={isDisabled || isFittingLoading}
+        disabled={isDisabled}
         onClick={handleSubmitFitting}
       >
-        {isFittingLoading ? '가상피팅 중...' : '코디 추가하기'}
+        코디 추가하기
       </button>
     </div>
   );
