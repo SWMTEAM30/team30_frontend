@@ -6,11 +6,10 @@ export default function SigninSNSForm() {
   const config = getKakaoConfig();
   const kakaoAuthUrl = getKakaoAuthUrl();
 
-
   // 카카오 로그인 - 전체 페이지 리다이렉트
   const handleKakaoLogin = () => {
     if (!kakaoAuthUrl) return;
-    
+
     // 현재 창에서 카카오 인증 페이지로 이동
     window.location.href = kakaoAuthUrl;
   };
@@ -28,13 +27,10 @@ export default function SigninSNSForm() {
     );
   }
 
-  console.log('Kakao Config:', config);
-  console.log('Full Kakao Auth URL:', kakaoAuthUrl);
-
   return (
     <div className="space-y-4">
       {/* 카카오 로그인 버튼 */}
-      <button 
+      <button
         onClick={handleKakaoLogin}
         className="
           group relative w-full
@@ -52,7 +48,7 @@ export default function SigninSNSForm() {
       >
         {/* 배경 애니메이션 효과 */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-        
+
         <div className="relative z-10 flex items-center space-x-3">
           {/* 카카오 아이콘 */}
           <div className="flex-shrink-0">
@@ -64,14 +60,11 @@ export default function SigninSNSForm() {
               />
             </svg>
           </div>
-          
+
           {/* 텍스트 */}
-          <span className="text-[#391B1B] font-semibold text-lg">
-            카카오로 시작하기
-          </span>
+          <span className="text-[#391B1B] font-semibold text-lg">카카오로 시작하기</span>
         </div>
       </button>
-
     </div>
   );
 }

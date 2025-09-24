@@ -10,4 +10,4 @@ import { getAuthCookie } from '@/lib/cookies';
 //   return getAuthCookie();
 // });
 
-export const userAtom = atom<User | null>({ userId: 'adsf', username: 'mindul' });
+export const userAtom = atom<User | null>(null);

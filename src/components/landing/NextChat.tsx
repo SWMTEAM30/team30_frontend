@@ -9,6 +9,7 @@ import LucideIcon from '@/components/ui/icons/LucideIcon';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { tempMessageAtom } from '@/atoms/chatAtoms';
 import { userAtom } from '@/atoms/authAtoms';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 export default function NextChat() {
   const [inputValue, setInputValue] = useState('');
@@ -16,6 +17,7 @@ export default function NextChat() {
   const router = useRouter();
   const setTempMessage = useSetAtom(tempMessageAtom);
   const user = useAtomValue(userAtom);
+  const { checkAuth } = useAuthCheck();
 
   // 상황별 프리셋 메시지들
   const situationPresets = [
@@ -41,18 +43,21 @@ export default function NextChat() {
     setIsLoading(true);
 
     try {
+      // 로그인 확인
+      const authResult = await checkAuth({
+        alertMessage: '채팅을 시작하려면 로그인이 필요합니다.'
+      });
+
+      if (!authResult.isAuthenticated) {
+        return; // checkAuth에서 이미 리다이렉트 처리됨
+      }
+
       // 채팅방 생성
       const response = await postChatRooms();
       console.log('NextChat - room creation response:', response.data);
       if (response.status === 'success' && response.data) {
         const newRoomId = response.data.id.toString();
         console.log('NextChat - setting roomId to:', newRoomId);
-
-        // 사용자 메시지 생성
-        if (!user) {
-          console.error('User is not logged in');
-          return;
-        }
 
         // 임시 저장소에 메시지 저장
         setTempMessage({
@@ -92,13 +97,14 @@ export default function NextChat() {
           {situationPresets.map((preset, index) => (
             <button
               key={index}
-              onClick={() => {
-                if (!user) {
-                  alert('로그인이 필요합니다.');
-                  router.push('/signin');
-                  return;
+              onClick={async () => {
+                const authResult = await checkAuth({
+                  alertMessage: '채팅을 시작하려면 로그인이 필요합니다.'
+                });
+                
+                if (authResult.isAuthenticated) {
+                  handleSituationClick(preset.message);
                 }
-                handleSituationClick(preset.message);
               }}
               disabled={isLoading}
               className="
@@ -148,14 +154,11 @@ export default function NextChat() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              onClick={() => {
-                console.log(user);
-                if (!user) {
-                  alert('로그인이 필요합니다.');
-                  router.push('/signin');
-                  return;
-                }
-              }}
+            onClick={async () => {
+              await checkAuth({
+                alertMessage: '채팅을 시작하려면 로그인이 필요합니다.'
+              });
+            }}
               placeholder="패션에 대해 마음대로 물어보세요! 예: '데이트룩 추천해줘'"
               className="
                 w-full min-h-[70px] max-h-[140px] 

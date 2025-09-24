@@ -9,6 +9,7 @@ import { messagesAtomFamily, panelAtom, roomIdAtom, tempMessageAtom } from '@/at
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useChatStream } from '@/hooks/useChatStream';
 import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 interface ChatRoomPageProps {
   params: Promise<{
@@ -24,6 +25,12 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
   const [isFetchingOlder, setIsFetchingOlder] = useState(false);
   const [canLoadOlder, setCanLoadOlder] = useState(true);
   const { mutate } = useChatStream();
+  const { checkAuth } = useAuthCheck();
+
+  // 최초 마운트 시 인증 확인 (미인증 시 알림 + /signin 리다이렉트)
+  useEffect(() => {
+    checkAuth({ alertMessage: '채팅을 이용하려면 로그인이 필요합니다.' });
+  }, [checkAuth]);
 
   // params에서 roomId 추출
   useEffect(() => {
