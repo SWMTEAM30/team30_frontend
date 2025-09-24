@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Build and Deploy to EC2
 
 on:
   push:
@@ -6,25 +6,78 @@ on:
       - main # main 브랜치에 푸시될 때 실행
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to EC2
+      # 1. 소스 코드 가져오기 (Checkout)
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2. Node.js 및 pnpm 환경 설정 (GitHub Actions Runner에 설치)
+      - name: Setup pnpm and Node.js v22
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10 # 사용하시는 pnpm 버전을 적어주세요
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      # 3. 의존성 설치 및 프로젝트 빌드 (GitHub Actions Runner에서 실행)
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: pnpm build
+        env: # 빌드 시점에 필요한 환경변수를 여기에 주입합니다.
+          NEXT_PUBLIC_TFT_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_TFT_BACKEND_URL }}
+          NEXT_PUBLIC_AUTH_KAKAO_ID: ${{ secrets.NEXT_PUBLIC_AUTH_KAKAO_ID }}
+          NEXT_PUBLIC_AUTH_KAKAO_REDIRECT_URL: ${{ secrets.NEXT_PUBLIC_AUTH_KAKAO_REDIRECT_URL }}
+
+      # 4. 빌드 결과물을 EC2 서버로 복사 (SCP 사용)
+      - name: Copy build files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: '.next/, public/, package.json, pnpm-lock.yaml' # Next.js 실행에 필요한 파일/폴더
+          target: ${{ secrets.EC2_PROJECT_PATH }}
+          overwrite: true
+
+      # 5. EC2 서버에 런타임용 .env.production 파일 생성
+      - name: Create .env.production file on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            source ~/.bashrc
-            export NEXT_PUBLIC_TFT_BACKEND_URL=${{ secrets.NEXT_PUBLIC_TFT_BACKEND_URL }}
-            export NEXT_PUBLIC_AUTH_KAKAO_ID=${{ secrets.NEXT_PUBLIC_AUTH_KAKAO_ID }}
-            export NEXT_PUBLIC_AUTH_KAKAO_REDIRECT_URL=${{ secrets.NEXT_PUBLIC_AUTH_KAKAO_REDIRECT_URL }}
+            cd ${{ secrets.EC2_PROJECT_PATH }}
+
+            # .env.production 파일을 생성하고 런타임 환경변수를 추가합니다.
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env.production
+            echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env.production
+            echo "SECRET_API_KEY=${{ secrets.SECRET_API_KEY }}" >> .env.production
+            # ... 필요한 모든 런타임 환경변수를 여기에 추가 ...
+
+      # 6. EC2에 접속하여 애플리케이션 재시작
+      - name: Restart application on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
             set -e
             cd ${{ secrets.EC2_PROJECT_PATH }}
-            git fetch origin main
-            git reset --hard origin/main
 
-            pnpm install
-            pnpm run build
-            pm2 reload the-first-take || pm2 start "pnpm run start" --name the-first-take
+            # fnm 환경을 활성화하여 올바른 Node 버전을 사용하도록 보장합니다.
+            export FNM_DIR="/home/ubuntu/.fnm"
+            eval "`fnm env --shell bash`"
+
+            # 운영에 필요한 의존성만 설치합니다.
+            pnpm install --prod
+
+            # PM2 재시작 (인터프리터를 명시하여 한번 더 확실하게 합니다)
+            pm2 reload the-first-take || pm2 start pnpm --name the-first-take --interpreter=$(which node) -- run start
