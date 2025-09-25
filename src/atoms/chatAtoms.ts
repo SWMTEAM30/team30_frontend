@@ -34,15 +34,16 @@ export const closetAtom = atom<ClosetCloth[]>([]);
 export const activeClothAtom = atom<ClosetCloth | null>(null);
 export const userModelImageAtom = atom<string | null>('/model.png');
 
-// 가상피팅 상태 관리 (react-query와 연동)
 export const virtualFittingStatusAtom = atom<{
   codinationId: string | null;
   status: 'idle' | 'pending' | 'success' | 'error';
   resultUrl: string | null;
   errorMessage: string | null;
+  taskId: string | null;
 }>({
   codinationId: null,
   status: 'idle',
   resultUrl: null,
   errorMessage: null,
+  taskId: null,
 });

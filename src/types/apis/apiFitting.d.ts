@@ -1,6 +1,6 @@
 type APIFitting = {
   success: boolean;
   message: string;
-  downloadUrl: string;
-  taskId: string;
+  download_url: string;
+  task_id: string;
 };

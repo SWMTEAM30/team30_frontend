@@ -79,9 +79,18 @@ const startChatStream = ({
 
   eventSource.addEventListener('content', (event) => {
     const parsedData = JSON.parse(event.data);
+    console.log(parsedData);
     if (parsedData.status === 'success') {
       if (parsedData?.data?.message?.includes('Claude API 스트리밍 호출 실패')) {
-        onError(new Error('Claude API 스트리밍 호출 실패'));
+        onError(
+          new Error(
+            'Claude API 스트리밍 호출 실패' +
+              parsedData.data.message.slice(
+                parsedData.data.message.findIndex("'message'") + 11,
+                parsedData.data.message.findIndex("'},"),
+              ),
+          ),
+        );
         eventSource.close();
         return;
       }
@@ -120,7 +129,7 @@ export const useChatStream = () => {
   const [streamingMessage, setStreamingMessage] = useAtom(streamingMessageAtom);
   const [globalEventSource, setGlobalEventSource] = useAtom(globalEventSourceAtom);
   const user = useAtomValue(userAtom);
-  const sseInFlightRef = useRef(false);
+
   const pathname = usePathname();
   const setMessages = useSetAtom(messagesAtomFamily(roomId));
   const completedAgentsRef = useRef<Set<string>>(new Set());
@@ -140,20 +149,14 @@ export const useChatStream = () => {
           return;
         }
 
-        if (sseInFlightRef.current) {
-          console.log('useChatStream - skip duplicate mutation while in-flight');
-          resolve({});
-          return;
-        }
-        sseInFlightRef.current = true;
-
         // 사용자 메시지 추가
-        if (!user) return;
+        //console.log(user);
+        //if (!user) return;
         console.log(roomId);
         const userMessage: Message = {
           id: Date.now().toString(),
           content: inputValue,
-          user: user,
+          user: { userId: 'asdf', username: 'mindul' },
           agent: null,
           message_type: 'USER',
           products: products ? [products] : [],
@@ -166,11 +169,11 @@ export const useChatStream = () => {
           inputValue,
           products,
           onConnect: (data: ConnectResponse) => {
-            //console.log('SSE Connected:', data);
+            console.log('SSE Connected:', data);
             setIsAIResponding(true);
           },
           onContent: (data: ContentResponse) => {
-            //console.log('SSE content', data);
+            console.log('SSE content', data);
             setStreamingMessage((prev) => {
               const next = new Map(prev);
               let newMessage = next.get(data.agent_id);
@@ -197,6 +200,7 @@ export const useChatStream = () => {
             });
           },
           onComplete: (data: any) => {
+            console.log('SSE Complete:', data);
             const completedMessage = {
               id: Date.now().toString(),
               content: data.message,
@@ -219,10 +223,9 @@ export const useChatStream = () => {
             });
           },
           onFinalComplete: (data: FinalCompleteResponse) => {
-            //console.log('SSE Final Complete:', data);
+            console.log('SSE Final Complete:', data);
             setIsAIResponding(false);
             setGlobalEventSource(null);
-            sseInFlightRef.current = false;
             resolve(data);
           },
           onError: (error: ErrorEvent) => {
@@ -244,14 +247,13 @@ export const useChatStream = () => {
             setMessages((prev) => [...prev, completedMessage]);
             setIsAIResponding(false);
             setGlobalEventSource(null);
-            sseInFlightRef.current = false;
             reject(error);
           },
         });
         setGlobalEventSource(eventSource);
       });
     },
-    onMutate: ({ inputValue, products }: { inputValue: string; products?: Product }) => {
+    onMutate: () => {
       if (globalEventSource && typeof globalEventSource.close === 'function') {
         globalEventSource.close();
         setGlobalEventSource(null);
@@ -271,7 +273,6 @@ export const useChatStream = () => {
         return [...prevMessages, ...finalStreamingMessages];
       });
       setStreamingMessage(new Map());
-      sseInFlightRef.current = false;
     },
   });
 
