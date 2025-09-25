@@ -7,11 +7,12 @@ import { activeCodinationAtom, virtualFittingStatusAtom } from '@/atoms/chatAtom
 export default function FittingCard() {
   const activeCodination = useAtomValue(activeCodinationAtom);
   const virtualFittingStatus = useAtomValue(virtualFittingStatusAtom);
-  
+
   // 현재 활성 코디네이션에 대한 가상피팅 상태 확인
-  const currentFittingStatus = activeCodination && virtualFittingStatus.codinationId === activeCodination.id 
-    ? virtualFittingStatus 
-    : { status: 'idle' as const, resultUrl: null, errorMessage: null };
+  const currentFittingStatus =
+    activeCodination && virtualFittingStatus.codinationId === activeCodination.id
+      ? virtualFittingStatus
+      : { status: 'idle' as const, resultUrl: null, errorMessage: null };
 
   const renderContent = () => {
     switch (currentFittingStatus.status) {
@@ -25,21 +26,18 @@ export default function FittingCard() {
             <p className="text-sm mt-1">잠시만 기다려주세요</p>
           </div>
         );
-      
+
       case 'success':
         return (
-          <div className="w-full h-full relative">
+          <div className="w-full h-full p-2">
             {currentFittingStatus.resultUrl && (
-              <Image
-                src={currentFittingStatus.resultUrl}
-                alt="가상피팅 결과"
-                fill
-                className="object-cover"
-              />
+              <div className="relative w-full h-full">
+                <Image src={currentFittingStatus.resultUrl} alt="가상피팅 결과" fill className="object-cover" />
+              </div>
             )}
           </div>
         );
-      
+
       case 'error':
         return (
           <div className="text-red-400 dark:text-red-500 text-center">
@@ -57,7 +55,7 @@ export default function FittingCard() {
             <p className="text-sm mt-1">{currentFittingStatus.errorMessage || '오류가 발생했습니다'}</p>
           </div>
         );
-      
+
       default:
         return (
           <div className="text-blue-400 dark:text-navy-500 text-center">
@@ -80,9 +78,7 @@ export default function FittingCard() {
 
   return (
     <div className="flex bg-beige-300 flex-col h-[60vh]">
-      <div className="flex h-full items-center justify-center">
-        {renderContent()}
-      </div>
+      <div className="flex h-full items-center justify-center">{renderContent()}</div>
     </div>
   );
 }

@@ -36,56 +36,96 @@ export const useVirtualFittingStatus = (taskId: string | null, enabled: boolean 
       }
       return response.data;
     },
-    enabled: enabled && !!taskId,
+    enabled: !!taskId,
     refetchInterval: (data) => {
-      return false;
+      return 2000;
     },
     retry: 3,
   });
 };
 
 // 가상피팅 전체 프로세스를 관리하는 hook
-export const useVirtualFitting = () => {
+interface UseVirtualFittingResult {
+  startVirtualFitting: (upper_product_id: string, lower_product_id: string) => void;
+  reset: () => void;
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  error: Error | null;
+  resultUrl?: string;
+  taskId: string | null;
+  status: 'success' | 'error' | 'pending' | 'idle';
+}
+export const useVirtualFitting = (): UseVirtualFittingResult => {
   const mutation = useVirtualFittingMutation();
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
+  const statusQuery = useVirtualFittingStatus(currentTaskId, !!currentTaskId);
 
-  const statusQuery = useVirtualFittingStatus(currentTaskId, mutation.isSuccess && !!currentTaskId);
+  // 상태 변화 로그
+  console.log('🔍 useVirtualFitting 상태:', {
+    currentTaskId,
+    mutationPending: mutation.isPending,
+    mutationError: mutation.error,
+    statusQueryData: statusQuery.data,
+    statusQueryError: statusQuery.error,
+    statusQueryIsLoading: statusQuery.isLoading,
+  });
 
-  const startVirtualFitting = async (upper_product_id: string, lower_product_id: string) => {
-    try {
-      const result = await mutation.mutateAsync({
+  const startVirtualFitting = (upper_product_id: string, lower_product_id: string) => {
+    console.log('🚀 startVirtualFitting 호출됨:', { upper_product_id, lower_product_id });
+    // 비동기로 처리하되 결과를 기다리지 않음
+    mutation.mutate(
+      {
         upper_product_id,
         lower_product_id,
-      });
-      console.log(result);
-      setCurrentTaskId(result?.taskId || null);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+      },
+      {
+        onSuccess: (result) => {
+          console.log('✅ 가상피팅 요청 성공:', result);
+          console.log('📝 taskId 설정:', result?.task_id);
+          setCurrentTaskId(result?.task_id || null);
+        },
+        onError: (error) => {
+          console.error('❌ 가상피팅 요청 실패:', error);
+        },
+      },
+    );
   };
 
   const reset = () => {
     setCurrentTaskId(null);
     mutation.reset();
-    // statusQuery.remove(); // React Query v5에서는 자동으로 정리됨
   };
+
+  const isLoading = mutation.isPending || (!!currentTaskId && !statusQuery.data?.download_url && !statusQuery.isError);
+  const isSuccess = !!statusQuery.data?.download_url;
+  const isError = mutation.isError || statusQuery.isError;
+  const resultUrl = statusQuery.data?.download_url;
+  const status = statusQuery.data?.download_url
+    ? 'success'
+    : mutation.isError || statusQuery.isError
+      ? 'error'
+      : mutation.isPending || !!currentTaskId
+        ? 'pending'
+        : 'idle';
+
+  console.log('📊 최종 상태 계산:', {
+    isLoading,
+    isSuccess,
+    isError,
+    resultUrl,
+    status,
+  });
 
   return {
     startVirtualFitting,
     reset,
-    isLoading: mutation.isPending,
-    isSuccess: statusQuery.isSuccess && !!statusQuery.data?.downloadUrl,
-    isError: mutation.isError || statusQuery.isError,
-    error: mutation.error || statusQuery.error,
-    resultUrl: statusQuery.data?.downloadUrl,
+    isLoading,
+    isSuccess,
+    isError,
+    error: (mutation.error as any) || (statusQuery.error as any),
+    resultUrl,
     taskId: currentTaskId,
-    status: statusQuery.data?.downloadUrl
-      ? 'success'
-      : mutation.isError || statusQuery.isError
-        ? 'error'
-        : mutation.isPending
-          ? 'pending'
-          : 'idle',
+    status,
   };
 };
