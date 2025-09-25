@@ -27,9 +27,9 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
   const { mutate } = useChatStream();
   const { checkAuth } = useAuthCheck();
 
-  // 최초 마운트 시 인증 확인 (미인증 시 알림 + /signin 리다이렉트)
+  // 최초 마운트 시 인증 확인
   useEffect(() => {
-    checkAuth({ alertMessage: '채팅을 이용하려면 로그인이 필요합니다.' });
+    checkAuth({ alertMessage: '로그인이 필요합니다.' });
   }, []);
 
   // params에서 roomId 추출
