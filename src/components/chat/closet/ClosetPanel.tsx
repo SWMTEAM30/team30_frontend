@@ -20,10 +20,15 @@ export default function ClosetPanel() {
   const setCodinations = useSetAtom(codinationsAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
-  const userModelImage = useAtomValue(userModelImageAtom);
   const setVirtualFittingStatus = useSetAtom(virtualFittingStatusAtom);
   const virtualFitting = useVirtualFitting();
-  const isDisabled = !closetCodination || closetCodination.cloths.length == 0;
+  // 상의와 하의가 모두 선택되었는지 확인
+  const hasUpperAndLower =
+    closetCodination &&
+    closetCodination.cloths.some((cloth) => cloth.url.includes('TOP')) &&
+    closetCodination.cloths.some((cloth) => cloth.url.includes('BOTTOM'));
+
+  const isDisabled = !closetCodination || closetCodination.cloths.length === 0 || !hasUpperAndLower;
 
   // react-query 상태를 atom에 동기화
   useEffect(() => {
@@ -46,16 +51,21 @@ export default function ClosetPanel() {
   const handleSubmitFitting = async () => {
     if (isDisabled) return;
 
+    // 선택된 옷들을 upper/lower로 분류
+    const upperCloth = closetCodination.cloths.find((cloth) => cloth.url.includes('TOP'));
+    const lowerCloth = closetCodination.cloths.find((cloth) => cloth.url.includes('BOTTOM'));
+
+    // upper와 lower 옷이 모두 있는지 확인
+    if (!upperCloth || !lowerCloth) {
+      alert('상의와 하의를 각각 하나씩 선택해주세요.');
+      return;
+    }
+
     // 가상피팅 요청 시작 (비동기로 실행)
-    if (userModelImage) {
-      try {
-        await virtualFitting.startVirtualFitting(
-          userModelImage,
-          closetCodination.cloths.map((cloth) => cloth.url),
-        );
-      } catch (error) {
-        console.error('가상피팅 요청 실패:', error);
-      }
+    try {
+      await virtualFitting.startVirtualFitting(upperCloth.id, lowerCloth.id);
+    } catch (error) {
+      console.error('가상피팅 요청 실패:', error);
     }
 
     // 즉시 fitting 패널로 이동

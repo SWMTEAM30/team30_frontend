@@ -1,13 +1,7 @@
-export const requestAPI = async <T>(
-  url: string,
-  method: Method,
-  body?: any,
-  header = { 'Content-Type': 'application/json' } as any,
-): Promise<APIResponse<T>> => {
+export const requestAPI = async <T>(url: string, method: Method, body?: any, header?: any): Promise<APIResponse<T>> => {
   try {
     const option: RequestInit = {
       method: method,
-      headers: header,
       credentials: 'include',
     };
     if (body) {
