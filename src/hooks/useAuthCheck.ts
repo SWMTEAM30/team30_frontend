@@ -2,13 +2,13 @@
 
 import { useAtom } from 'jotai';
 import { userAtom } from '@/atoms/authAtoms';
-import { getAuthMe } from '@/api/authAPI';
+import { getAuthMe, postAuthRefresh } from '@/api/authAPI';
+import { getAuthJWT } from '@/lib/cookies';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
 interface AuthCheckOptions {
   redirectToSignin?: boolean;
-  showAlert?: boolean;
   alertMessage?: string;
 }
 
@@ -19,42 +19,53 @@ export function useAuthCheck() {
 
   const checkAuth = useCallback(
     async (options: AuthCheckOptions = {}) => {
-      const { redirectToSignin = true, showAlert = true, alertMessage = '로그인이 필요합니다.' } = options;
-
+      const { redirectToSignin = true, alertMessage = '로그인이 필요합니다.' } = options;
       setIsChecking(true);
 
       try {
         // 1. 현재 user 상태가 있으면 그대로 반환
-        if (user && user.userId && user.username) {
-          return { isAuthenticated: true, user };
-        }
+        if (user && user.userId && user.username) return { isAuthenticated: true, user };
 
-        // 2. user 상태가 없으면 /api/auth/me 호출
-        console.log('User state is null, fetching from server...');
+        // 2. 브라우저 토큰에 access_token이 있는지 확인
+        const jwtToken = getAuthJWT();
+        if (!jwtToken) throw new Error('No access token found');
+
+        // 3. 토큰이 있으면 authMe 호출해서 사용자 정보 갱신
         const response = await getAuthMe();
-
         if (response.status === 'success' && response.data) {
-          // 3. 서버에서 사용자 정보를 성공적으로 가져왔으면 상태 업데이트
+          // 4. 서버에서 사용자 정보를 성공적으로 가져왔으면 상태 업데이트
           setUser(response.data);
           return { isAuthenticated: true, user: response.data };
         } else {
-          // 4. 서버에서 사용자 정보를 가져오지 못했으면 인증 실패
+          // 5. 서버에서 사용자 정보를 가져오지 못했으면 인증 실패
           throw new Error(response.message || 'Authentication failed');
         }
-      } catch (error) {
-        console.error('Auth check failed:', error);
+      } catch (error: any) {
+        // 6. 401 에러인 경우 refresh 시도
+        if (error?.statusCode === 401 || error?.status === 401 || error?.message?.includes('401')) {
+          try {
+            console.log('Attempting token refresh...');
+            const refreshResponse = await postAuthRefresh();
 
-        // 5. 인증 실패 처리
+            if (refreshResponse.status === 'success') {
+              // 7. refresh 성공 시 다시 authMe 호출
+              const retryResponse = await getAuthMe();
+              if (retryResponse.status === 'success' && retryResponse.data) {
+                setUser(retryResponse.data);
+                return { isAuthenticated: true, user: retryResponse.data };
+              } else {
+                throw new Error('Authentication failed');
+              }
+            }
+          } catch (refreshError) {
+            console.error('Token refresh failed:', refreshError);
+          }
+        }
+
+        // 8. 모든 시도가 실패한 경우 인증 실패 처리
         setUser(null);
-
-        if (showAlert) {
-          alert(alertMessage);
-        }
-
-        if (redirectToSignin) {
-          router.push('/signin');
-        }
-
+        if (alertMessage) alert(alertMessage);
+        if (redirectToSignin) router.push('/signin');
         return { isAuthenticated: false, user: null, error };
       } finally {
         setIsChecking(false);
@@ -68,35 +79,10 @@ export function useAuthCheck() {
     return !!(user && user.userId && user.username);
   }, [user]);
 
-  // 강제로 사용자 정보 갱신
-  const refreshUser = useCallback(async () => {
-    setIsChecking(true);
-
-    try {
-      const response = await getAuthMe();
-
-      if (response.status === 'success' && response.data) {
-        setUser(response.data);
-        return { success: true, user: response.data };
-      } else {
-        setUser(null);
-        return { success: false, error: response.message };
-      }
-    } catch (error) {
-      console.error('Failed to refresh user:', error);
-      setUser(null);
-      return { success: false, error };
-    } finally {
-      setIsChecking(false);
-    }
-  }, [setUser]);
-
   return {
     user,
     isAuthenticated: isAuthenticated(),
     isChecking,
     checkAuth,
-    refreshUser,
   };
 }
-
