@@ -5,8 +5,14 @@ import { postFittingTryonCombo, getFittingStatusTaskId } from '@/api/fittingAPI'
 // 가상피팅 요청을 위한 mutation hook
 export const useVirtualFittingMutation = () => {
   return useMutation({
-    mutationFn: async ({ userImageUrl, clothImageUrls }: { userImageUrl: string; clothImageUrls: string[] }) => {
-      const response = await postFittingTryonCombo(userImageUrl, clothImageUrls);
+    mutationFn: async ({
+      upper_product_id,
+      lower_product_id,
+    }: {
+      upper_product_id: string;
+      lower_product_id: string;
+    }) => {
+      const response = await postFittingTryonCombo(upper_product_id, lower_product_id);
       if (response.status === 'fail') {
         throw new Error(response.message);
       }
@@ -45,10 +51,14 @@ export const useVirtualFitting = () => {
 
   const statusQuery = useVirtualFittingStatus(currentTaskId, mutation.isSuccess && !!currentTaskId);
 
-  const startVirtualFitting = async (userImageUrl: string, clothImageUrls: string[]) => {
+  const startVirtualFitting = async (upper_product_id: string, lower_product_id: string) => {
     try {
-      const result = await mutation.mutateAsync({ userImageUrl, clothImageUrls });
-      setCurrentTaskId(result.taskId);
+      const result = await mutation.mutateAsync({
+        upper_product_id,
+        lower_product_id,
+      });
+      console.log(result);
+      setCurrentTaskId(result?.taskId || null);
       return result;
     } catch (error) {
       throw error;
