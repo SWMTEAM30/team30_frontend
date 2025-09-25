@@ -27,8 +27,7 @@ export function useAuthCheck() {
         if (user && user.userId && user.username) return { isAuthenticated: true, user };
 
         // 2. 브라우저 토큰에 access_token이 있는지 확인
-        const jwtToken = getAuthJWT();
-        if (!jwtToken) throw new Error('No access token found');
+        // 해당 로직은 지금 오류가 있어서 잠시 스킵
 
         // 3. 토큰이 있으면 authMe 호출해서 사용자 정보 갱신
         const response = await getAuthMe();
@@ -38,28 +37,26 @@ export function useAuthCheck() {
           return { isAuthenticated: true, user: response.data };
         } else {
           // 5. 서버에서 사용자 정보를 가져오지 못했으면 인증 실패
+          console.log(response);
           throw new Error(response.message || 'Authentication failed');
         }
       } catch (error: any) {
-        // 6. 401 에러인 경우 refresh 시도
-        if (error?.statusCode === 401 || error?.status === 401 || error?.message?.includes('401')) {
-          try {
-            console.log('Attempting token refresh...');
-            const refreshResponse = await postAuthRefresh();
-
-            if (refreshResponse.status === 'success') {
-              // 7. refresh 성공 시 다시 authMe 호출
-              const retryResponse = await getAuthMe();
-              if (retryResponse.status === 'success' && retryResponse.data) {
-                setUser(retryResponse.data);
-                return { isAuthenticated: true, user: retryResponse.data };
-              } else {
-                throw new Error('Authentication failed');
-              }
+        // 6.  refresh 시도
+        try {
+          console.log('Attempting token refresh...');
+          const refreshResponse = await postAuthRefresh();
+          if (refreshResponse.status === 'success') {
+            // 7. refresh 성공 시 다시 authMe 호출
+            const retryResponse = await getAuthMe();
+            if (retryResponse.status === 'success' && retryResponse.data) {
+              setUser(retryResponse.data);
+              return { isAuthenticated: true, user: retryResponse.data };
+            } else {
+              throw new Error('Authentication failed');
             }
-          } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
           }
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
         }
 
         // 8. 모든 시도가 실패한 경우 인증 실패 처리
