@@ -49,13 +49,18 @@ export default function ChatArea() {
     [roomId, isFetchingOlder, canLoadOlder, setMessages],
   );
 
+  // 첫 마운트 시에 대화 내용 불러오기
+  useEffect(() => {
+    loadMessages();
+  }, [roomId]);
+
   // 스크롤 감지 이벤트
   useEffect(() => {
     const scrollArea = scrollAreaRef.current;
     if (!scrollArea) return;
 
     const handleScroll = () => {
-      // 스크롤이 맨 위에 가까이 있을 때 (50px 이내)
+      // 스크롤이 맨 위에 가까이 있을 때
       if (scrollArea.scrollTop <= 50 && !isFetchingOlder && canLoadOlder) {
         const oldest = messages[0];
         if (oldest?.createdAt) loadMessages(oldest.createdAt);

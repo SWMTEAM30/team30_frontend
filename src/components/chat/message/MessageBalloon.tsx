@@ -14,13 +14,13 @@ export default function MessageBalloon({ message }: { message: Message }) {
         </div>
       )}
       <div className={`max-w-[70%] p-6 rounded-2xl ${isUserId ? messageColor[0] : messageColor[1]}`}>
-        <p className="text-lg md:text-xl font-serif font-extrabold mb-3">
+        <p className="text-lg md:text-xl font-extrabold mb-3">
           {message.user ? message.user.username : message.agent.agentname}
         </p>
-        <p className="text-lg md:text-2xl font-serif">
+        <p className="text-lg md:text-2xl whitespace-pre-line">
           {isUserId ? message.content : <MessageParser text={message.content} />}
         </p>
-        <p className="text-xs opacity-70 mt-2">{message.createdAt.toLocaleTimeString()}</p>
+        {/* <p className="text-xs opacity-70 mt-2">{message.createdAt.toLocaleTimeString()}</p> */}
         {
           <div className="mt-4 flex flex-row gap-2 overflow-x-auto overflow-y-hidden">
             {message.products &&

@@ -9,7 +9,7 @@ export default function FittingDetail() {
   return (
     <div className="flex flex-col space-y-4 h-[60vh]">
       {/* 기본 정보 */}
-      <div className="h-full bg-beige-300 dark:bg-slate-800 rounded-2xl p-4">
+      <div className="h-full border border-blue dark:bg-slate-800 rounded-2xl p-4">
         <h3 className="text-4xl font-bold text-navy-500 dark:text-white my-6">코디 아이템</h3>
         <h4 className="text-2xl font-semibold text-navy-500 dark:text-white mt-8 mb-4"></h4>
         <div className="space-y-2">

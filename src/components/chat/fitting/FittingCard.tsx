@@ -19,7 +19,7 @@ export default function FittingCard() {
       case 'pending':
         return (
           <div className="text-blue-400 dark:text-navy-500 text-center">
-            <div className="w-20 h-20 mx-auto mb-4 bg-yellow-150 dark:bg-slate-600 rounded-full flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto mb-4 bg-gray-150 dark:bg-slate-600 rounded-full flex items-center justify-center">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
             </div>
             <p className="text-base font-medium">가상피팅 진행 중...</p>
@@ -59,7 +59,7 @@ export default function FittingCard() {
       default:
         return (
           <div className="text-blue-400 dark:text-navy-500 text-center">
-            <div className="w-20 h-20 mx-auto mb-4 bg-yellow-150 dark:bg-slate-600 rounded-full flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto mb-4 bg-gray-200 dark:bg-slate-600 rounded-full flex items-center justify-center">
               <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -77,7 +77,7 @@ export default function FittingCard() {
   };
 
   return (
-    <div className="flex bg-beige-300 flex-col h-[60vh]">
+    <div className="flex bg-gray-100 flex-col h-[60vh]">
       <div className="flex h-full items-center justify-center">{renderContent()}</div>
     </div>
   );

@@ -30,21 +30,39 @@ export const getChatRoomsHistory = async () => requestAPI<APIRoomHistory>(`/api/
 export const getChatRoomsRoomIdMessages = async (
   roomId: string,
   before?: Date,
+  limit = 10,
 ): Promise<APIResponse<{ messages: Message[] }>> => {
-  const response = await requestAPI<APIRoomIdMessages>(
-    `/api/chat/rooms/${roomId}/messages${before ? `?before=${before.toISOString()}` : ''}`,
-    'GET',
-  );
+  const params = new URLSearchParams();
+  params.append('limit', String(limit));
+  if (before) params.append('before', before.toISOString());
+  const queryString = params.toString();
+
+  const response = await requestAPI<APIRoomIdMessages>(`/api/chat/rooms/${roomId}/messages?${queryString}`, 'GET');
   if (response.status === 'fail') {
     console.error(new Error(response.message));
     return response;
   }
 
+  const messages = response.data.messages.map((e) => formatRoomMessage(e));
+  // const processedMessages: Message[] = [];
+  // for (let m of messages) {
+  //   if (m.agent?.agentname.includes('PRODUCT')) {
+  //     const type = m.agent?.agentname.split('_')[0];
+  //     for (let mm of messages) {
+  //       if (mm.agent?.agentType == type) {
+  //         /// asdf
+
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }
+
   return {
     status: response.status,
     message: response.message,
     data: {
-      messages: response.data.messages.map((e) => formatRoomMessage(e)),
+      messages: messages,
     },
   };
 };

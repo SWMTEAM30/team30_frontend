@@ -22,3 +22,8 @@ export const moveItemToFront = <T extends HasId>(array: T[], id: string | number
   const restOfItems = array.filter((item) => item.id !== id);
   return [targetItem, ...restOfItems];
 };
+
+export function getStringNumbersOnly(str: string) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/\D/g, '');
+}
