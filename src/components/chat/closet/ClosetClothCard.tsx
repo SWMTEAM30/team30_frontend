@@ -42,7 +42,7 @@ export default function ClosetClothCard({ cloth }: ClosetClothCardProps) {
     <div
       onClick={() => handleClothClick(cloth)}
       className={cn(
-        'h-128 flex flex-col relative  bg-beige-200 border-2 cursor-pointer transition-all duration-200 hover:shadow-md group',
+        'h-128 flex flex-col relative  border-2 cursor-pointer transition-all duration-200 hover:shadow-md group',
         isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-blue-100 hover:border-blue-300',
       )}
     >

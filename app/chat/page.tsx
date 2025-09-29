@@ -68,7 +68,7 @@ export default function Chat() {
             <ChatPanel />
           </div>
 
-          <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 bg-beige border-l border-navy-200">
+          <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 border-l border-navy-200">
             <div className="flex-shrink-0">
               <ChatHeader />
             </div>

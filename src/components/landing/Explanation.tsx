@@ -12,7 +12,7 @@ export default function Explanation() {
           <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
-                <LucideIcon name={'MessageSquare'} color="beige-50" className="w-8 h-8" />
+                <LucideIcon name={'MessageSquare'} color="blue-50" className="w-8 h-8" />
               </div>
               <div>
                 <h4 className="text-2xl font-bold text-gray-900 mb-3">자연스러운 대화로 취향 파악</h4>
@@ -34,7 +34,7 @@ export default function Explanation() {
           <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
-                <LucideIcon name={'Sparkles'} color="beige-50" className="w-8 h-8" />
+                <LucideIcon name={'Sparkles'} color="blue-50" className="w-8 h-8" />
               </div>
               <div>
                 <h4 className="text-2xl font-bold text-gray-900 mb-3">체형과 상황을 고려한 맞춤 추천</h4>
@@ -56,7 +56,7 @@ export default function Explanation() {
           <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
-                <LucideIcon name={'Timer'} color="beige-50" className="w-8 h-8" />
+                <LucideIcon name={'Timer'} color="blue-50" className="w-8 h-8" />
               </div>
               <div>
                 <h4 className="text-2xl font-bold text-gray-900 mb-3">30초면 완성되는 간편함</h4>
@@ -78,7 +78,7 @@ export default function Explanation() {
           <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
-                <LucideIcon name={'ShoppingBag'} color="beige-50" className="w-8 h-8" />
+                <LucideIcon name={'ShoppingBag'} color="blue-50" className="w-8 h-8" />
               </div>
               <div>
                 <h4 className="text-2xl font-bold text-gray-900 mb-3">바로 구매 가능한 실용성</h4>

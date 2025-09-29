@@ -15,7 +15,7 @@ export default function FittingDetail() {
         <div className="space-y-2">
           {activeCodination
             ? activeCodination.cloths.map((cloth: ClosetCloth, index: number) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-beige-500 rounded-lg">
+                <div key={index} className="flex items-center gap-3 p-3 rounded-lg">
                   <div className="flex-shrink-0 flex items-center justify-center h-40">
                     <Image
                       src={cloth.url}
