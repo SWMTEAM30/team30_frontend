@@ -55,18 +55,6 @@ export default function Chat() {
     return () => mq.removeEventListener('change', handler);
   }, [panel, setPanel]);
 
-  // useEffect(() => {
-  //   console.log(user);
-  //   if (!user) {
-  //     alert('로그인이 필요합니다.');
-  //     router.push('/signin');
-  //   }
-  // }, [user, router]);
-
-  // if (!user) {
-  //   return null;
-  // }
-
   return (
     <Suspense>
       <div className="flex flex-col">

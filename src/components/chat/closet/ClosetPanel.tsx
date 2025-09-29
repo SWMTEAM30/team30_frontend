@@ -58,7 +58,7 @@ export default function ClosetPanel() {
         console.log('📡 API 응답:', response);
         if (response.status === 'success') {
           console.log('✅ 가상피팅 요청 성공:', response.data);
-          
+
           // 결과가 바로 있는 경우 (동기 응답)
           if (response.data?.download_url) {
             setVirtualFittingStatus((prev) => ({
@@ -67,7 +67,7 @@ export default function ClosetPanel() {
               resultUrl: response.data.download_url,
               taskId: response.data.task_id || null,
             }));
-          } 
+          }
           // taskId만 있는 경우 (비동기 처리)
           else if (response.data?.task_id) {
             setVirtualFittingStatus((prev) => ({
@@ -109,11 +109,9 @@ export default function ClosetPanel() {
       <div className="overflow-y-auto p-4 h-11/12">
         {closet.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">옷장이 비어있습니다</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">AI와 대화하여 패션 아이템을 옷장에 추가해보세요</p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">
-              추천받은 아이템을 클릭하면 옷장에 자동으로 추가됩니다
-            </p>
+            <h3 className="text-xl font-semibold text-blue dark:text-white mb-2">옷장이 비어있습니다</h3>
+            <p className="text-blue mb-4">AI와 대화하여 패션 아이템을 옷장에 추가해보세요</p>
+            <p className="text-sm text-blue">추천받은 아이템을 클릭하면 옷장에 자동으로 추가됩니다</p>
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-3 ">

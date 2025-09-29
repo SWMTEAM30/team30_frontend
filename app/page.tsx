@@ -11,7 +11,7 @@ export default function Home() {
           <NextChat />
         </div>
       </div>
-      <RoomList />
+      {/* <RoomList /> */}
     </div>
   );
 }

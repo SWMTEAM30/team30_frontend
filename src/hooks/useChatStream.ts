@@ -10,8 +10,9 @@ import {
   streamingMessageAtom,
 } from '../atoms/chatAtoms';
 import { userAtom } from '@/atoms/authAtoms';
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import { getStringNumbersOnly } from '@/lib/utils';
 
 interface ConnectResponse {
   message: string;
@@ -201,6 +202,13 @@ export const useChatStream = () => {
           },
           onComplete: (data: any) => {
             console.log('SSE Complete:', data);
+            const products: Product[] = data.products.map((product: Product) => {
+              return {
+                product_id: getStringNumbersOnly(product.product_id),
+                product_url: product.product_url,
+              };
+            });
+
             const completedMessage = {
               id: Date.now().toString(),
               content: data.message,
@@ -210,7 +218,7 @@ export const useChatStream = () => {
                 agentType: data.agent_id,
               },
               message_type: 'AGENT',
-              products: data.products || [],
+              products: products || [],
               createdAt: new Date(),
             };
             setMessages((prev) => [...prev, completedMessage]);
