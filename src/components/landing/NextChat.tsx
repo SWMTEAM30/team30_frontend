@@ -45,7 +45,7 @@ export default function NextChat() {
     try {
       // 로그인 확인
       const authResult = await checkAuth({
-        alertMessage: '채팅을 시작하려면 로그인이 필요합니다.'
+        alertMessage: '채팅을 시작하려면 로그인이 필요합니다.',
       });
 
       if (!authResult.isAuthenticated) {
@@ -99,9 +99,9 @@ export default function NextChat() {
               key={index}
               onClick={async () => {
                 const authResult = await checkAuth({
-                  alertMessage: '채팅을 시작하려면 로그인이 필요합니다.'
+                  alertMessage: '채팅을 시작하려면 로그인이 필요합니다.',
                 });
-                
+
                 if (authResult.isAuthenticated) {
                   handleSituationClick(preset.message);
                 }
@@ -154,11 +154,11 @@ export default function NextChat() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-            onClick={async () => {
-              await checkAuth({
-                alertMessage: '채팅을 시작하려면 로그인이 필요합니다.'
-              });
-            }}
+              onClick={async () => {
+                await checkAuth({
+                  alertMessage: '채팅을 시작하려면 로그인이 필요합니다.',
+                });
+              }}
               placeholder="패션에 대해 마음대로 물어보세요! 예: '데이트룩 추천해줘'"
               className="
                 w-full min-h-[70px] max-h-[140px] 
@@ -183,7 +183,7 @@ export default function NextChat() {
             disabled={!inputValue.trim() || isLoading}
             className="
               inline-flex items-center px-8 py-4 
-              bg-blue text-beige-50 
+              bg-blue text-white 
               font-bold rounded-2xl 
               hover:bg-navy-600 
               disabled:bg-gray-300 disabled:text-gray-500
@@ -194,12 +194,12 @@ export default function NextChat() {
           >
             {isLoading ? (
               <>
-                <LucideIcon name={'LoaderCircle'} color="beige-50" className="mr-3 w-5 h-5 animate-spin" />
+                <LucideIcon name={'LoaderCircle'} color="blue-50" className="mr-3 w-5 h-5 animate-spin" />
                 채팅방 생성 중...
               </>
             ) : (
               <>
-                <LucideIcon name={'Sparkles'} color="beige-50" className="mr-3 w-5 h-5" />
+                <LucideIcon name={'Sparkles'} color="blue-50" className="mr-3 w-5 h-5" />
                 채팅 시작하기
               </>
             )}

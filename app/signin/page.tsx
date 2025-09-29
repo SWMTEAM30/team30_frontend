@@ -5,7 +5,7 @@ export default function SigninPage() {
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* 배경 색상 */}
-      <div className="absolute inset-0 bg-beige"></div>
+      <div className="absolute inset-0"></div>
 
       {/* 배경 장식 요소들 */}
       <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200/20 rounded-full blur-3xl animate-pulse"></div>
