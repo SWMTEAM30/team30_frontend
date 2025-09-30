@@ -46,7 +46,7 @@ export default function ChatFittingCodination() {
     );
 
   return (
-    <div className="h-1/3 p-4 overflow-hidden flex gap-4 overflow-x-auto overflow-y-hidden pb-2 scrollbar-hide">
+    <div className="grid grid-cols-4 gap-3 p-4 overflow-hidden overflow-x-auto pb-2 scrollbar-hide">
       {/* 코디 추가하기 버튼 */}
       <div className="w-72 h-104 flex items-center justify-center">
         <Button

@@ -26,7 +26,7 @@ export const examplesAtom = atom<string[]>([
 export const isAIRespondingAtom = atom<boolean>(false);
 export const isSidebarOpenAtom = atom<boolean>(false);
 
-export const panelAtom = atom<'chat' | 'closet' | 'fitting'>('chat');
+export const panelAtom = atom<'chat' | 'closet' | 'codination' | 'fitting'>('chat');
 export const codinationsAtom = atom<Codination[]>([]);
 export const activeCodinationAtom = atom<Codination | null>(null);
 export const closetCodinationAtom = atom<Codination | null>(null);

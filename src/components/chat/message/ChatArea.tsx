@@ -105,7 +105,7 @@ export default function ChatArea() {
   return (
     <div className={`flex flex-col transition-all duration-500 ease-in-out flex-1`}>
       <div ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto chat-scroll">
-        <div className="space-y-6 mx-auto max-w-[960px]">
+        <div className="space-y-6 mx-auto">
           {/* 이전 메시지 로딩 인디케이터 */}
           {isFetchingOlder && (
             <div className="flex justify-center py-4">

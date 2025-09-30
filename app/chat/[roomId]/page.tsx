@@ -10,6 +10,7 @@ import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useChatStream } from '@/hooks/useChatStream';
 import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import CodinationPanel from '@/components/chat/codination/CodinationPanel';
 
 interface ChatRoomPageProps {
   params: Promise<{
@@ -79,6 +80,7 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
             </div>
             <div className="flex-1 min-h-0">
               {panel === 'closet' && <ClosetPanel />}
+              {panel === 'codination' && <CodinationPanel />}
               {panel === 'fitting' && <FittingPanel />}
             </div>
           </div>
@@ -87,6 +89,7 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
           <div className="lg:hidden w-full h-[calc(100vh-5rem)]">
             {panel === 'chat' && <ChatPanel />}
             {panel === 'closet' && <ClosetPanel />}
+            {panel === 'codination' && <CodinationPanel />}
             {panel === 'fitting' && <FittingPanel />}
           </div>
         </div>
