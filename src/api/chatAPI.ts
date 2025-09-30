@@ -43,26 +43,29 @@ export const getChatRoomsRoomIdMessages = async (
     return response;
   }
 
-  const messages = response.data.messages.map((e) => formatRoomMessage(e));
-  // const processedMessages: Message[] = [];
-  // for (let m of messages) {
-  //   if (m.agent?.agentname.includes('PRODUCT')) {
-  //     const type = m.agent?.agentname.split('_')[0];
-  //     for (let mm of messages) {
-  //       if (mm.agent?.agentType == type) {
-  //         /// asdf
-
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }
+  let messages = response.data.messages.map((e) => formatRoomMessage(e));
+  const processedMessages: Message[] = [];
+  for (let m of messages) {
+    if (m.agent?.agentname.includes('PRODUCT')) {
+      const type = m.agent?.agentname.split('_')[0];
+      for (let mm of messages) {
+        if (mm.agent?.agentType == type) {
+          m.products.forEach((me) => {
+            mm.products.push(me);
+          });
+          break;
+        }
+      }
+      continue;
+    }
+    processedMessages.push(m);
+  }
 
   return {
     status: response.status,
     message: response.message,
     data: {
-      messages: messages,
+      messages: processedMessages,
     },
   };
 };

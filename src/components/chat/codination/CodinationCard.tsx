@@ -46,18 +46,7 @@ export default function ChatFittingCodination() {
     );
 
   return (
-    <div className="h-1/3 p-4 overflow-hidden flex gap-4 overflow-x-auto overflow-y-hidden pb-2 scrollbar-hide">
-      {/* 코디 추가하기 버튼 */}
-      <div className="w-72 h-104 flex items-center justify-center">
-        <Button
-          onClick={handleAddNewCodination}
-          className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl flex flex-col items-center justify-center gap-2"
-        >
-          <Plus className="w-8 h-8" />
-          <span className="text-lg font-semibold">새 코디 추가</span>
-        </Button>
-      </div>
-
+    <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 2xl:grid-cols-4 gap-3 p-4 overflow-hidden overflow-x-auto pb-2 scrollbar-hide">
       {codinations.map((codination, key) => (
         <div
           key={key}

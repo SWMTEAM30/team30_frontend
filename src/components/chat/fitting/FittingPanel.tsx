@@ -1,4 +1,3 @@
-import ChatFittingCodination from '@/components/chat/fitting/ChatFittingCodination';
 import FittingCard from '@/components/chat/fitting/FittingCard';
 import FittingDetail from '@/components/chat/fitting/FittingDetail';
 
@@ -9,7 +8,6 @@ export default function FittingPanel() {
         <FittingCard />
         <FittingDetail />
       </div>
-      <ChatFittingCodination />
     </div>
   );
 }
