@@ -6,7 +6,7 @@ import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
 import { useCallback } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
-import { activeCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
+import { activeCodinationAtom, codinationsAtom, panelAtom, closetAtom } from '@/atoms/chatAtoms';
 import { useCodination } from '@/hooks/useCodination';
 import { getChatProduct } from '@/api/chatAPI';
 
@@ -21,6 +21,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
 
   const setPanel = useSetAtom(panelAtom);
   const [codinations, setCodinations] = useAtom(codinationsAtom);
+  const [closet, setCloset] = useAtom(closetAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const { addNewCodination } = useCodination();
 
@@ -41,9 +42,15 @@ export default function MessageBalloon({ message }: { message: Message }) {
 
     const newCodination = addNewCodination(cloths);
     setCodinations((prev) => [...prev, newCodination]);
+    setCloset((prev) => {
+      const merged = new Map<string, ClosetCloth>();
+      for (const item of prev) merged.set(item.id, item);
+      for (const item of cloths) merged.set(item.id, item);
+      return Array.from(merged.values());
+    });
     setActiveCodination(newCodination);
     setPanel('codination');
-  }, [isUserId, message.products, setCodinations, addNewCodination, setActiveCodination, setPanel]);
+  }, [isUserId, message.products, setCodinations, addNewCodination, setActiveCodination, setPanel, setCloset]);
 
   return (
     <div className={`flex ${isUserId ? 'justify-end' : 'justify-start'}`}>

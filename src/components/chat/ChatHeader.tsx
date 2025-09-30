@@ -3,6 +3,7 @@
 import { useAtom, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { activeCodinationAtom, panelAtom } from '@/atoms/chatAtoms';
+import LucideIcon from '@/components/ui/icons/LucideIcon';
 
 export default function ChatHeader() {
   const [panel, setPanel] = useAtom(panelAtom);
@@ -38,28 +39,25 @@ export default function ChatHeader() {
       <header className="hidden lg:flex h-20 items-center justify-between px-4 py-6 mx-16 lg:mx-auto w-[calc(100vw-68px)] lg:w-full bg-white">
         <div className="flex items-center gap-4">
           <button
-            className={`btn cursor-pointer text-blue text-2xl ${isClient && panel == 'chat' ? 'font-bold' : ''}`}
-            onClick={handleChat}
-          >
-            Chat
-          </button>
-          <button
-            className={`btn cursor-pointer text-blue text-2xl ${isClient && panel == 'closet' ? 'font-bold' : ''}`}
+            className={`btn cursor-pointer text-blue text-2xl w-32 h-10 flex items-center justify-center ${isClient && panel == 'closet' ? 'font-bold' : ''}`}
             onClick={handleCloset}
           >
-            Closet
+            <span className="inline-flex mr-2"><LucideIcon name={'Shirt'} size={20} /></span>
+            옷장
           </button>
           <button
-            className={`btn cursor-pointer text-blue text-2xl ${isClient && panel == 'codination' ? 'font-bold' : ''}`}
+            className={`btn cursor-pointer text-blue text-2xl w-32 h-10 flex items-center justify-center ${isClient && panel == 'codination' ? 'font-bold' : ''}`}
             onClick={handleCodination}
           >
-            Codination
+            <span className="inline-flex mr-2"><LucideIcon name={'Layers'} size={20} /></span>
+            코디
           </button>
           <button
-            className={`btn cursor-pointer text-blue text-2xl ${isClient && panel == 'fitting' ? 'font-bold' : ''}`}
+            className={`btn cursor-pointer text-blue text-2xl w-32 h-10 flex items-center justify-center ${isClient && panel == 'fitting' ? 'font-bold' : ''}`}
             onClick={handleFitting}
           >
-            Fitting
+            <span className="inline-flex mr-2"><LucideIcon name={'ScanLine'} size={20} /></span>
+            피팅
           </button>
         </div>
         <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
@@ -72,47 +70,43 @@ export default function ChatHeader() {
         <div className="flex items-center justify-around h-16">
           <button
             aria-label="Chat"
-            className={`flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'text-blue-600' : 'text-slate-500'}`}
             onClick={handleChat}
           >
             <span className="inline-flex">
-              {/* MessageSquare */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <LucideIcon name={'MessageSquare'} size={24} />
             </span>
-            <span className="text-xs">Chat</span>
+            <span className="text-xs">채팅</span>
           </button>
           <button
             aria-label="Closet"
-            className={`flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'text-blue-600' : 'text-slate-500'}`}
             onClick={handleCloset}
           >
             <span className="inline-flex">
-              {/* Shirt */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shirt"><path d="M20.38 7.01 16 4l-2 2h-4L8 4 3.62 7.01A2 2 0 0 0 3 8.64V20h6v-5a3 3 0 0 1 6 0v5h6V8.64a2 2 0 0 0-.62-1.63Z"/></svg>
+              <LucideIcon name={'Shirt'} size={24} />
             </span>
-            <span className="text-xs">Closet</span>
+            <span className="text-xs">옷장</span>
           </button>
           <button
             aria-label="Codination"
-            className={`flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'text-blue-600' : 'text-slate-500'}`}
             onClick={handleCodination}
           >
             <span className="inline-flex">
-              {/* Layers */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layers"><path d="m12.73 2.27 7.2 4.2a2 2 0 0 1 0 3.46l-7.2 4.2a2 2 0 0 1-2 0l-7.2-4.2a2 2 0 0 1 0-3.46l7.2-4.2a2 2 0 0 1 2 0Z"/><path d="m3.53 10.76 8.2 4.78a2 2 0 0 0 2 0l8.2-4.78"/></svg>
+              <LucideIcon name={'Layers'} size={24} />
             </span>
-            <span className="text-xs">Codis</span>
+            <span className="text-xs">코디</span>
           </button>
           <button
             aria-label="Fitting"
-            className={`flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'text-blue-600' : 'text-slate-500'}`}
             onClick={handleFitting}
           >
             <span className="inline-flex">
-              {/* Scan */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-scan-line"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 7h10v10H7z"/></svg>
+              <LucideIcon name={'ScanLine'} size={24} />
             </span>
-            <span className="text-xs">Fitting</span>
+            <span className="text-xs">피팅</span>
           </button>
         </div>
       </nav>
