@@ -8,15 +8,15 @@ import {
   panelAtom,
   virtualFittingStatusAtom,
 } from '@/atoms/chatAtoms';
-import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { postFittingTryonCombo } from '@/api/fittingAPI';
-import ChatFittingCodination from '@/components/chat/codination/CodinationCard';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import CodinationCard from '@/components/chat/codination/CodinationCard';
 
 export default function CodinationPanel() {
   const setPanel = useSetAtom(panelAtom);
-  const closet = useAtomValue(closetAtom);
-  const setCodinations = useSetAtom(codinationsAtom);
+  const [codinations, setCodinations] = useAtom(codinationsAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
   const setVirtualFittingStatus = useSetAtom(virtualFittingStatusAtom);
@@ -27,6 +27,12 @@ export default function CodinationPanel() {
     closetCodination.cloths.some((cloth) => cloth.url.includes('BOTTOM'));
 
   const isDisabled = !closetCodination || closetCodination.cloths.length === 0 || !hasUpperAndLower;
+
+  const handleAddNewCodination = () => {
+    setPanel('closet');
+    setActiveCodination(null);
+    setClosetCodination(null);
+  };
 
   const handleSubmitFitting = () => {
     if (isDisabled) return;
@@ -105,9 +111,56 @@ export default function CodinationPanel() {
     });
   };
 
+  if (codinations.length === 0)
+    return (
+      <div className="h-full flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+          <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6">
+            <Plus className="w-12 h-12 text-slate-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">아직 코디가 없습니다</h3>
+          <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md">
+            AI와 대화하여 가상피팅에 사용할 옷 조합들을 추가해보세요
+          </p>
+          <Button onClick={handleAddNewCodination} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3">
+            <Plus className="w-4 h-4 mr-2" />
+            코디 추가하기
+          </Button>
+        </div>
+        {closetCodination && closetCodination.cloths.length > 0 && (
+          <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+            <button
+              className={`w-full cursor-pointer h-12 btn bg-navy text-lg text-white disabled:bg-blue-50`}
+              disabled={isDisabled}
+              onClick={handleSubmitFitting}
+            >
+              가상피팅하기
+            </button>
+          </div>
+        )}
+      </div>
+    );
+
   return (
-    <>
-      <ChatFittingCodination />
-    </>
+    <div className="h-full flex flex-col">
+      <div className="flex-1 overflow-y-auto">
+        <div className="flex flex-col gap-4 p-4">
+          {codinations.map((codination, key) => (
+            <CodinationCard codination={codination} key={key}></CodinationCard>
+          ))}
+        </div>
+      </div>
+      {closetCodination && closetCodination.cloths.length > 0 && (
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+          <button
+            className={`w-full cursor-pointer h-12 btn bg-navy text-lg text-white disabled:bg-blue-50`}
+            disabled={isDisabled}
+            onClick={handleSubmitFitting}
+          >
+            가상피팅하기
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
