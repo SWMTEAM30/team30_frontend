@@ -15,10 +15,11 @@ import { postFittingTryonCombo } from '@/api/fittingAPI';
 export default function ClosetPanel() {
   const setPanel = useSetAtom(panelAtom);
   const closet = useAtomValue(closetAtom);
-  const setCodinations = useSetAtom(codinationsAtom);
+  const [codinations, setCodinations] = useAtom(codinationsAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
   const setVirtualFittingStatus = useSetAtom(virtualFittingStatusAtom);
+
   // 상의와 하의가 모두 선택되었는지 확인
   const hasUpperAndLower =
     closetCodination &&
@@ -27,81 +28,50 @@ export default function ClosetPanel() {
 
   const isDisabled = !closetCodination || closetCodination.cloths.length === 0 || !hasUpperAndLower;
 
-  const handleSubmitFitting = () => {
-    if (isDisabled) return;
+  // 두 코디네이션이 같은 옷들로 구성되어 있는지 확인하는 함수
+  const isSameCodination = (codination1: Codination, codination2: Codination) => {
+    if (codination1.cloths.length !== codination2.cloths.length) {
+      return false;
+    }
 
-    // 선택된 옷들을 upper/lower로 분류
-    const upperCloth = closetCodination.cloths.find((cloth) => cloth.url.includes('TOP'));
-    const lowerCloth = closetCodination.cloths.find((cloth) => cloth.url.includes('BOTTOM'));
+    // 각 코디네이션의 옷 ID들을 정렬하여 비교
+    const clothIds1 = codination1.cloths.map(cloth => cloth.id).sort();
+    const clothIds2 = codination2.cloths.map(cloth => cloth.id).sort();
 
-    // upper와 lower 옷이 모두 있는지 확인
-    if (!upperCloth || !lowerCloth) {
-      alert('상의와 하의를 각각 하나씩 선택해주세요.');
+    return clothIds1.every((id, index) => id === clothIds2[index]);
+  };
+
+  const handleCreateCodination = () => {
+    if (!closetCodination || closetCodination.cloths.length === 0) {
+      alert('코디네이션에 추가할 옷을 선택해주세요.');
       return;
     }
 
-    // 가상피팅 요청 시작 (비동기로 실행, 결과를 기다리지 않음)
-    console.log('🚀 startVirtualFitting 호출:', { upperId: upperCloth.id, lowerId: lowerCloth.id });
-
-    // 즉시 pending 상태로 설정
-    setVirtualFittingStatus({
-      codinationId: closetCodination.id,
-      status: 'pending',
-      resultUrl: null,
-      errorMessage: null,
-      taskId: null,
-    });
-
-    // API 호출
-    postFittingTryonCombo(upperCloth.id, lowerCloth.id)
-      .then((response) => {
-        console.log('📡 API 응답:', response);
-        if (response.status === 'success') {
-          console.log('✅ 가상피팅 요청 성공:', response.data);
-
-          // 결과가 바로 있는 경우 (동기 응답)
-          if (response.data?.download_url) {
-            setVirtualFittingStatus((prev) => ({
-              ...prev,
-              status: 'success',
-              resultUrl: response.data.download_url,
-              taskId: response.data.task_id || null,
-            }));
-          }
-          // taskId만 있는 경우 (비동기 처리)
-          else if (response.data?.task_id) {
-            setVirtualFittingStatus((prev) => ({
-              ...prev,
-              taskId: response.data.task_id,
-            }));
-          }
-        } else {
-          console.error('❌ 가상피팅 요청 실패:', response.message);
-          setVirtualFittingStatus((prev) => ({
-            ...prev,
-            status: 'error',
-            errorMessage: response.message,
-          }));
-        }
+    // 기존 코디네이션들과 중복 체크
+    const isDuplicate = codinations.some(existingCodination => 
+      isSameCodination(existingCodination, {
+        id: '',
+        fitting_image: null,
+        cloths: closetCodination.cloths
       })
-      .catch((error) => {
-        console.error('❌ 가상피팅 요청 에러:', error);
-        setVirtualFittingStatus((prev) => ({
-          ...prev,
-          status: 'error',
-          errorMessage: error.message,
-        }));
-      });
+    );
 
-    // 즉시 fitting 패널로 이동
-    setPanel('fitting');
-    setActiveCodination(closetCodination);
+    if (isDuplicate) {
+      alert('이미 같은 코디네이션이 저장되어 있습니다.');
+      return;
+    }
+
+    const newCodination: Codination = {
+      id: `codination-${Date.now()}`,
+      fitting_image: null,
+      cloths: [...closetCodination.cloths],
+    };
+
+    setCodinations((prev) => [...prev, newCodination]);
     setClosetCodination(null);
-    setCodinations((prev) => {
-      if (!prev) return [closetCodination];
-      const newCodinations = prev.filter((e) => e.id !== closetCodination.id);
-      return [...newCodinations, closetCodination];
-    });
+    setPanel('codination');
+
+    console.log('새 코디네이션 생성됨:', newCodination);
   };
 
   return (
@@ -124,9 +94,9 @@ export default function ClosetPanel() {
       <button
         className={`cursor-pointer h-1/12 btn bg-navy text-2xl text-white disabled:bg-blue-50`}
         disabled={isDisabled}
-        onClick={handleSubmitFitting}
+        onClick={handleCreateCodination}
       >
-        코디 추가하기
+        코디하기
       </button>
     </div>
   );

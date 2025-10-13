@@ -25,6 +25,14 @@ export default function MessageBalloon({ message }: { message: Message }) {
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const { addNewCodination } = useCodination();
 
+  // 기존 코디네이션과 동일한 착장인지 비교 (옷 ID 기준, 순서 무관)
+  const isSameCodination = (a: Codination, b: Codination) => {
+    if (a.cloths.length !== b.cloths.length) return false;
+    const aIds = a.cloths.map((c) => c.id).sort();
+    const bIds = b.cloths.map((c) => c.id).sort();
+    return aIds.every((id, idx) => id === bIds[idx]);
+  };
+
   const addCodination = useCallback(async () => {
     if (isUserId) return;
     if (!message.products || message.products.length === 0) return;
@@ -41,6 +49,14 @@ export default function MessageBalloon({ message }: { message: Message }) {
     if (cloths.length === 0) return;
 
     const newCodination = addNewCodination(cloths);
+
+    // 중복 코디네이션 방지: 동일 조합이 이미 저장되어 있으면 추가하지 않음
+    const isDuplicate = codinations.some((existing) => isSameCodination(existing, newCodination));
+    if (isDuplicate) {
+      alert('이미 같은 코디네이션이 저장되어 있습니다.');
+      return;
+    }
+
     setCodinations((prev) => [...prev, newCodination]);
     setCloset((prev) => {
       const merged = new Map<string, ClosetCloth>();
@@ -50,7 +66,7 @@ export default function MessageBalloon({ message }: { message: Message }) {
     });
     setActiveCodination(newCodination);
     setPanel('codination');
-  }, [isUserId, message.products, setCodinations, addNewCodination, setActiveCodination, setPanel, setCloset]);
+  }, [isUserId, message.products, codinations, setCodinations, addNewCodination, setActiveCodination, setPanel, setCloset]);
 
   return (
     <div className={`flex ${isUserId ? 'justify-end' : 'justify-start'}`}>
