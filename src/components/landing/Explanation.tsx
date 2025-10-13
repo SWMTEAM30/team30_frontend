@@ -5,10 +5,7 @@ export default function Explanation() {
     <div className="transition-all duration-700 ease-out">
       <div className="py-16 space-y-8 max-w-6xl mx-auto px-4">
         {/* Card 1: 자연스러운 대화 */}
-        <div
-          className="opacity-0 translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
-          data-scroll="card"
-        >
+        <div className="translate-y-12 transition-all duration-1000 ease-out pointer-events-none" data-scroll="card">
           <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
@@ -27,7 +24,7 @@ export default function Explanation() {
 
         {/* Card 2: 맞춤 추천 */}
         <div
-          className="opacity-0 translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
+          className="translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
           data-scroll="card"
           style={{ transitionDelay: '200ms' }}
         >
@@ -49,7 +46,7 @@ export default function Explanation() {
 
         {/* Card 3: 간편함 */}
         <div
-          className="opacity-0 translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
+          className="translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
           data-scroll="card"
           style={{ transitionDelay: '400ms' }}
         >
@@ -71,7 +68,7 @@ export default function Explanation() {
 
         {/* Card 4: 실용성 */}
         <div
-          className="opacity-0 translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
+          className="translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
           data-scroll="card"
           style={{ transitionDelay: '600ms' }}
         >
@@ -93,7 +90,7 @@ export default function Explanation() {
 
         {/* Final Card */}
         <div
-          className="opacity-0 translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
+          className="translate-y-12 transition-all duration-1000 ease-out pointer-events-none"
           data-scroll="card"
           style={{ transitionDelay: '800ms' }}
         >
