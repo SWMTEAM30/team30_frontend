@@ -1,22 +1,16 @@
 import LucideIcon from '@/components/ui/icons/LucideIcon';
+import Image from 'next/image';
 
 export default function HeroSection() {
   return (
-    <div className={`text-center transition-all duration-700 ease-out 'transform translate-y-0 opacity-100`}>
-      <div className="my-16">
-        <div className="inline-flex items-center px-6 py-3 bg-white/80 text-blue rounded-full text-lg font-medium shadow-sm">
-          <LucideIcon name={'Clock'} color={'blue-500'} className="w-5 h-5 mr-2 dark" />
-          패션을 잘 모르겠다면?
-        </div>
+    <div className={`my-16 text-center transition-all duration-700 ease-out 'transform translate-y-0 opacity-100`}>
+      <div className="w-full flex justify-center">
+        <Image className="mx-3" src={'/TFT_icon.png'} alt={'logo'} width={60} height={60} />
+      </div>
 
-        <h2 className="text-7xl font-bold text-gray-900 my-16 leading-tight">
-          <span className="text-blue font-">The First Take</span>
-        </h2>
-        <div className="text-2xl font-bold text-gray-900 mb-16 leading-tight font-sans">
-          패션 전문가가 아니더라도
-          <br />
-          완벽한 한 벌을 찾을 수 있어요
-        </div>
+      <h2 className="text-7xl font-bold mt-16 leading-tight">The First Take</h2>
+      <div className="text-2xl font-bold mb-16 leading-tight font-sans">
+        <div className="inline-flex items-center text-lg">패션을 잘 모르는 사람들을 위한 AI 패션 추천 플랫폼</div>
       </div>
     </div>
   );

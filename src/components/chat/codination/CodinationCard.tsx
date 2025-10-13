@@ -179,7 +179,7 @@ export default function CodinationCard({ codination }: { codination: any }) {
           ))}
 
           {/* 구분선 */}
-          <div className="border-t border-slate-200 dark:border-slate-700 my-3"></div>
+          <div className="border-t border-slate-200 dark:border-slate-700 my-3" />
 
           {/* 액션 버튼들 */}
           <div className="space-y-2">

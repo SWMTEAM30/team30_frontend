@@ -87,13 +87,12 @@ export default function NextChat() {
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">
       {/* 상황별 버튼들 */}
-      <div className="mb-8">
-        <div className="text-center mb-8">
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">어떤 상황에서 입을 옷을 찾고 계신가요?</h3>
-          <p className="text-gray-500 text-sm">상황을 선택하거나 직접 입력해보세요</p>
-        </div>
+      {/* <div className="mb-8"> */}
+      {/* <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold  mb-2">어떤 상황에서 입을 옷을 찾고 계신가요?</h3>
+        </div> */}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {situationPresets.map((preset, index) => (
             <button
               key={index}
@@ -116,35 +115,35 @@ export default function NextChat() {
                 hover:border-blue-400 hover:from-blue-50 hover:to-blue-100
                 hover:shadow-lg hover:-translate-y-1
                 transition-all duration-300 ease-out
-                text-sm font-semibold text-gray-700
+                font-semibold 
                 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0
                 shadow-sm
                 overflow-hidden
               "
-            >
-              {/* 배경 그라데이션 효과 */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-pink-500/0 group-hover:from-blue-500/5 group-hover:via-purple-500/5 group-hover:to-pink-500/5 transition-all duration-300"></div>
+            > */}
+      {/* 배경 그라데이션 효과 */}
+      {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-pink-500/0 group-hover:from-blue-500/5 group-hover:via-purple-500/5 group-hover:to-pink-500/5 transition-all duration-300"></div> */}
 
-              {/* 버튼 내용 */}
-              <div className="relative z-10 flex items-center justify-center">
+      {/* 버튼 내용 */}
+      {/* <div className="relative z-10 flex items-center justify-center">
                 <span className="text-center leading-tight">{preset.text}</span>
-              </div>
+              </div> */}
 
-              {/* 호버 시 아이콘 효과 */}
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      {/* 호버 시 아이콘 효과 */}
+      {/* <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
               </div>
             </button>
           ))}
-        </div>
+        </div> */}
 
-        {/* 구분선 */}
-        <div className="flex items-center my-6">
+      {/* 구분선 */}
+      {/* <div className="flex items-center my-6">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           <span className="px-4 text-sm text-gray-400 font-medium">또는</span>
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
         </div>
-      </div>
+      </div> */}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="relative group">
