@@ -70,7 +70,6 @@ export default function FittingCard() {
               </svg>
             </div>
             <p className="text-base font-medium">피팅 이미지</p>
-            <p className="text-sm mt-1">현재 뷰: 정면</p>
           </div>
         );
     }

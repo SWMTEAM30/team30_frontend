@@ -14,7 +14,7 @@ interface PhotoModalProps {
   children: React.ReactNode;
 }
 
-export default function PhotoModal({ product, children }: PhotoModalProps) {
+export default function ClothModal({ product, children }: PhotoModalProps) {
   const [activeCloth, setActiveCloth] = useAtom(activeClothAtom);
   const [closet, setCloset] = useAtom(closetAtom);
   const [isOpen, setIsOpen] = useState(false);
