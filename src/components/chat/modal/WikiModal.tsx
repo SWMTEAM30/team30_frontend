@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { MDXRemote } from 'next-mdx-remote';
+import { MDXClient } from 'next-mdx-remote-client';
 
 interface WikiModalProps {
   wiki: any;
@@ -35,7 +35,7 @@ export default function WikiModal({ wiki, children }: WikiModalProps) {
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto p-6">
             <div className="prose text-lg prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-ul:text-gray-700 prose-li:text-gray-700 prose-img:w-[300px] prose-img:h-auto prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto prose-img:my-6 prose-img:block">
-              <MDXRemote {...wiki.content} />
+              <MDXClient {...wiki.content} />
             </div>
           </div>
         </div>

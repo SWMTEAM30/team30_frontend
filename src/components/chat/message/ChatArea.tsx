@@ -1,16 +1,11 @@
 'use client';
 
 import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
-import {
-  messagesAtomFamily,
-  roomIdAtom,
-  streamingMessageAtom,
-  isAIRespondingAtom,
-  tempMessageAtom,
-} from '@/atoms/chatAtoms';
+import { messagesAtomFamily, roomIdAtom, streamingMessageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
 import EmptyChatStart from '@/components/chat/message/EmptyChatStart';
 import MessageBalloon from '@/components/chat/message/MessageBalloon';
-import MessageSpinner from '@/components/chat/message/MessageSpinner';
+import MessageGroup from '@/components/chat/message/MessageGroup';
+import { groupMessagesIntoPosts, addMessageToGroups, MessageGroup as MessageGroupType } from '@/lib/messageGrouping';
 import { useAtom, useAtomValue } from 'jotai';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -23,6 +18,7 @@ export default function ChatArea() {
   const prevStreamingSizeRef = useRef(0);
   const [isFetchingOlder, setIsFetchingOlder] = useState(false);
   const [canLoadOlder, setCanLoadOlder] = useState(true);
+  const [messageGroups, setMessageGroups] = useState<MessageGroupType[]>([]);
 
   // 단일 로더: beforeDate 유무에 따라 초기/이전 메시지 로드
   const loadMessages = useCallback(
@@ -37,7 +33,12 @@ export default function ChatArea() {
         const response = await getChatRoomsRoomIdMessages(roomId, beforeDate);
         if (response.status === 'success' && response.data?.messages) {
           const fetched = response.data.messages;
-          setMessages((prev) => [...fetched, ...prev]);
+          setMessages((prev) => {
+            const newMessages = [...fetched, ...prev];
+            // 메시지 그룹 업데이트
+            setMessageGroups(groupMessagesIntoPosts(newMessages));
+            return newMessages;
+          });
           if (fetched.length === 0) setCanLoadOlder(false);
         }
       } catch (error) {
@@ -53,6 +54,13 @@ export default function ChatArea() {
   useEffect(() => {
     loadMessages();
   }, [roomId]);
+
+  // 메시지가 변경될 때마다 그룹 업데이트
+  useEffect(() => {
+    if (messages.length > 0) {
+      setMessageGroups(groupMessagesIntoPosts(messages));
+    }
+  }, [messages]);
 
   // 스크롤 감지 이벤트
   useEffect(() => {
@@ -113,16 +121,42 @@ export default function ChatArea() {
             </div>
           )}
           <>
-            {messages.map((message, i) => (
-              <MessageBalloon key={i} message={message} />
-            ))}
-          </>
-          {[...streamingMessage].map(([agent, content]) => (
-            <MessageBalloon key={agent} message={content} />
-          ))}
+            {messageGroups.length > 0 ? (
+              <>
+                {messageGroups.slice(0, -1).map((group, i) => (
+                  <MessageGroup key={group.id} group={group} showDivider={i > 0} />
+                ))}
 
-          {/* AI 응답 중일 때 로딩 메시지 표시 */}
-          {isAIResponding && streamingMessage.size === 0 && <MessageSpinner />}
+                {(() => {
+                  const last = messageGroups[messageGroups.length - 1];
+                  const streamingReplies = [...streamingMessage].map(([_, msg]) => msg);
+                  const typingPlaceholder =
+                    isAIResponding && streamingMessage.size === 0
+                      ? [
+                          {
+                            id: `typing-${Date.now()}`,
+                            content: 'AI 전문가가 답변을 작성하는 중입니다…',
+                            createdAt: new Date(),
+                            products: [],
+                            agent: { agentname: 'AI' } as any,
+                          } as unknown as Message,
+                        ]
+                      : [];
+                  const hasStreaming = streamingReplies.length > 0;
+                  const augmentedLast = {
+                    ...last,
+                    replies: [...last.replies, ...streamingReplies, ...typingPlaceholder],
+                  };
+                  return (
+                    <MessageGroup key={augmentedLast.id} group={augmentedLast} showDivider={messageGroups.length > 1} />
+                  );
+                })()}
+              </>
+            ) : (
+              // 그룹이 아직 없는데 스트리밍만 진행되는 예외 상황 대비
+              [...streamingMessage].map(([agent, content]) => <MessageBalloon key={agent} message={content} />)
+            )}
+          </>
         </div>
       </div>
     </div>
