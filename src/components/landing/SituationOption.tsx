@@ -17,8 +17,8 @@ export default function SituationOption({
           <LucideIcon name={option.icon} color="blue-500" className="w-6 h-6" />
         </div>
         <div>
-          <div className="font-semibold text-gray-900 text-lg">{option.text}</div>
-          <div className="text-sm text-gray-500">{option.description}</div>
+          <div className="font-semibold text-lg">{option.text}</div>
+          <div className="text-md">{option.description}</div>
         </div>
       </div>
     </button>
