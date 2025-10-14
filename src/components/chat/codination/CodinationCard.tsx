@@ -111,11 +111,12 @@ export default function CodinationCard({ codination }: { codination: any }) {
             {codination.cloths.map((product: ClosetCloth, clothKey: number) => (
               <div key={clothKey} className="relative">
                 <Image
-                  className="object-cover w-20 h-20 rounded-lg border border-slate-200"
+                  className="object-contain rounded-lg border border-slate-200"
                   src={product.url}
                   alt={product.name}
-                  width={80}
-                  height={80}
+                  width={64}
+                  height={64}
+                  style={{ width: '64px', height: '64px' }}
                 />
               </div>
             ))}
@@ -126,9 +127,9 @@ export default function CodinationCard({ codination }: { codination: any }) {
         <div className="flex-1 p-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="font-semibold text-slate-900 dark:text-white text-lg">
+              <p className="font-semibold text-2xl">
                 코디
-                <span className="text-slate-600 dark:text-slate-400 text-md"> {codination.cloths.length}개 아이템</span>
+                <span className="text-lg"> {codination.cloths.length}개 아이템</span>
               </p>
               {isExpanded ? (
                 <ChevronUp className="w-5 h-5 text-slate-400" />
@@ -136,13 +137,10 @@ export default function CodinationCard({ codination }: { codination: any }) {
                 <ChevronDown className="w-5 h-5 text-slate-400" />
               )}
             </div>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-col gap-1">
               {codination.cloths.map((product: ClosetCloth, clothKey: number) => (
-                <span
-                  key={clothKey}
-                  className="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs rounded-full"
-                >
-                  {product.name}
+                <span key={clothKey} className="px-2 py-1 text-lg rounded-full">
+                  - {product.name}
                 </span>
               ))}
             </div>
@@ -153,7 +151,7 @@ export default function CodinationCard({ codination }: { codination: any }) {
       {/* 콜랩스 컨텐츠 */}
       <div
         className={`transition-all duration-300 overflow-hidden ${
-          isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          isExpanded ? 'max-h-none opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         <div className="p-4 space-y-2">
@@ -165,15 +163,16 @@ export default function CodinationCard({ codination }: { codination: any }) {
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer transition-colors"
             >
               <Image
-                className="object-cover w-12 h-12 rounded border border-slate-200"
+                className="object-contain rounded border border-slate-200"
                 src={cloth.url}
                 alt={cloth.name}
-                width={48}
-                height={48}
+                width={64}
+                height={64}
+                style={{ width: '64px', height: '64px' }}
               />
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-slate-900 dark:text-white">{cloth.name}</span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">{cloth.description}</span>
+                <span className="text-lg font-semibold dark:text-white">{cloth.name}</span>
+                <span className="">{cloth.description}</span>
               </div>
             </div>
           ))}
@@ -188,7 +187,7 @@ export default function CodinationCard({ codination }: { codination: any }) {
               className="w-full flex items-center gap-2 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 transition-colors"
             >
               <div className="w-4 h-4 rounded-full bg-blue-500"></div>
-              <span className="text-sm font-medium">가상 피팅하기</span>
+              <span className="text-lg">가상 피팅하기</span>
             </button>
 
             <button
@@ -196,7 +195,7 @@ export default function CodinationCard({ codination }: { codination: any }) {
               className="w-full flex items-center gap-2 p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
-              <span className="text-sm font-medium">삭제하기</span>
+              <span className="text-lg">삭제하기</span>
             </button>
           </div>
         </div>
