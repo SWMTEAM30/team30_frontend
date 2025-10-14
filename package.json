@@ -48,7 +48,7 @@
     "@capacitor/cli": "^7.4.3",
     "@capacitor/ios": "^7.4.3",
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/plugin-kit": "0.4.0",
+    "@eslint/plugin-kit": "0.3.4",
     "@google/generative-ai": "^0.24.1",
     "@nextcss/color-tools": "^1.0.9",
     "@radix-ui/react-icons": "^1.3.2",
@@ -91,7 +91,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@eslint/plugin-kit": "0.3.3"
+      "@eslint/plugin-kit": "0.3.4"
     },
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
