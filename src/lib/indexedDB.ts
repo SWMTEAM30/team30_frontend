@@ -1,0 +1,254 @@
+// Navigator Connection API 타입 확장
+declare global {
+  interface Navigator {
+    connection?: {
+      effectiveType?: 'slow-2g' | '2g' | '3g' | '4g';
+      downlink?: number;
+      rtt?: number;
+    };
+  }
+}
+
+// 재시도 설정 타입
+export interface RetryConfig {
+  maxRetries: number;        // 최대 재시도 횟수
+  baseDelayMs: number;       // 기본 지연 시간 (ms)
+  maxDelayMs: number;        // 최대 지연 시간 (ms)
+  backoffMultiplier: number; // 지수 백오프 배수
+}
+
+const DB_NAME = 'TheFirstTakeDB';
+const DB_VERSION = 2;
+
+export const DEFAULT_RETRY_CONFIG: RetryConfig = {
+  maxRetries: 5,
+  baseDelayMs: 500,
+  maxDelayMs: 10000,
+  backoffMultiplier: 2,
+};
+
+let globalRetryConfig: RetryConfig = { ...DEFAULT_RETRY_CONFIG };
+
+export const setRetryConfig = (config: Partial<RetryConfig>) => {
+  globalRetryConfig = { ...globalRetryConfig, ...config };
+};
+
+export const getRetryConfig = (): RetryConfig => {
+  return { ...globalRetryConfig };
+};
+
+export const STORE_NAMES = {
+  CLOSET: 'closet',
+  CODINATIONS: 'codinations',
+  FITTING_STATUS: 'fittingStatus',
+} as const;
+
+let dbInstance: IDBDatabase | null = null;
+
+export const initDB = (): Promise<IDBDatabase> => {
+  return new Promise((resolve, reject) => {
+    if (dbInstance) {
+      resolve(dbInstance);
+      return;
+    }
+
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onerror = () => {
+      console.error('IndexedDB 열기 실패:', request.error);
+      reject(request.error);
+    };
+
+    request.onsuccess = () => {
+      dbInstance = request.result;
+      resolve(dbInstance);
+    };
+
+    request.onupgradeneeded = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+
+      // 옷장 데이터 저장소
+      if (!db.objectStoreNames.contains(STORE_NAMES.CLOSET)) {
+        const closetStore = db.createObjectStore(STORE_NAMES.CLOSET, { keyPath: 'id' });
+        closetStore.createIndex('name', 'name', { unique: false });
+      }
+
+      // 코디네이션 데이터 저장소
+      if (!db.objectStoreNames.contains(STORE_NAMES.CODINATIONS)) {
+        const codinationStore = db.createObjectStore(STORE_NAMES.CODINATIONS, { keyPath: 'id' });
+        codinationStore.createIndex('createdAt', 'createdAt', { unique: false });
+      }
+
+      // 피팅 상태 데이터 저장소
+      if (!db.objectStoreNames.contains(STORE_NAMES.FITTING_STATUS)) {
+        db.createObjectStore(STORE_NAMES.FITTING_STATUS, { keyPath: 'codinationId' });
+      }
+    };
+  });
+};
+
+export const saveToIndexedDB = async <T>(
+  storeName: string,
+  data: T,
+  retryConfig?: Partial<RetryConfig>,
+): Promise<void> => {
+  const config = { ...globalRetryConfig, ...retryConfig };
+
+  for (let attempt = 0; attempt < config.maxRetries; attempt++) {
+    try {
+      const db = await initDB();
+      const transaction = db.transaction([storeName], 'readwrite');
+      const store = transaction.objectStore(storeName);
+
+      await new Promise<void>((resolve, reject) => {
+        const request = store.put(data);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+
+      return;
+    } catch (error) {
+      console.error(`IndexedDB 저장 실패 (시도 ${attempt + 1}/${config.maxRetries}, ${storeName}):`, error);
+      if (attempt < config.maxRetries - 1) {
+        const delay = Math.min(config.baseDelayMs * Math.pow(config.backoffMultiplier, attempt), config.maxDelayMs);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+
+      throw error;
+    }
+  }
+};
+
+export const loadFromIndexedDB = async <T>(
+  storeName: string,
+  key?: string,
+  retryConfig?: Partial<RetryConfig>,
+): Promise<T | null> => {
+  const config = { ...globalRetryConfig, ...retryConfig };
+
+  for (let attempt = 0; attempt < config.maxRetries; attempt++) {
+    try {
+      const db = await initDB();
+      const transaction = db.transaction([storeName], 'readonly');
+      const store = transaction.objectStore(storeName);
+
+      return await new Promise<T | null>((resolve, reject) => {
+        const request = key ? store.get(key) : store.getAll();
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.error(`IndexedDB 불러오기 실패 (시도 ${attempt + 1}/${config.maxRetries}, ${storeName}):`, error);
+      if (attempt < config.maxRetries - 1) {
+        const delay = Math.min(config.baseDelayMs * Math.pow(config.backoffMultiplier, attempt), config.maxDelayMs);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      return null;
+    }
+  }
+  return null;
+};
+
+export const deleteFromIndexedDB = async (storeName: string, key: string): Promise<void> => {
+  try {
+    const db = await initDB();
+    const transaction = db.transaction([storeName], 'readwrite');
+    const store = transaction.objectStore(storeName);
+
+    await new Promise<void>((resolve, reject) => {
+      const request = store.delete(key);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error(`IndexedDB 삭제 실패 (${storeName}):`, error);
+    throw error;
+  }
+};
+
+export const clearIndexedDB = async (storeName: string): Promise<void> => {
+  try {
+    const db = await initDB();
+    const transaction = db.transaction([storeName], 'readwrite');
+    const store = transaction.objectStore(storeName);
+
+    await new Promise<void>((resolve, reject) => {
+      const request = store.clear();
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error(`IndexedDB 전체 삭제 실패 (${storeName}):`, error);
+    throw error;
+  }
+};
+
+export const isIndexedDBSupported = (): boolean => {
+  return typeof window !== 'undefined' && 'indexedDB' in window;
+};
+
+// ===== 재시도 설정 프리셋 함수들 =====
+
+// 개발 환경용 설정 (빠른 재시도)
+export const setDevelopmentRetryConfig = () => {
+  setRetryConfig({
+    maxRetries: 3,
+    baseDelayMs: 200,
+    maxDelayMs: 2000,
+    backoffMultiplier: 1.5,
+  });
+};
+
+// 프로덕션 환경용 설정 (안정적인 재시도)
+export const setProductionRetryConfig = () => {
+  setRetryConfig({
+    maxRetries: 5,
+    baseDelayMs: 500,
+    maxDelayMs: 10000,
+    backoffMultiplier: 2,
+  });
+};
+
+// 느린 네트워크용 설정 (더 많은 재시도)
+export const setSlowNetworkRetryConfig = () => {
+  setRetryConfig({
+    maxRetries: 8,
+    baseDelayMs: 1000,
+    maxDelayMs: 15000,
+    backoffMultiplier: 1.8,
+  });
+};
+
+// 빠른 네트워크용 설정 (적은 재시도)
+export const setFastNetworkRetryConfig = () => {
+  setRetryConfig({
+    maxRetries: 3,
+    baseDelayMs: 100,
+    maxDelayMs: 1000,
+    backoffMultiplier: 2.5,
+  });
+};
+
+// 사용자 정의 설정 예시
+export const setCustomRetryConfig = (config: Partial<RetryConfig>) => {
+  setRetryConfig(config);
+};
+
+// 환경별 자동 설정
+export const initializeRetryConfig = () => {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isSlowNetwork =
+    navigator.connection?.effectiveType === 'slow-2g' || navigator.connection?.effectiveType === '2g';
+
+  if (isDevelopment) {
+    setDevelopmentRetryConfig();
+  } else if (isSlowNetwork) {
+    setSlowNetworkRetryConfig();
+  } else {
+    setProductionRetryConfig();
+  }
+
+  console.log('IndexedDB 재시도 설정이 초기화되었습니다.');
+};

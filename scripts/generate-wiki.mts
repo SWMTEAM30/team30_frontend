@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
+import type { WikiIndex } from '../src/types/chat';
 
 // 콘텐츠 소스 폴더와 JSON 결과물 파일 경로를 정의합니다.
 const contentDirectory = path.join(process.cwd(), 'content/wiki');

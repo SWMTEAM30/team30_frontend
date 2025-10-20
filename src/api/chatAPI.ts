@@ -1,5 +1,6 @@
 import { requestAPI } from '@/api/API';
 import { formatMessage, formatRoomMessage } from '@/lib/chat_formatter';
+import type { Message } from '@/types/chat';
 
 // GET
 export const getChatReceive = async (roomId: string | null): Promise<APIResponse<Message>> => {

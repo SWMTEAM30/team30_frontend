@@ -9,10 +9,25 @@ export default function FittingCard() {
   const virtualFittingStatus = useAtomValue(virtualFittingStatusAtom);
 
   // 현재 활성 코디네이션에 대한 가상피팅 상태 확인
-  const currentFittingStatus =
-    activeCodination && virtualFittingStatus.codinationId === activeCodination.id
-      ? virtualFittingStatus
-      : { status: 'idle' as const, resultUrl: null, errorMessage: null };
+  const currentFittingStatus = (() => {
+    // 활성 코디네이션이 없으면 idle 상태
+    if (!activeCodination) {
+      return { status: 'idle' as const, resultUrl: null, errorMessage: null };
+    }
+    
+    // 정확한 코디네이션 ID 매칭
+    if (virtualFittingStatus.codinationId === activeCodination.id) {
+      return virtualFittingStatus;
+    }
+    
+    // 코디네이션 ID가 null이지만 피팅 상태가 있는 경우 (일반적인 피팅 상태)
+    if (!virtualFittingStatus.codinationId && virtualFittingStatus.status !== 'idle') {
+      return virtualFittingStatus;
+    }
+    
+    // 매칭되지 않으면 idle 상태
+    return { status: 'idle' as const, resultUrl: null, errorMessage: null };
+  })();
 
   const renderContent = () => {
     switch (currentFittingStatus.status) {

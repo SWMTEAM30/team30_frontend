@@ -4,6 +4,7 @@ import ChatHeader from '@/components/chat/ChatHeader';
 import ClosetPanel from '@/components/chat/closet/ClosetPanel';
 import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import ChatPanel from '@/components/chat/message/ChatPanel';
+import StorageInitializer from '@/components/StorageInitializer';
 import { useAtom, useSetAtom } from 'jotai';
 import { messagesAtomFamily, panelAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
 import { Suspense, useCallback, useEffect, useState } from 'react';
@@ -62,38 +63,40 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
   }, [panel, setPanel]);
 
   return (
-    <Suspense>
-      <div className="flex flex-col">
-        {/* 모바일/태블릿에서는 상단에 헤더 표시 */}
-        <div className="lg:hidden">
-          <ChatHeader />
-        </div>
-        <div className="flex h-[calc(100vh-5rem)] lg:h-[100vh]">
-          {/* 데스크톱: 좌우 분할 레이아웃 */}
-          <div className="hidden lg:flex w-full lg:w-1/2 h-full lg:transition-all lg:duration-300">
-            <ChatPanel />
+    <StorageInitializer>
+      <Suspense>
+        <div className="flex flex-col">
+          {/* 모바일/태블릿에서는 상단에 헤더 표시 */}
+          <div className="lg:hidden">
+            <ChatHeader />
           </div>
-
-          <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 border-l border-navy-200">
-            <div className="flex-shrink-0">
-              <ChatHeader />
+          <div className="flex h-[calc(100vh-5rem)] lg:h-[100vh]">
+            {/* 데스크톱: 좌우 분할 레이아웃 */}
+            <div className="hidden lg:flex w-full lg:w-1/2 h-full lg:transition-all lg:duration-300">
+              <ChatPanel />
             </div>
-            <div className="flex-1 min-h-0">
+
+            <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 border-l border-navy-200">
+              <div className="flex-shrink-0">
+                <ChatHeader />
+              </div>
+              <div className="flex-1 min-h-0">
+                {panel === 'closet' && <ClosetPanel />}
+                {panel === 'codination' && <CodinationPanel />}
+                {panel === 'fitting' && <FittingPanel />}
+              </div>
+            </div>
+
+            {/* 모바일/태블릿: 단일 패널 레이아웃 */}
+            <div className="lg:hidden w-full h-[calc(100vh-5rem)]">
+              {panel === 'chat' && <ChatPanel />}
               {panel === 'closet' && <ClosetPanel />}
               {panel === 'codination' && <CodinationPanel />}
               {panel === 'fitting' && <FittingPanel />}
             </div>
           </div>
-
-          {/* 모바일/태블릿: 단일 패널 레이아웃 */}
-          <div className="lg:hidden w-full h-[calc(100vh-5rem)]">
-            {panel === 'chat' && <ChatPanel />}
-            {panel === 'closet' && <ClosetPanel />}
-            {panel === 'codination' && <CodinationPanel />}
-            {panel === 'fitting' && <FittingPanel />}
-          </div>
         </div>
-      </div>
-    </Suspense>
+      </Suspense>
+    </StorageInitializer>
   );
 }

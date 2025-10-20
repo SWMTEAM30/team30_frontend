@@ -11,14 +11,17 @@ import {
 import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { postFittingTryonCombo } from '@/api/fittingAPI';
+import { useCodinationStorage } from '@/hooks/useCodinationStorage';
 
 export default function ClosetPanel() {
   const setPanel = useSetAtom(panelAtom);
   const closet = useAtomValue(closetAtom);
-  const [codinations, setCodinations] = useAtom(codinationsAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
   const setVirtualFittingStatus = useSetAtom(virtualFittingStatusAtom);
+  
+  // 코디네이션 스토리지 훅 사용
+  const { codinations, addCodination } = useCodinationStorage();
 
   // 상의와 하의가 모두 선택되었는지 확인
   const hasUpperAndLower =
@@ -41,7 +44,7 @@ export default function ClosetPanel() {
     return clothIds1.every((id, index) => id === clothIds2[index]);
   };
 
-  const handleCreateCodination = () => {
+  const handleCreateCodination = async () => {
     if (!closetCodination || closetCodination.cloths.length === 0) {
       alert('코디네이션에 추가할 옷을 선택해주세요.');
       return;
@@ -67,7 +70,8 @@ export default function ClosetPanel() {
       cloths: [...closetCodination.cloths],
     };
 
-    setCodinations((prev) => [...prev, newCodination]);
+    // IndexedDB에 저장하면서 코디네이션 추가
+    await addCodination(newCodination);
     setClosetCodination(null);
     setPanel('codination');
 
