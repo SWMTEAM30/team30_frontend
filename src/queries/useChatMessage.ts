@@ -1,14 +1,12 @@
 import { getChatReceive, postChatSend } from '@/api/chatAPI';
-import { isAIRespondingAtom, messagesAtomFamily, roomIdAtom } from '@/atoms/chatAtoms';
-import { queryKeys } from '@/config/queryKeys';
+import { messagesAtomFamily, roomIdAtom } from '@/atoms/chatAtoms';
+import { queryKeys } from '@/config/query.config';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useAtomValue, useStore } from 'jotai';
+import { useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useChatMessage = (chatId: string | null) => {
-  const [isAIResponding, setIsAIResponding] = useAtom(isAIRespondingAtom);
   const roomId = useAtomValue(roomIdAtom);
-  const messages = messagesAtomFamily(roomId);
   const queryClient = useQueryClient();
   const [pollCount, setPollCount] = useState(0);
   const store = useStore();

@@ -1,33 +1,15 @@
-// Navigator Connection API 타입 확장
-declare global {
-  interface Navigator {
-    connection?: {
-      effectiveType?: 'slow-2g' | '2g' | '3g' | '4g';
-      downlink?: number;
-      rtt?: number;
-    };
-  }
-}
+import { DEFAULT_RETRY_CONFIG, DB_NAME, DB_VERSION, STORE_NAMES } from '@/config/indexedDB.config';
 
-// 재시도 설정 타입
-export interface RetryConfig {
-  maxRetries: number;        // 최대 재시도 횟수
-  baseDelayMs: number;       // 기본 지연 시간 (ms)
-  maxDelayMs: number;        // 최대 지연 시간 (ms)
+interface RetryConfig {
+  maxRetries: number; // 최대 재시도 횟수
+  baseDelayMs: number; // 기본 지연 시간 (ms)
+  maxDelayMs: number; // 최대 지연 시간 (ms)
   backoffMultiplier: number; // 지수 백오프 배수
 }
 
-const DB_NAME = 'TheFirstTakeDB';
-const DB_VERSION = 2;
-
-export const DEFAULT_RETRY_CONFIG: RetryConfig = {
-  maxRetries: 5,
-  baseDelayMs: 500,
-  maxDelayMs: 10000,
-  backoffMultiplier: 2,
-};
-
 let globalRetryConfig: RetryConfig = { ...DEFAULT_RETRY_CONFIG };
+
+let dbInstance: IDBDatabase | null = null;
 
 export const setRetryConfig = (config: Partial<RetryConfig>) => {
   globalRetryConfig = { ...globalRetryConfig, ...config };
@@ -36,14 +18,6 @@ export const setRetryConfig = (config: Partial<RetryConfig>) => {
 export const getRetryConfig = (): RetryConfig => {
   return { ...globalRetryConfig };
 };
-
-export const STORE_NAMES = {
-  CLOSET: 'closet',
-  CODINATIONS: 'codinations',
-  FITTING_STATUS: 'fittingStatus',
-} as const;
-
-let dbInstance: IDBDatabase | null = null;
 
 export const initDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {

@@ -6,10 +6,9 @@ import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import ChatPanel from '@/components/chat/message/ChatPanel';
 import StorageInitializer from '@/components/StorageInitializer';
 import { useAtom } from 'jotai';
-import {  panelAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
-import { Suspense,  useEffect } from 'react';
+import { panelAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
+import { Suspense, useEffect } from 'react';
 import { useChatStream } from '@/hooks/useChatStream';
-import { useAuthCheck } from '@/hooks/useAuthCheck';
 import CodinationPanel from '@/components/chat/codination/CodinationPanel';
 
 interface ChatRoomPageProps {
