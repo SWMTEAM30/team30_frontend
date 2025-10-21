@@ -29,7 +29,7 @@ export default function CodinationCard({ codination }: { codination: any }) {
   
   // 스토리지 훅 사용
   const { codinations, removeCodination } = useCodinationStorage();
-  const { updateFittingStatus } = useFittingStorage();
+  const { updateFittingStatus } = useFittingStorage(codination.id);
 
   // 비동기 피팅 결과 폴링 함수
   const pollFittingResult = async (taskId: string) => {

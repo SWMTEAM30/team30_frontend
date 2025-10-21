@@ -1,21 +1,10 @@
-'use client';
-
-import { getKakaoAuthUrl, getKakaoConfig } from '@/lib/kakao-auth';
+import { getKakaoAuthUrl } from '@/lib/kakao-auth';
+import Link from 'next/link';
 
 export default function SigninSNSForm() {
-  const config = getKakaoConfig();
   const kakaoAuthUrl = getKakaoAuthUrl();
 
-  // 카카오 로그인 - 전체 페이지 리다이렉트
-  const handleKakaoLogin = () => {
-    if (!kakaoAuthUrl) return;
-
-    // 현재 창에서 카카오 인증 페이지로 이동
-    window.location.href = kakaoAuthUrl;
-  };
-
-  // 환경변수가 없으면 에러 표시
-  if (!config || !kakaoAuthUrl) {
+  if (!kakaoAuthUrl) {
     return (
       <div className="text-red-500 text-center p-4">
         카카오 로그인 설정이 완료되지 않았습니다.
@@ -30,8 +19,8 @@ export default function SigninSNSForm() {
   return (
     <div className="space-y-4">
       {/* 카카오 로그인 버튼 */}
-      <button
-        onClick={handleKakaoLogin}
+      <Link
+        href={kakaoAuthUrl}
         className="
           group relative w-full
           flex items-center justify-center 
@@ -64,14 +53,10 @@ export default function SigninSNSForm() {
           {/* 텍스트 */}
           <span className="text-[#391B1B] font-semibold text-lg">카카오로 시작하기</span>
         </div>
-      </button>
+      </Link>
 
       {/* 네이버 로그인 버튼 */}
       <button
-        onClick={() => {
-          // 기능은 구현하지 않음 - 시연용
-          console.log('네이버 로그인 클릭');
-        }}
         className="
           group relative w-full
           flex items-center justify-center 
@@ -108,10 +93,6 @@ export default function SigninSNSForm() {
 
       {/* 구글 로그인 버튼 */}
       <button
-        onClick={() => {
-          // 기능은 구현하지 않음 - 시연용
-          console.log('구글 로그인 클릭');
-        }}
         className="
           group relative w-full
           flex items-center justify-center 

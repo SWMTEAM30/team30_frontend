@@ -1,6 +1,6 @@
 import { getChatReceive, postChatSend } from '@/api/chatAPI';
 import { isAIRespondingAtom, messagesAtomFamily, roomIdAtom } from '@/atoms/chatAtoms';
-import { queryKeys } from '@/lib/queryKeys';
+import { queryKeys } from '@/config/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';

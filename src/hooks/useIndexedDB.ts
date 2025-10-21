@@ -9,6 +9,15 @@ import {
 } from '@/lib/indexedDB';
 import { useToast } from '@/hooks/useToast';
 
+interface UseIndexedDBOptions<T> {
+  storeName: keyof typeof STORE_NAMES;
+  storageKey: string;
+  initialValue: T;
+  onError?: (error: Error) => void;
+  showToast?: boolean;
+  retryConfig?: Partial<RetryConfig>;
+}
+
 export function useIndexedDB<T>({
   storeName,
   storageKey,
@@ -67,7 +76,7 @@ export function useIndexedDB<T>({
     } finally {
       setIsLoading(false);
     }
-  }, [storeName, storageKey]);
+  }, []);
 
   // 데이터 저장
   const saveData = useCallback(
@@ -77,11 +86,25 @@ export function useIndexedDB<T>({
         return false;
       }
 
+      // storageKey가 유효하지 않은 경우 오류 처리
+      if (!storageKey || storageKey.trim() === '') {
+        const error = new Error('저장 키가 유효하지 않습니다. storageKey를 확인해주세요.');
+        handleError(error, '저장');
+        return false;
+      }
+
       try {
         // 각 store의 keyPath에 맞는 키 필드 설정
         const keyField = storeName === 'FITTING_STATUS' ? 'codinationId' : 'id';
+
+        // 키 값이 유효한지 다시 한번 확인
+        const keyValue = storageKey.trim();
+        if (!keyValue) {
+          throw new Error(`유효한 ${keyField} 값이 필요합니다.`);
+        }
+
         const dataToSave = {
-          [keyField]: storageKey,
+          [keyField]: keyValue,
           data: newData,
           lastUpdated: new Date().toISOString(),
         };

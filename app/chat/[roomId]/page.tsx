@@ -5,11 +5,10 @@ import ClosetPanel from '@/components/chat/closet/ClosetPanel';
 import FittingPanel from '@/components/chat/fitting/FittingPanel';
 import ChatPanel from '@/components/chat/message/ChatPanel';
 import StorageInitializer from '@/components/StorageInitializer';
-import { useAtom, useSetAtom } from 'jotai';
-import { messagesAtomFamily, panelAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
+import {  panelAtom, roomIdAtom, tempMessageAtom } from '@/atoms/chatAtoms';
+import { Suspense,  useEffect } from 'react';
 import { useChatStream } from '@/hooks/useChatStream';
-import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import CodinationPanel from '@/components/chat/codination/CodinationPanel';
 
@@ -24,12 +23,6 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
   const [roomId, setRoomId] = useAtom(roomIdAtom);
   const [tempMessage, setTempMessage] = useAtom(tempMessageAtom);
   const { mutate } = useChatStream();
-  const { checkAuth } = useAuthCheck();
-
-  // 최초 마운트 시 인증 확인
-  // useEffect(() => {
-  //   checkAuth({ alertMessage: '로그인이 필요합니다.' });
-  // }, []);
 
   // params에서 roomId 추출
   useEffect(() => {

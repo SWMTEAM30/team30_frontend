@@ -21,10 +21,11 @@ export default function CodinationPanel() {
   const setPanel = useSetAtom(panelAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
+  const [activeCodination] = useAtom(activeCodinationAtom);
   
   // 스토리지 훅 사용
   const { codinations, updateCodination } = useCodinationStorage();
-  const { updateFittingStatus } = useFittingStorage();
+  const { updateFittingStatus } = useFittingStorage(activeCodination?.id);
 
   // 비동기 피팅 결과 폴링 함수
   const pollFittingResult = async (taskId: string) => {

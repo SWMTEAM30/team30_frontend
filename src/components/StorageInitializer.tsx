@@ -1,12 +1,8 @@
-/**
- * 페이지 마운트 시 IndexedDB에서 데이터를 불러오는 초기화 컴포넌트
- */
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useClosetStorage } from '@/hooks/useClosetStorage';
 import { useCodinationStorage } from '@/hooks/useCodinationStorage';
-import { useFittingStorage } from '@/hooks/useFittingStorage';
 import { useToast } from '@/hooks/useToast';
 import { ToastContainer } from '@/components/ui/Toast';
 import { isIndexedDBSupported, initializeRetryConfig } from '@/lib/indexedDB';
@@ -25,7 +21,7 @@ export default function StorageInitializer({ children }: StorageInitializerProps
   // 각 스토리지 훅들을 초기화
   useClosetStorage();
   useCodinationStorage();
-  useFittingStorage();
+  // useFittingStorage는 특정 codinationId가 필요하므로 여기서는 초기화하지 않음
 
   useEffect(() => {
     const initializeStorage = async () => {
@@ -74,4 +70,3 @@ export default function StorageInitializer({ children }: StorageInitializerProps
     </>
   );
 }
-

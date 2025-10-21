@@ -94,6 +94,27 @@ export const saveToIndexedDB = async <T>(
 ): Promise<void> => {
   const config = { ...globalRetryConfig, ...retryConfig };
 
+  // 데이터 유효성 검사
+  if (!data || typeof data !== 'object') {
+    throw new Error('저장할 데이터가 유효하지 않습니다.');
+  }
+
+  // FITTING_STATUS 스토어의 경우 codinationId 필드 검증
+  if (storeName === STORE_NAMES.FITTING_STATUS) {
+    const fittingData = data as any;
+    if (!fittingData.codinationId || fittingData.codinationId.trim() === '') {
+      throw new Error('FITTING_STATUS 저장 시 codinationId가 필요합니다.');
+    }
+  }
+
+  // CLOSET, CODINATIONS 스토어의 경우 id 필드 검증
+  if (storeName === STORE_NAMES.CLOSET || storeName === STORE_NAMES.CODINATIONS) {
+    const storeData = data as any;
+    if (!storeData.id || storeData.id.trim() === '') {
+      throw new Error(`${storeName} 저장 시 id가 필요합니다.`);
+    }
+  }
+
   for (let attempt = 0; attempt < config.maxRetries; attempt++) {
     try {
       const db = await initDB();

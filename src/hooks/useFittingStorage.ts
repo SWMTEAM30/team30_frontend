@@ -11,12 +11,11 @@ type VirtualFittingStatus = {
   taskId: string | null;
 };
 
-const FITTING_STATUS_STORAGE_KEY = 'fitting_status_data';
-
-export const useFittingStorage = () => {
+export const useFittingStorage = (codinationId?: string) => {
   const [virtualFittingStatus, setVirtualFittingStatus] = useAtom(virtualFittingStatusAtom);
 
-  // 새로운 IndexedDB 훅 사용
+  const shouldUseStorage = Boolean(codinationId && codinationId.trim() !== '');
+
   const {
     data: storedFittingStatus,
     saveData: saveFittingStatusToStorage,
@@ -26,41 +25,47 @@ export const useFittingStorage = () => {
     error: fittingStatusError,
   } = useIndexedDB<VirtualFittingStatus>({
     storeName: 'FITTING_STATUS',
-    storageKey: FITTING_STATUS_STORAGE_KEY,
+    storageKey: codinationId || 'default',
     initialValue: {
-      codinationId: null,
+      codinationId: codinationId || null,
       status: 'idle',
       resultUrl: null,
       errorMessage: null,
       taskId: null,
     },
-    showToast: false, // 피팅 상태는 자동 저장이므로 토스트 비활성화
+    showToast: false,
   });
 
   const updateFittingStatus = useCallback(
     async (newStatus: Partial<VirtualFittingStatus>) => {
       const updatedStatus = { ...virtualFittingStatus, ...newStatus };
       setVirtualFittingStatus(updatedStatus);
-      await saveFittingStatusToStorage(updatedStatus);
+
+      // codinationId가 있을 때만 저장
+      if (shouldUseStorage) await saveFittingStatusToStorage(updatedStatus);
     },
-    [virtualFittingStatus, setVirtualFittingStatus, saveFittingStatusToStorage],
+    [virtualFittingStatus, setVirtualFittingStatus, saveFittingStatusToStorage, shouldUseStorage],
   );
 
   const resetFittingStatus = useCallback(async () => {
     const initialStatus: VirtualFittingStatus = {
-      codinationId: null,
+      codinationId: codinationId || null,
       status: 'idle',
       resultUrl: null,
       errorMessage: null,
       taskId: null,
     };
     setVirtualFittingStatus(initialStatus);
-    await saveFittingStatusToStorage(initialStatus);
-  }, [setVirtualFittingStatus, saveFittingStatusToStorage]);
+
+    // codinationId가 있을 때만 저장
+    if (shouldUseStorage) {
+      await saveFittingStatusToStorage(initialStatus);
+    }
+  }, [setVirtualFittingStatus, saveFittingStatusToStorage, shouldUseStorage, codinationId]);
 
   useEffect(() => {
     const initializeFittingStatus = async () => {
-      if (!isFittingStatusLoading) {
+      if (!isFittingStatusLoading && shouldUseStorage) {
         const loadedData = await loadFittingStatusFromStorage();
         if (loadedData && loadedData.status !== 'idle') {
           setVirtualFittingStatus(loadedData);
@@ -69,13 +74,13 @@ export const useFittingStorage = () => {
     };
 
     initializeFittingStatus();
-  }, [isFittingStatusLoading, loadFittingStatusFromStorage, setVirtualFittingStatus]);
+  }, [isFittingStatusLoading, loadFittingStatusFromStorage, setVirtualFittingStatus, shouldUseStorage]);
 
   useEffect(() => {
-    if (virtualFittingStatus.status !== 'idle') {
+    if (virtualFittingStatus.status !== 'idle' && shouldUseStorage) {
       saveFittingStatusToStorage(virtualFittingStatus);
     }
-  }, [virtualFittingStatus, saveFittingStatusToStorage]);
+  }, [virtualFittingStatus, saveFittingStatusToStorage, shouldUseStorage]);
 
   return {
     virtualFittingStatus,
