@@ -2,43 +2,43 @@
 
 import Image from 'next/image';
 import { useAtomValue } from 'jotai';
-import { activeCodinationAtom, virtualFittingStatusAtom } from '@/atoms/chatAtoms';
+import { activeCodinationAtom } from '@/atoms/chatAtoms';
+import { useFitting } from '@/hooks/useFitting';
 
 export default function FittingCard() {
   const activeCodination = useAtomValue(activeCodinationAtom);
-  const virtualFittingStatus = useAtomValue(virtualFittingStatusAtom);
+  const { fittingStatus } = useFitting(activeCodination?.id);
 
-  // 현재 활성 코디네이션에 대한 가상피팅 상태 확인
-  const currentFittingStatus = (() => {
-    // 활성 코디네이션이 없으면 idle 상태
-    if (!activeCodination) {
-      return { status: 'idle' as const, resultUrl: null, errorMessage: null };
-    }
-    
-    // 정확한 코디네이션 ID 매칭
-    if (virtualFittingStatus.codinationId === activeCodination.id) {
-      return virtualFittingStatus;
-    }
-    
-    // 코디네이션 ID가 null이지만 피팅 상태가 있는 경우 (일반적인 피팅 상태)
-    if (!virtualFittingStatus.codinationId && virtualFittingStatus.status !== 'idle') {
-      return virtualFittingStatus;
-    }
-    
-    // 매칭되지 않으면 idle 상태
-    return { status: 'idle' as const, resultUrl: null, errorMessage: null };
-  })();
+  // 코디네이션에 저장된 피팅 이미지가 있으면 우선 표시
+  const displayImage = activeCodination?.fitting_image || fittingStatus.resultUrl;
 
   console.log('🔍 FittingCard 상태:', {
     activeCodination: activeCodination?.id,
-    virtualFittingStatus,
-    currentFittingStatus,
+    fittingStatus,
+    displayImage,
   });
 
   const renderContent = () => {
-    console.log('🎨 FittingCard 렌더링:', currentFittingStatus.status);
+    console.log('🎨 FittingCard 렌더링:', fittingStatus.status);
     
-    switch (currentFittingStatus.status) {
+    // 저장된 피팅 이미지가 있으면 바로 표시
+    if (displayImage) {
+      console.log('🖼️ 저장된 피팅 이미지 표시:', displayImage);
+      return (
+        <div className="w-full h-full p-2">
+          <div className="relative w-full h-full">
+            <Image 
+              src={displayImage} 
+              alt="가상피팅 결과" 
+              fill 
+              className="object-cover rounded-lg" 
+            />
+          </div>
+        </div>
+      );
+    }
+    
+    switch (fittingStatus.status) {
       case 'pending':
         console.log('⏳ Pending 상태 렌더링');
         return (
@@ -52,13 +52,13 @@ export default function FittingCard() {
         );
 
       case 'success':
-        console.log('✅ Success 상태 렌더링:', currentFittingStatus.resultUrl);
+        console.log('✅ Success 상태 렌더링:', fittingStatus.resultUrl);
         return (
           <div className="w-full h-full p-2">
-            {currentFittingStatus.resultUrl ? (
+            {fittingStatus.resultUrl ? (
               <div className="relative w-full h-full">
                 <Image 
-                  src={currentFittingStatus.resultUrl} 
+                  src={fittingStatus.resultUrl} 
                   alt="가상피팅 결과" 
                   fill 
                   className="object-cover rounded-lg" 
@@ -73,7 +73,7 @@ export default function FittingCard() {
         );
 
       case 'error':
-        console.log('❌ Error 상태 렌더링:', currentFittingStatus.errorMessage);
+        console.log('❌ Error 상태 렌더링:', fittingStatus.errorMessage);
         return (
           <div className="text-red-400 dark:text-red-500 text-center">
             <div className="w-20 h-20 mx-auto mb-4 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
@@ -87,7 +87,7 @@ export default function FittingCard() {
               </svg>
             </div>
             <p className="text-base font-medium">가상피팅 실패</p>
-            <p className="text-sm mt-1">{currentFittingStatus.errorMessage || '오류가 발생했습니다'}</p>
+            <p className="text-sm mt-1">{fittingStatus.errorMessage || '오류가 발생했습니다'}</p>
           </div>
         );
 

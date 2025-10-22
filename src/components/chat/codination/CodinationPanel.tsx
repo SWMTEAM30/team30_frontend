@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  activeCodinationAtom,
-  closetAtom,
-  closetCodinationAtom,
-  codinationsAtom,
-  panelAtom,
-  virtualFittingStatusAtom,
-} from '@/atoms/chatAtoms';
+import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
 import { useAtom, useSetAtom } from 'jotai';
 import { postFittingTryonCombo } from '@/api/fittingAPI';
 import { Button } from '@/components/ui/button';
@@ -212,11 +205,15 @@ export default function CodinationPanel() {
       {closetCodination && closetCodination.cloths.length > 0 && (
         <div className="p-4 border-t border-slate-200 dark:border-slate-700">
           <button
-            className={`w-full cursor-pointer h-12 btn bg-navy text-lg text-white disabled:bg-blue-50`}
+            className={`w-full cursor-pointer h-12 btn ${
+              closetCodination.fitting_image 
+                ? 'bg-green-600 hover:bg-green-700' 
+                : 'bg-navy'
+            } text-lg text-white disabled:bg-blue-50`}
             disabled={isDisabled}
             onClick={handleSubmitFitting}
           >
-            가상피팅하기
+            {closetCodination.fitting_image ? '피팅 결과 보기' : '가상피팅하기'}
           </button>
         </div>
       )}

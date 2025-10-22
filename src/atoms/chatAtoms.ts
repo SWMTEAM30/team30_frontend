@@ -34,7 +34,8 @@ export const closetAtom = atom<ClosetCloth[]>([]);
 export const activeClothAtom = atom<ClosetCloth | null>(null);
 export const userModelImageAtom = atom<string | null>('/model.png');
 
-export const virtualFittingStatusAtom = atom<{
+// 피팅 상태를 전역으로 관리 (단순화된 구조)
+export const fittingStatusAtom = atom<{
   codinationId: string | null;
   status: 'idle' | 'pending' | 'success' | 'error';
   resultUrl: string | null;
@@ -47,3 +48,4 @@ export const virtualFittingStatusAtom = atom<{
   errorMessage: null,
   taskId: null,
 });
+

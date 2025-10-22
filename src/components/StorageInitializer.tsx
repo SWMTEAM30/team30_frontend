@@ -34,6 +34,7 @@ export default function StorageInitializer({ children }: StorageInitializerProps
         if (Array.isArray(codinationsResult)) {
           setCodinations(codinationsResult.map((e) => e.data));
         }
+
       } catch (e) {
         console.error('스토리지 초기화 실패:', e);
         setError(e as Error);
