@@ -5,6 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import QueryProvider from 'app/providers';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import ServerAuthProvider from '@/components/auth/ServerAuthProvider';
+import StorageInitializer from '@/components/StorageInitializer';
 import { Suspense } from 'react';
 import WebVitals from '@/components/WebVitals';
 
@@ -92,7 +93,9 @@ export default function RootLayout({
           <JotaiProvider>
             <QueryProvider>
               <ServerAuthProvider>
-                {children}
+                <StorageInitializer>
+                  {children}
+                </StorageInitializer>
               </ServerAuthProvider>
             </QueryProvider>
           </JotaiProvider>

@@ -1,50 +1,42 @@
 'use client';
 
-import {
-  activeCodinationAtom,
-  closetCodinationAtom,
-  codinationsAtom,
-  panelAtom,
-  activeClothAtom,
-  virtualFittingStatusAtom,
-} from '@/atoms/chatAtoms';
+import { activeCodinationAtom, closetCodinationAtom, panelAtom, activeClothAtom } from '@/atoms/chatAtoms';
 import { useAtom, useSetAtom } from 'jotai';
-import { Button } from '@/components/ui/button';
-import { Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog } from '@/components/ui/dialog';
 import { postFittingTryonCombo } from '@/api/fittingAPI';
-import { useCodinationStorage } from '@/hooks/useCodinationStorage';
-import { useFittingStorage } from '@/hooks/useFittingStorage';
+import { useCodination } from '@/hooks/useCodination';
+import { useFitting } from '@/hooks/useFitting';
 import { getFittingStatusTaskId } from '@/api/fittingAPI';
 
 export default function CodinationCard({ codination }: { codination: any }) {
   const setPanel = useSetAtom(panelAtom);
   const [activeCodination, setActiveCodination] = useAtom(activeCodinationAtom);
-  const setClosetCodination = useSetAtom(closetCodinationAtom);
   const [activeCloth, setActiveCloth] = useAtom(activeClothAtom);
   const [isClothModalOpen, setIsClothModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   // 스토리지 훅 사용
-  const { codinations, removeCodination } = useCodinationStorage();
-  const { updateFittingStatus } = useFittingStorage(codination.id);
+  const { codinations, removeCodination } = useCodination();
+  const { updateFittingStatus } = useFitting(codination.id);
 
   // 비동기 피팅 결과 폴링 함수
   const pollFittingResult = async (taskId: string) => {
     const maxAttempts = 30; // 최대 30번 시도 (약 5분)
     const pollInterval = 10000; // 10초마다 폴링
-    
+
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        await new Promise(resolve => setTimeout(resolve, pollInterval));
-        
+        await new Promise((resolve) => setTimeout(resolve, pollInterval));
+
         const response = await getFittingStatusTaskId(taskId);
         console.log(`피팅 상태 확인 (${attempt + 1}/${maxAttempts}):`, response);
-        
+
         if (response.status === 'success' && response.data?.download_url) {
           // 피팅 완료
+          console.log('🎉 피팅 성공! 상태 업데이트 중...', response.data.download_url);
           await updateFittingStatus({
             status: 'success',
             resultUrl: response.data.download_url,
@@ -54,6 +46,7 @@ export default function CodinationCard({ codination }: { codination: any }) {
           return;
         } else if (response.status === 'fail') {
           // 피팅 실패
+          console.log('💥 피팅 실패! 에러 상태 업데이트 중...', response.message);
           await updateFittingStatus({
             status: 'error',
             errorMessage: response.message || '피팅 처리 중 오류가 발생했습니다.',
@@ -75,7 +68,7 @@ export default function CodinationCard({ codination }: { codination: any }) {
         }
       }
     }
-    
+
     // 최대 시도 횟수 초과
     await updateFittingStatus({
       status: 'error',
@@ -140,7 +133,7 @@ export default function CodinationCard({ codination }: { codination: any }) {
               codinationId: codination.id,
               taskId: response.data.task_id,
             });
-            
+
             // 비동기 피팅 결과 폴링 시작
             pollFittingResult(response.data.task_id);
           }

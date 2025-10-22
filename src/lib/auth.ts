@@ -1,5 +1,5 @@
 import { setCookie, getCookie, deleteCookie } from '@/lib/cookies';
-import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from '@/config/cookies';
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from '@/config/cookies.config';
 
 // ===== JWT 유틸 함수들 =====
 

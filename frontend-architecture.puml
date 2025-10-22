@@ -1,0 +1,171 @@
+@startuml The First Take Frontend Architecture
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+
+title The First Take - Frontend System Architecture
+
+' ===== 레이어 정의 =====
+package "Presentation Layer" as Presentation {
+    [Next.js App Router] as AppRouter
+    [React Components] as Components
+    [UI Components (shadcn/ui)] as UI
+}
+
+package "State Management Layer" as State {
+    [Jotai Atoms] as Atoms
+    [TanStack Query] as Query
+    [React Hooks] as Hooks
+}
+
+package "Data Layer" as Data {
+    [IndexedDB Storage] as IndexedDB
+    [API Layer] as API
+    [Local Storage] as LocalStorage
+}
+
+package "External Services" as External {
+    [Backend API] as Backend
+    [Google Analytics] as GA
+    [Capacitor] as Capacitor
+}
+
+' ===== 주요 컴포넌트 구조 =====
+package "Core Components" as Core {
+    [Layout] as Layout
+    [Providers] as Providers
+    [StorageInitializer] as StorageInit
+    
+    Layout --> Providers
+    Providers --> StorageInit
+}
+
+package "Chat System" as Chat {
+    [ChatPanel] as ChatPanel
+    [MessageBalloon] as MessageBalloon
+    [ChatArea] as ChatArea
+    [ChatHeader] as ChatHeader
+    
+    ChatPanel --> ChatArea
+    ChatArea --> MessageBalloon
+    ChatPanel --> ChatHeader
+}
+
+package "Storage Panels" as Panels {
+    [ClosetPanel] as ClosetPanel
+    [CodinationPanel] as CodinationPanel
+    [FittingPanel] as FittingPanel
+    
+    ClosetPanel --> FittingPanel
+    CodinationPanel --> FittingPanel
+}
+
+package "Landing Page" as Landing {
+    [HeroSection] as Hero
+    [NextChat] as NextChat
+    [Explanation] as Explanation
+}
+
+' ===== 상태 관리 구조 =====
+package "Jotai Atoms" as JotaiAtoms {
+    [authAtoms] as AuthAtoms
+    [chatAtoms] as ChatAtoms
+    [graphAtoms] as GraphAtoms
+}
+
+package "Storage Hooks" as StorageHooks {
+    [useClosetStorage] as ClosetHook
+    [useCodinationStorage] as CodinationHook
+    [useFittingStorage] as FittingHook
+    [useIndexedDB] as IndexedDBHook
+}
+
+' ===== API 구조 =====
+package "API Services" as APIServices {
+    [API.ts] as APICore
+    [authAPI.ts] as AuthAPI
+    [chatAPI.ts] as ChatAPI
+    [clothAPI.ts] as ClothAPI
+    [fittingAPI.ts] as FittingAPI
+}
+
+' ===== 데이터 저장소 =====
+package "Data Storage" as DataStorage {
+    [closetStorage] as ClosetStorage
+    [codinationStorage] as CodinationStorage
+    [fittingStorage] as FittingStorage
+}
+
+' ===== 연결 관계 =====
+AppRouter --> Core
+Core --> Chat
+Core --> Panels
+Core --> Landing
+
+Components --> State
+State --> Data
+
+' 상태 관리 연결
+Chat --> JotaiAtoms
+Panels --> JotaiAtoms
+Landing --> JotaiAtoms
+
+JotaiAtoms --> StorageHooks
+StorageHooks --> DataStorage
+
+' API 연결
+Data --> APIServices
+APIServices --> Backend
+
+' 스토리지 연결
+DataStorage --> IndexedDB
+DataStorage --> LocalStorage
+
+' 외부 서비스 연결
+AppRouter --> GA
+AppRouter --> Capacitor
+
+' ===== 기술 스택 정보 =====
+note right of AppRouter
+  **Framework**: Next.js 15.5.4
+  **Language**: TypeScript
+  **Styling**: Tailwind CSS
+end note
+
+note right of State
+  **Client State**: Jotai
+  **Server State**: TanStack Query
+  **Hooks**: Custom React Hooks
+end note
+
+note right of Data
+  **Local Storage**: IndexedDB
+  **API**: REST API
+  **Mobile**: Capacitor
+end note
+
+note right of External
+  **Backend**: Spring + PostgreSQL
+  **AI**: FastAPI + LangChain
+  **Analytics**: Google Analytics
+end note
+
+' ===== 주요 기능 플로우 =====
+note top of Chat
+  **Chat Flow**:
+  1. 사용자 메시지 입력
+  2. API를 통한 AI 응답
+  3. 메시지 그룹핑 및 표시
+  4. 제품 추천 및 상호작용
+end note
+
+note top of Panels
+  **Storage Flow**:
+  1. 옷장/코디네이션 데이터 관리
+  2. IndexedDB를 통한 로컬 저장
+  3. 가상 피팅 기능
+  4. 실시간 상태 동기화
+end note
+
+@enduml

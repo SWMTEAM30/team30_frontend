@@ -10,18 +10,15 @@ import {
 } from '@/atoms/chatAtoms';
 import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { postFittingTryonCombo } from '@/api/fittingAPI';
-import { useCodinationStorage } from '@/hooks/useCodinationStorage';
+import { useCodination } from '@/hooks/useCodination';
 
 export default function ClosetPanel() {
   const setPanel = useSetAtom(panelAtom);
   const closet = useAtomValue(closetAtom);
-  const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
-  const setVirtualFittingStatus = useSetAtom(virtualFittingStatusAtom);
-  
+
   // 코디네이션 스토리지 훅 사용
-  const { codinations, addCodination } = useCodinationStorage();
+  const { codinations, addCodination } = useCodination();
 
   // 상의와 하의가 모두 선택되었는지 확인
   const hasUpperAndLower =
@@ -38,8 +35,8 @@ export default function ClosetPanel() {
     }
 
     // 각 코디네이션의 옷 ID들을 정렬하여 비교
-    const clothIds1 = codination1.cloths.map(cloth => cloth.id).sort();
-    const clothIds2 = codination2.cloths.map(cloth => cloth.id).sort();
+    const clothIds1 = codination1.cloths.map((cloth) => cloth.id).sort();
+    const clothIds2 = codination2.cloths.map((cloth) => cloth.id).sort();
 
     return clothIds1.every((id, index) => id === clothIds2[index]);
   };
@@ -51,12 +48,12 @@ export default function ClosetPanel() {
     }
 
     // 기존 코디네이션들과 중복 체크
-    const isDuplicate = codinations.some(existingCodination => 
+    const isDuplicate = codinations.some((existingCodination) =>
       isSameCodination(existingCodination, {
         id: '',
         fitting_image: null,
-        cloths: closetCodination.cloths
-      })
+        cloths: closetCodination.cloths,
+      }),
     );
 
     if (isDuplicate) {

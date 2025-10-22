@@ -29,9 +29,18 @@ export default function FittingCard() {
     return { status: 'idle' as const, resultUrl: null, errorMessage: null };
   })();
 
+  console.log('🔍 FittingCard 상태:', {
+    activeCodination: activeCodination?.id,
+    virtualFittingStatus,
+    currentFittingStatus,
+  });
+
   const renderContent = () => {
+    console.log('🎨 FittingCard 렌더링:', currentFittingStatus.status);
+    
     switch (currentFittingStatus.status) {
       case 'pending':
+        console.log('⏳ Pending 상태 렌더링');
         return (
           <div className="text-blue-400 dark:text-navy-500 text-center">
             <div className="w-20 h-20 mx-auto mb-4 bg-gray-150 dark:bg-slate-600 rounded-full flex items-center justify-center">
@@ -43,17 +52,28 @@ export default function FittingCard() {
         );
 
       case 'success':
+        console.log('✅ Success 상태 렌더링:', currentFittingStatus.resultUrl);
         return (
           <div className="w-full h-full p-2">
-            {currentFittingStatus.resultUrl && (
+            {currentFittingStatus.resultUrl ? (
               <div className="relative w-full h-full">
-                <Image src={currentFittingStatus.resultUrl} alt="가상피팅 결과" fill className="object-cover" />
+                <Image 
+                  src={currentFittingStatus.resultUrl} 
+                  alt="가상피팅 결과" 
+                  fill 
+                  className="object-cover rounded-lg" 
+                />
+              </div>
+            ) : (
+              <div className="text-center text-gray-500">
+                <p>결과 이미지를 불러올 수 없습니다</p>
               </div>
             )}
           </div>
         );
 
       case 'error':
+        console.log('❌ Error 상태 렌더링:', currentFittingStatus.errorMessage);
         return (
           <div className="text-red-400 dark:text-red-500 text-center">
             <div className="w-20 h-20 mx-auto mb-4 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
@@ -72,6 +92,7 @@ export default function FittingCard() {
         );
 
       default:
+        console.log('😴 Idle 상태 렌더링');
         return (
           <div className="text-blue-400 dark:text-navy-500 text-center">
             <div className="w-20 h-20 mx-auto mb-4 bg-gray-200 dark:bg-slate-600 rounded-full flex items-center justify-center">

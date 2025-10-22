@@ -13,8 +13,8 @@ import { postFittingTryonCombo } from '@/api/fittingAPI';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import CodinationCard from '@/components/chat/codination/CodinationCard';
-import { useCodinationStorage } from '@/hooks/useCodinationStorage';
-import { useFittingStorage } from '@/hooks/useFittingStorage';
+import { useCodination } from '@/hooks/useCodination';
+import { useFitting } from '@/hooks/useFitting';
 import { getFittingStatusTaskId } from '@/api/fittingAPI';
 
 export default function CodinationPanel() {
@@ -24,8 +24,8 @@ export default function CodinationPanel() {
   const [activeCodination] = useAtom(activeCodinationAtom);
   
   // 스토리지 훅 사용
-  const { codinations, updateCodination } = useCodinationStorage();
-  const { updateFittingStatus } = useFittingStorage(activeCodination?.id);
+  const { codinations, updateCodination } = useCodination();
+  const { updateFittingStatus } = useFitting(activeCodination?.id);
 
   // 비동기 피팅 결과 폴링 함수
   const pollFittingResult = async (taskId: string) => {
@@ -41,6 +41,7 @@ export default function CodinationPanel() {
         
         if (response.status === 'success' && response.data?.download_url) {
           // 피팅 완료
+          console.log('🎉 피팅 성공! 상태 업데이트 중...', response.data.download_url);
           await updateFittingStatus({
             status: 'success',
             resultUrl: response.data.download_url,
@@ -50,6 +51,7 @@ export default function CodinationPanel() {
           return;
         } else if (response.status === 'fail') {
           // 피팅 실패
+          console.log('💥 피팅 실패! 에러 상태 업데이트 중...', response.message);
           await updateFittingStatus({
             status: 'error',
             errorMessage: response.message || '피팅 처리 중 오류가 발생했습니다.',

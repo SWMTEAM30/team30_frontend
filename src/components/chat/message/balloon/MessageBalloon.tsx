@@ -5,12 +5,11 @@ import { elapsedTimeText } from '@/lib/utils';
 import { messageColor } from '@/styles/chat';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
-import { useAtom, useSetAtom } from 'jotai';
-import { activeCodinationAtom, codinationsAtom, panelAtom, closetAtom } from '@/atoms/chatAtoms';
-import { useCodination } from '@/hooks/useCodination';
+import { useSetAtom } from 'jotai';
+import { activeCodinationAtom, panelAtom } from '@/atoms/chatAtoms';
 import { getChatProduct } from '@/api/chatAPI';
-import { useClosetStorage } from '@/hooks/useClosetStorage';
-import { useCodinationStorage } from '@/hooks/useCodinationStorage';
+import { useCloset } from '@/hooks/useCloset';
+import { useCodination } from '@/hooks/useCodination';
 
 export default function MessageBalloon({
   message,
@@ -33,13 +32,13 @@ export default function MessageBalloon({
 
   const setPanel = useSetAtom(panelAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
-  const { addNewCodination } = useCodination();
+  const { addCodination } = useCodination();
   const [isRepliesCollapsed, setIsRepliesCollapsed] = useState(false);
   const [locallySavedKeys, setLocallySavedKeys] = useState<Set<string>>(new Set());
-  
+
   // 스토리지 훅 사용
-  const { closet, addClothToCloset } = useClosetStorage();
-  const { codinations, addCodination } = useCodinationStorage();
+  const { closet, addClothesToCloset } = useCloset();
+  const { codinations } = useCodination();
 
   const makeProductsKey = useCallback((products: Product[]) => {
     const ids = products
@@ -80,7 +79,7 @@ export default function MessageBalloon({
       const results = await Promise.all(products.map((p) => getChatProduct(p)));
       const clothsMap = new Map<string, ClosetCloth>();
       const failedProducts: Product[] = [];
-      
+
       for (let i = 0; i < results.length; i++) {
         const res = results[i];
         if (res.status === 'success' && res.data) {
@@ -91,19 +90,24 @@ export default function MessageBalloon({
           console.warn(`상품 정보 가져오기 실패: ${products[i].product_id}`, res.message);
         }
       }
-      
+
       const cloths = Array.from(clothsMap.values());
       if (cloths.length === 0) {
         console.error('모든 상품 정보 가져오기 실패');
         return;
       }
-      
+
       // 일부만 성공한 경우 사용자에게 알림
       if (failedProducts.length > 0) {
         console.warn(`${failedProducts.length}개 상품 정보를 가져오지 못했습니다.`);
       }
 
-      const newCodination = addNewCodination(cloths);
+      const newCodination = {
+        id: new Date().getTime().toString(),
+        fitting_image: null,
+        cloths: cloths,
+      };
+      console.log(newCodination);
 
       // 중복 코디네이션 방지: 동일 조합이 이미 저장되어 있으면 추가하지 않음
       const isDuplicate = codinations.some((existing) => isSameCodination(existing, newCodination));
@@ -114,22 +118,17 @@ export default function MessageBalloon({
 
       // IndexedDB에 저장하면서 코디네이션 추가
       await addCodination(newCodination);
-      
-      // 옷장에 아이템들 추가 (중복 제거)
-      for (const cloth of cloths) {
-        const exists = closet.some(existingCloth => existingCloth.id === cloth.id);
-        if (!exists) {
-          await addClothToCloset(cloth);
-        }
-      }
-      
+
+      // 옷장에 아이템들 일괄 추가 (중복 제거 포함)
+      await addClothesToCloset(cloths);
+
       setActiveCodination(newCodination);
       setPanel('codination');
       // 저장됨 표시를 위해 로컬 키 기록
       const key = makeProductsKey(products);
       setLocallySavedKeys((prev) => new Set(prev).add(key));
     },
-    [codinations, addCodination, addNewCodination, setActiveCodination, setPanel, closet, addClothToCloset],
+    [codinations, addCodination, setActiveCodination, setPanel, closet, addClothesToCloset],
   );
 
   return (
@@ -315,7 +314,7 @@ export default function MessageBalloon({
                           ? 'bg-blue text-white hover:bg-navy-600'
                           : 'bg-white text-blue border border-blue hover:bg-blue/5')
                       }
-                      onClick={() => addCodinationFromProducts(message.products)}
+                      onClick={async () => await addCodinationFromProducts(message.products)}
                       disabled={isSaved}
                       title={isSaved ? '이미 저장됨' : '코디 저장하기'}
                     >

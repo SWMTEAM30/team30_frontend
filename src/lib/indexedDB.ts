@@ -11,15 +11,19 @@ let globalRetryConfig: RetryConfig = { ...DEFAULT_RETRY_CONFIG };
 
 let dbInstance: IDBDatabase | null = null;
 
-export const setRetryConfig = (config: Partial<RetryConfig>) => {
+const setRetryConfig = (config: Partial<RetryConfig>) => {
   globalRetryConfig = { ...globalRetryConfig, ...config };
 };
 
-export const getRetryConfig = (): RetryConfig => {
+const getRetryConfig = (): RetryConfig => {
   return { ...globalRetryConfig };
 };
 
-export const initDB = (): Promise<IDBDatabase> => {
+const isIndexedDBSupported = (): boolean => {
+  return typeof window !== 'undefined' && 'indexedDB' in window;
+};
+
+const initDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
     if (dbInstance) {
       resolve(dbInstance);
@@ -44,13 +48,13 @@ export const initDB = (): Promise<IDBDatabase> => {
       // 옷장 데이터 저장소
       if (!db.objectStoreNames.contains(STORE_NAMES.CLOSET)) {
         const closetStore = db.createObjectStore(STORE_NAMES.CLOSET, { keyPath: 'id' });
-        closetStore.createIndex('name', 'name', { unique: false });
+        //closetStore.createIndex('name', 'name', { unique: false });
       }
 
       // 코디네이션 데이터 저장소
       if (!db.objectStoreNames.contains(STORE_NAMES.CODINATIONS)) {
         const codinationStore = db.createObjectStore(STORE_NAMES.CODINATIONS, { keyPath: 'id' });
-        codinationStore.createIndex('createdAt', 'createdAt', { unique: false });
+        //codinationStore.createIndex('createdAt', 'createdAt', { unique: false });
       }
 
       // 피팅 상태 데이터 저장소
@@ -66,6 +70,10 @@ export const saveToIndexedDB = async <T>(
   data: T,
   retryConfig?: Partial<RetryConfig>,
 ): Promise<void> => {
+  if (!isIndexedDBSupported()) {
+    throw new Error('IndexedDB가 지원되지 않는 브라우저입니다.');
+  }
+
   const config = { ...globalRetryConfig, ...retryConfig };
 
   // 데이터 유효성 검사
@@ -73,11 +81,11 @@ export const saveToIndexedDB = async <T>(
     throw new Error('저장할 데이터가 유효하지 않습니다.');
   }
 
-  // FITTING_STATUS 스토어의 경우 codinationId 필드 검증
+  // FITTING_STATUS 스토어의 경우 id 필드 검증
   if (storeName === STORE_NAMES.FITTING_STATUS) {
     const fittingData = data as any;
-    if (!fittingData.codinationId || fittingData.codinationId.trim() === '') {
-      throw new Error('FITTING_STATUS 저장 시 codinationId가 필요합니다.');
+    if (!fittingData.id || fittingData.id.trim() === '') {
+      throw new Error('FITTING_STATUS 저장 시 id가 필요합니다.');
     }
   }
 
@@ -120,6 +128,10 @@ export const loadFromIndexedDB = async <T>(
   key?: string,
   retryConfig?: Partial<RetryConfig>,
 ): Promise<T | null> => {
+  if (!isIndexedDBSupported()) {
+    throw new Error('IndexedDB가 지원되지 않는 브라우저입니다.');
+  }
+
   const config = { ...globalRetryConfig, ...retryConfig };
 
   for (let attempt = 0; attempt < config.maxRetries; attempt++) {
@@ -147,6 +159,10 @@ export const loadFromIndexedDB = async <T>(
 };
 
 export const deleteFromIndexedDB = async (storeName: string, key: string): Promise<void> => {
+  if (!isIndexedDBSupported()) {
+    throw new Error('IndexedDB가 지원되지 않는 브라우저입니다.');
+  }
+
   try {
     const db = await initDB();
     const transaction = db.transaction([storeName], 'readwrite');
@@ -164,6 +180,10 @@ export const deleteFromIndexedDB = async (storeName: string, key: string): Promi
 };
 
 export const clearIndexedDB = async (storeName: string): Promise<void> => {
+  if (!isIndexedDBSupported()) {
+    throw new Error('IndexedDB가 지원되지 않는 브라우저입니다.');
+  }
+
   try {
     const db = await initDB();
     const transaction = db.transaction([storeName], 'readwrite');
@@ -178,10 +198,6 @@ export const clearIndexedDB = async (storeName: string): Promise<void> => {
     console.error(`IndexedDB 전체 삭제 실패 (${storeName}):`, error);
     throw error;
   }
-};
-
-export const isIndexedDBSupported = (): boolean => {
-  return typeof window !== 'undefined' && 'indexedDB' in window;
 };
 
 // ===== 재시도 설정 프리셋 함수들 =====

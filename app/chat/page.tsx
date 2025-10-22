@@ -7,56 +7,14 @@ import ChatPanel from '@/components/chat/message/ChatPanel';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { panelAtom, roomIdAtom } from '@/atoms/chatAtoms';
 import { Suspense, useEffect } from 'react';
-import { userAtom } from '@/atoms/authAtoms';
 import { useRouter } from 'next/navigation';
 import { postChatRooms } from '@/api/chatAPI';
-import { useAuthCheck } from '@/hooks/useAuthCheck';
-import { getAuthCookie, getAuthJWT, isValidJWT, getUserFromJWT } from '@/lib/auth';
-import { getAuthMe, postAuthRefresh } from '@/api/authAPI';
 
 export default function Chat() {
   const panel = useAtomValue(panelAtom);
   const setPanel = useSetAtom(panelAtom);
-  const user = useAtomValue(userAtom);
   const router = useRouter();
   const setRoomId = useSetAtom(roomIdAtom);
-  const { isAuthenticated, isChecking, checkAuth } = useAuthCheck();
-
-  // Auth 관련 정보를 콘솔에 출력
-  useEffect(() => {
-    const logAuthInfo = async () => {
-      console.log('=== AUTH 정보 확인 (단방향) ===');
-      
-      // 1. Jotai 상태 확인
-      console.log('🔹 Jotai User State:', user);
-      console.log('🔹 isChecking:', isChecking);
-      
-      // 2. 서버 API 기반 인증 확인
-      const authStatus = await isAuthenticated();
-      console.log('🔹 isAuthenticated (서버 API 기반):', authStatus);
-      
-      // 3. 쿠키에서 JWT 토큰 확인
-      try {
-        const jwtToken = await getAuthJWT();
-        console.log('🔹 JWT Token:', jwtToken ? '존재함' : '없음');
-        
-        if (jwtToken) {
-          console.log('🔹 JWT 유효성:', isValidJWT(jwtToken));
-          const userFromJWT = getUserFromJWT(jwtToken);
-          console.log('🔹 JWT에서 추출한 사용자:', userFromJWT);
-        }
-        
-        const userFromCookie = await getAuthCookie();
-        console.log('🔹 쿠키에서 가져온 사용자:', userFromCookie);
-      } catch (error) {
-        console.log('🔹 Auth 확인 중 오류:', error);
-      }
-      
-      console.log('=== AUTH 정보 확인 완료 ===');
-    };
-    
-    logAuthInfo();
-  }, [user, isChecking, isAuthenticated]);
 
   // 새로운 채팅방 생성
   useEffect(() => {

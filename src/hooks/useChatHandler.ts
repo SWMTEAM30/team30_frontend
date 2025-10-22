@@ -4,7 +4,6 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { inputValueAtom, inputProductAtom, messagesAtomFamily, roomIdAtom } from '@/atoms/chatAtoms';
 import { useCallback } from 'react';
 import { userAtom } from '@/atoms/authAtoms';
-import { tmpUserId, tmpUsername } from '@/queries/useUser';
 import { postChatSend } from '@/api/chatAPI';
 
 export function useChatHandlers(): {
@@ -27,7 +26,7 @@ export function useChatHandlers(): {
       const userMessage: Message = {
         id: Date.now().toString(),
         content: inputValue,
-        user: { userId: user?.userId || tmpUserId, username: user?.username || tmpUsername },
+        user: { userId: user?.userId || '!@#$', username: user?.username || 'mindul' },
         agent: null,
         message_type: 'USER',
         products: products ? [products] : [],
