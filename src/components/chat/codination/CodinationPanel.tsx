@@ -1,25 +1,80 @@
 'use client';
 
-import {
-  activeCodinationAtom,
-  closetAtom,
-  closetCodinationAtom,
-  codinationsAtom,
-  panelAtom,
-  virtualFittingStatusAtom,
-} from '@/atoms/chatAtoms';
+import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
 import { useAtom, useSetAtom } from 'jotai';
 import { postFittingTryonCombo } from '@/api/fittingAPI';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import CodinationCard from '@/components/chat/codination/CodinationCard';
+import { useCodination } from '@/hooks/useCodination';
+import { useFitting } from '@/hooks/useFitting';
+import { getFittingStatusTaskId } from '@/api/fittingAPI';
 
 export default function CodinationPanel() {
   const setPanel = useSetAtom(panelAtom);
-  const [codinations, setCodinations] = useAtom(codinationsAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
-  const setVirtualFittingStatus = useSetAtom(virtualFittingStatusAtom);
+  const [activeCodination] = useAtom(activeCodinationAtom);
+  
+  // 스토리지 훅 사용
+  const { codinations, updateCodination } = useCodination();
+  const { updateFittingStatus } = useFitting(activeCodination?.id);
+
+  // 비동기 피팅 결과 폴링 함수
+  const pollFittingResult = async (taskId: string) => {
+    const maxAttempts = 30; // 최대 30번 시도 (약 5분)
+    const pollInterval = 10000; // 10초마다 폴링
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        await new Promise(resolve => setTimeout(resolve, pollInterval));
+        
+        const response = await getFittingStatusTaskId(taskId);
+        console.log(`피팅 상태 확인 (${attempt + 1}/${maxAttempts}):`, response);
+        
+        if (response.status === 'success' && response.data?.download_url) {
+          // 피팅 완료
+          console.log('🎉 피팅 성공! 상태 업데이트 중...', response.data.download_url);
+          await updateFittingStatus({
+            status: 'success',
+            resultUrl: response.data.download_url,
+            taskId: taskId,
+          });
+          console.log('✅ 피팅 결과 폴링 완료:', response.data.download_url);
+          return;
+        } else if (response.status === 'fail') {
+          // 피팅 실패
+          console.log('💥 피팅 실패! 에러 상태 업데이트 중...', response.message);
+          await updateFittingStatus({
+            status: 'error',
+            errorMessage: response.message || '피팅 처리 중 오류가 발생했습니다.',
+            taskId: taskId,
+          });
+          console.error('❌ 피팅 폴링 실패:', response.message);
+          return;
+        }
+        // 아직 처리 중이면 계속 폴링
+      } catch (error) {
+        console.error(`피팅 상태 확인 오류 (${attempt + 1}/${maxAttempts}):`, error);
+        if (attempt === maxAttempts - 1) {
+          // 마지막 시도에서도 실패하면 에러 처리
+          await updateFittingStatus({
+            status: 'error',
+            errorMessage: '피팅 결과를 가져오는 중 오류가 발생했습니다.',
+            taskId: taskId,
+          });
+        }
+      }
+    }
+    
+    // 최대 시도 횟수 초과
+    await updateFittingStatus({
+      status: 'error',
+      errorMessage: '피팅 처리 시간이 초과되었습니다.',
+      taskId: taskId,
+    });
+    console.error('⏰ 피팅 폴링 시간 초과');
+  };
   // 상의와 하의가 모두 선택되었는지 확인
   const hasUpperAndLower =
     closetCodination &&
@@ -34,7 +89,7 @@ export default function CodinationPanel() {
     setClosetCodination(null);
   };
 
-  const handleSubmitFitting = () => {
+  const handleSubmitFitting = async () => {
     if (isDisabled) return;
 
     // 선택된 옷들을 upper/lower로 분류
@@ -51,7 +106,7 @@ export default function CodinationPanel() {
     console.log('🚀 startVirtualFitting 호출:', { upperId: upperCloth.id, lowerId: lowerCloth.id });
 
     // 즉시 pending 상태로 설정
-    setVirtualFittingStatus({
+    await updateFittingStatus({
       codinationId: closetCodination.id,
       status: 'pending',
       resultUrl: null,
@@ -61,54 +116,51 @@ export default function CodinationPanel() {
 
     // API 호출
     postFittingTryonCombo(upperCloth.id, lowerCloth.id)
-      .then((response) => {
+      .then(async (response) => {
         console.log('📡 API 응답:', response);
         if (response.status === 'success') {
           console.log('✅ 가상피팅 요청 성공:', response.data);
 
           // 결과가 바로 있는 경우 (동기 응답)
           if (response.data?.download_url) {
-            setVirtualFittingStatus((prev) => ({
-              ...prev,
+            await updateFittingStatus({
               status: 'success',
               resultUrl: response.data.download_url,
               taskId: response.data.task_id || null,
-            }));
+            });
           }
           // taskId만 있는 경우 (비동기 처리)
           else if (response.data?.task_id) {
-            setVirtualFittingStatus((prev) => ({
-              ...prev,
+            await updateFittingStatus({
               taskId: response.data.task_id,
-            }));
+            });
+            
+            // 비동기 피팅 결과 폴링 시작
+            pollFittingResult(response.data.task_id);
           }
         } else {
           console.error('❌ 가상피팅 요청 실패:', response.message);
-          setVirtualFittingStatus((prev) => ({
-            ...prev,
+          await updateFittingStatus({
             status: 'error',
             errorMessage: response.message,
-          }));
+          });
         }
       })
-      .catch((error) => {
+      .catch(async (error) => {
         console.error('❌ 가상피팅 요청 에러:', error);
-        setVirtualFittingStatus((prev) => ({
-          ...prev,
+        await updateFittingStatus({
           status: 'error',
           errorMessage: error.message,
-        }));
+        });
       });
 
     // 즉시 fitting 패널로 이동
     setPanel('fitting');
     setActiveCodination(closetCodination);
     setClosetCodination(null);
-    setCodinations((prev) => {
-      if (!prev) return [closetCodination];
-      const newCodinations = prev.filter((e) => e.id !== closetCodination.id);
-      return [...newCodinations, closetCodination];
-    });
+    
+    // 코디네이션 업데이트
+    await updateCodination(closetCodination);
   };
 
   if (codinations.length === 0)
@@ -153,11 +205,15 @@ export default function CodinationPanel() {
       {closetCodination && closetCodination.cloths.length > 0 && (
         <div className="p-4 border-t border-slate-200 dark:border-slate-700">
           <button
-            className={`w-full cursor-pointer h-12 btn bg-navy text-lg text-white disabled:bg-blue-50`}
+            className={`w-full cursor-pointer h-12 btn ${
+              closetCodination.fitting_image 
+                ? 'bg-green-600 hover:bg-green-700' 
+                : 'bg-navy'
+            } text-lg text-white disabled:bg-blue-50`}
             disabled={isDisabled}
             onClick={handleSubmitFitting}
           >
-            가상피팅하기
+            {closetCodination.fitting_image ? '피팅 결과 보기' : '가상피팅하기'}
           </button>
         </div>
       )}

@@ -1,0 +1,170 @@
+@startuml Component Structure
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+
+title The First Take - Component Structure & Data Flow
+
+' ===== 페이지 구조 =====
+package "Pages" as Pages {
+    [Home Page] as HomePage
+    [Chat Page] as ChatPage
+    [Chat Room Page] as ChatRoomPage
+    [Signin Page] as SigninPage
+    [Wiki Pages] as WikiPages
+}
+
+' ===== 레이아웃 구조 =====
+package "Layout" as Layout {
+    [RootLayout] as RootLayout
+    [JotaiProvider] as JotaiProvider
+    [QueryProvider] as QueryProvider
+    [ServerAuthProvider] as AuthProvider
+    [StorageInitializer] as StorageInit
+}
+
+' ===== 채팅 시스템 =====
+package "Chat System" as ChatSystem {
+    [ChatPanel] as ChatPanel
+    [ChatArea] as ChatArea
+    [ChatHeader] as ChatHeader
+    [MessageBalloon] as MessageBalloon
+    [MessageGroup] as MessageGroup
+    [EmptyChatStart] as EmptyChatStart
+}
+
+' ===== 패널 시스템 =====
+package "Panel System" as PanelSystem {
+    [ClosetPanel] as ClosetPanel
+    [CodinationPanel] as CodinationPanel
+    [FittingPanel] as FittingPanel
+    [FittingCard] as FittingCard
+    [FittingDetail] as FittingDetail
+}
+
+' ===== 랜딩 페이지 =====
+package "Landing Components" as Landing {
+    [HeroSection] as HeroSection
+    [NextChat] as NextChat
+    [Explanation] as Explanation
+}
+
+' ===== UI 컴포넌트 =====
+package "UI Components" as UI {
+    [Button] as Button
+    [Textarea] as Textarea
+    [Dialog] as Dialog
+    [Toast] as Toast
+    [Dropdown] as Dropdown
+    [LucideIcon] as LucideIcon
+}
+
+' ===== 상태 관리 =====
+package "State Management" as State {
+    [authAtoms] as AuthAtoms
+    [chatAtoms] as ChatAtoms
+    [graphAtoms] as GraphAtoms
+}
+
+' ===== 훅 시스템 =====
+package "Custom Hooks" as Hooks {
+    [useAuthCheck] as useAuthCheck
+    [useChatHandler] as useChatHandler
+    [useChatStream] as useChatStream
+    [useClosetStorage] as useClosetStorage
+    [useCodinationStorage] as useCodinationStorage
+    [useFittingStorage] as useFittingStorage
+    [useToast] as useToast
+}
+
+' ===== API 레이어 =====
+package "API Layer" as API {
+    [API.ts] as APICore
+    [authAPI.ts] as AuthAPI
+    [chatAPI.ts] as ChatAPI
+    [clothAPI.ts] as ClothAPI
+    [fittingAPI.ts] as FittingAPI
+}
+
+' ===== 데이터 저장소 =====
+package "Data Storage" as Storage {
+    [IndexedDB] as IndexedDB
+    [closetStorage] as ClosetStorage
+    [codinationStorage] as CodinationStorage
+    [fittingStorage] as FittingStorage
+}
+
+' ===== 연결 관계 =====
+' 페이지 연결
+HomePage --> Landing
+ChatPage --> ChatSystem
+ChatRoomPage --> ChatSystem
+ChatRoomPage --> PanelSystem
+SigninPage --> AuthProvider
+
+' 레이아웃 연결
+RootLayout --> JotaiProvider
+JotaiProvider --> QueryProvider
+QueryProvider --> AuthProvider
+AuthProvider --> StorageInit
+
+' 채팅 시스템 연결
+ChatPanel --> ChatArea
+ChatArea --> MessageBalloon
+ChatArea --> MessageGroup
+ChatArea --> EmptyChatStart
+ChatPanel --> ChatHeader
+
+' 패널 시스템 연결
+FittingPanel --> FittingCard
+FittingPanel --> FittingDetail
+
+' 상태 관리 연결
+ChatSystem --> State
+PanelSystem --> State
+Landing --> State
+
+' 훅 연결
+ChatSystem --> Hooks
+PanelSystem --> Hooks
+Landing --> Hooks
+
+' API 연결
+Hooks --> API
+API --> Storage
+
+' 스토리지 연결
+useClosetStorage --> ClosetStorage
+useCodinationStorage --> CodinationStorage
+useFittingStorage --> FittingStorage
+ClosetStorage --> IndexedDB
+CodinationStorage --> IndexedDB
+FittingStorage --> IndexedDB
+
+' ===== 데이터 플로우 =====
+note right of ChatSystem
+  **Chat Data Flow**:
+  1. 사용자 입력 → ChatPanel
+  2. API 호출 → chatAPI
+  3. 응답 처리 → MessageBalloon
+  4. 상태 업데이트 → chatAtoms
+end note
+
+note right of PanelSystem
+  **Storage Data Flow**:
+  1. 데이터 변경 → Custom Hooks
+  2. 로컬 저장 → IndexedDB
+  3. 상태 동기화 → Jotai Atoms
+  4. UI 업데이트 → Components
+end note
+
+note right of State
+  **State Management**:
+  - **Client State**: Jotai Atoms
+  - **Server State**: TanStack Query
+  - **Local Storage**: IndexedDB
+  - **Real-time**: WebSocket/SSE
+end note
+
+@enduml

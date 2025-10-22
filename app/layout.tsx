@@ -4,7 +4,8 @@ import { plus_jakarta_sans, noto_sans_kr } from 'app/fonts';
 import { Provider as JotaiProvider } from 'jotai';
 import QueryProvider from 'app/providers';
 import { GoogleAnalytics } from '@next/third-parties/google';
-import AuthJotaiInitializer from '@/components/auth/AuthJotaiInitializer';
+import ServerAuthProvider from '@/components/auth/ServerAuthProvider';
+import StorageInitializer from '@/components/StorageInitializer';
 import { Suspense } from 'react';
 import WebVitals from '@/components/WebVitals';
 
@@ -91,8 +92,11 @@ export default function RootLayout({
         <main className="flex-grow text-blue">
           <JotaiProvider>
             <QueryProvider>
-              <AuthJotaiInitializer />
-              {children}
+              <ServerAuthProvider>
+                <StorageInitializer>
+                  {children}
+                </StorageInitializer>
+              </ServerAuthProvider>
             </QueryProvider>
           </JotaiProvider>
         </main>

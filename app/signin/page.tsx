@@ -5,12 +5,7 @@ import Image from 'next/image';
 export default function SigninPage() {
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* 배경 SVG */}
-      <div className="fixed inset-0 w-screen h-screen z-0">
-        <LoginBackground />
-        {/* 배경 오버레이 */}
-        <div className="absolute inset-0 "></div>
-      </div>
+      <LoginBackground />
 
       {/* 메인 컨텐츠 */}
       <div className="relative z-10 w-full max-w-4xl mx-4">
@@ -40,7 +35,7 @@ export default function SigninPage() {
 
           {/* 푸터 */}
           {/* <div className="text-center pt-4 border-t border-gray-200/50">
-            <p className="text-xs text-gray-500">
+            <p className="text-sm text-gray-500">
               로그인 시 서비스 이용약관 및 개인정보처리방침에 <br />
               동의하는 것으로 간주됩니다.
             </p>

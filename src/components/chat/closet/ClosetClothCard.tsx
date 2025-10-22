@@ -12,7 +12,7 @@ interface ClosetClothCardProps {
 }
 
 export default function ClosetClothCard({ cloth }: ClosetClothCardProps) {
-  const { addNewCodination } = useCodination();
+  const { addCodination } = useCodination();
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
   const isSelected = closetCodination?.cloths.some((c) => c.id == cloth.id);
 
@@ -20,7 +20,15 @@ export default function ClosetClothCard({ cloth }: ClosetClothCardProps) {
     if (!isSelected)
       // 추가하는 상황
       setClosetCodination((prev) => {
-        if (!prev) return addNewCodination([cloth]);
+        if (!prev) {
+          const newCodination = {
+            id: new Date().getTime().toString(),
+            fitting_image: null,
+            cloths: [cloth],
+          };
+          addCodination(newCodination);
+          return newCodination;
+        }
         return {
           id: prev.id,
           fitting_image: prev.fitting_image,
@@ -30,7 +38,7 @@ export default function ClosetClothCard({ cloth }: ClosetClothCardProps) {
     else
       // 제거하는 상황
       setClosetCodination((prev) => {
-        if (!prev) return addNewCodination([]);
+        if (!prev) return null;
         return {
           id: prev.id,
           fitting_image: prev.fitting_image,

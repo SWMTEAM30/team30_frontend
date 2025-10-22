@@ -10,6 +10,13 @@ declare global {
       GEMINI_API_KEY: string;
     }
   }
+  interface Navigator {
+    connection?: {
+      effectiveType?: 'slow-2g' | '2g' | '3g' | '4g';
+      downlink?: number;
+      rtt?: number;
+    };
+  }
   // interface Window {
   //   kakao: any;
   // }
