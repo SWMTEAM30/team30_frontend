@@ -3,7 +3,7 @@ const formatAPIResponseMessagetoMessage = (apiMsg: APIResponseMessage): Message 
     return {
       id: new Date().toString(),
       content: apiMsg.message,
-      user: { userId: 'user', username: 'mindul' },
+      user: { userId: 'user', username: 'mindul', modelImage: null, darkMode: false },
       agent: null,
       message_type: apiMsg.agent_role,
       createdAt: new Date(),
@@ -29,7 +29,7 @@ const formatAPIRoomIdMessagetoMessage = (apiMsg: APIRoomIdMessage): Message => {
     return {
       id: new Date().toString(),
       content: apiMsg.content,
-      user: { userId: 'user', username: 'mindul' },
+      user: { userId: 'user', username: 'mindul', modelImage: null, darkMode: false },
       agent: null,
       message_type: apiMsg.message_type,
       createdAt: new Date(apiMsg.created_at),
@@ -63,6 +63,8 @@ export const formatRoomMessage = (apiMsg: APIRoomIdMessage): Message => {
       user: {
         userId: 'asdf',
         username: 'mindul',
+        modelImage: null,
+        darkMode: false,
       },
       agent: null,
       message_type: apiMsg.message_type,

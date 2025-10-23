@@ -1,71 +1,21 @@
 'use client';
 
-import { activeCodinationAtom, closetAtom, closetCodinationAtom, codinationsAtom, panelAtom } from '@/atoms/chatAtoms';
+import { useState } from 'react';
+import { closetAtom } from '@/atoms/chatAtoms';
 import ClosetClothCard from '@/components/chat/closet/ClosetClothCard';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { useCodination } from '@/hooks/useCodination';
+import CodinationModal from '@/components/chat/modal/CodinationModal';
+import { useAtomValue } from 'jotai';
 
 export default function ClosetPanel() {
-  const setPanel = useSetAtom(panelAtom);
   const closet = useAtomValue(closetAtom);
-  const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 코디네이션 스토리지 훅 사용
-  const { codinations, addCodination } = useCodination();
-
-  // 상의와 하의가 모두 선택되었는지 확인
-  const hasUpperAndLower =
-    closetCodination &&
-    closetCodination.cloths.some((cloth) => cloth.url.includes('TOP')) &&
-    closetCodination.cloths.some((cloth) => cloth.url.includes('BOTTOM'));
-
-  const isDisabled = !closetCodination || closetCodination.cloths.length === 0 || !hasUpperAndLower;
-
-  // 두 코디네이션이 같은 옷들로 구성되어 있는지 확인하는 함수
-  const isSameCodination = (codination1: Codination, codination2: Codination) => {
-    if (codination1.cloths.length !== codination2.cloths.length) {
-      return false;
-    }
-
-    // 각 코디네이션의 옷 ID들을 정렬하여 비교
-    const clothIds1 = codination1.cloths.map((cloth) => cloth.id).sort();
-    const clothIds2 = codination2.cloths.map((cloth) => cloth.id).sort();
-
-    return clothIds1.every((id, index) => id === clothIds2[index]);
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
   };
 
-  const handleCreateCodination = async () => {
-    if (!closetCodination || closetCodination.cloths.length === 0) {
-      alert('코디네이션에 추가할 옷을 선택해주세요.');
-      return;
-    }
-
-    // 기존 코디네이션들과 중복 체크
-    const isDuplicate = codinations.some((existingCodination) =>
-      isSameCodination(existingCodination, {
-        id: '',
-        fitting_image: null,
-        cloths: closetCodination.cloths,
-      }),
-    );
-
-    if (isDuplicate) {
-      alert('이미 같은 코디네이션이 저장되어 있습니다.');
-      return;
-    }
-
-    const newCodination: Codination = {
-      id: `codination-${Date.now()}`,
-      fitting_image: null,
-      cloths: [...closetCodination.cloths],
-    };
-
-    // IndexedDB에 저장하면서 코디네이션 추가
-    await addCodination(newCodination);
-    setClosetCodination(null);
-    setPanel('codination');
-
-    console.log('새 코디네이션 생성됨:', newCodination);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -86,12 +36,16 @@ export default function ClosetPanel() {
         )}
       </div>
       <button
-        className={`cursor-pointer h-1/12 btn bg-navy text-2xl text-white disabled:bg-blue-50`}
-        disabled={isDisabled}
-        onClick={handleCreateCodination}
+        className="cursor-pointer h-1/12 btn bg-navy text-2xl text-white hover:bg-navy-700 transition-colors"
+        onClick={handleOpenModal}
       >
         코디하기
       </button>
+      
+      <CodinationModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+      />
     </div>
   );
 }

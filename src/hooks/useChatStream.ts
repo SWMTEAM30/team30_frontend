@@ -157,7 +157,7 @@ export const useChatStream = () => {
         const userMessage: Message = {
           id: Date.now().toString(),
           content: inputValue,
-          user: { userId: 'asdf', username: 'mindul' },
+          user: { userId: 'asdf', username: 'mindul', modelImage: null, darkMode: false },
           agent: null,
           message_type: 'USER',
           products: products ? [products] : [],

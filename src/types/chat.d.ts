@@ -80,4 +80,5 @@ type Codination = {
   id: string;
   fitting_image: string | null;
   cloths: ClosetCloth[];
+  description?: string;
 };

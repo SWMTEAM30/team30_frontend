@@ -16,8 +16,8 @@ export const postFittingTryon = async (userImageUrl: string, clothImageUrl: stri
     clothImageUrl,
   });
 
-export const postFittingTryonCombo = async (upper_product_id: string, lower_product_id: string) => {
-  const formData = await imageToFormData('/model_image.jpg');
+export const postFittingTryonCombo = async (upper_product_id: string, lower_product_id: string, modelImageUrl: string) => {
+  const formData = await imageToFormData(modelImageUrl);
   return requestAPI<APIFitting>(
     `/api/fitting/try-on/combo?upper_product_id=${upper_product_id}&lower_product_id=${lower_product_id}`,
     'POST',

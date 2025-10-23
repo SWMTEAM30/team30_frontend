@@ -73,7 +73,7 @@ export default function MessageBalloon({
   };
 
   const addCodinationFromProducts = useCallback(
-    async (products: Product[]) => {
+    async (products: Product[], sourceMessage?: Message) => {
       if (!products || products.length === 0) return;
 
       const results = await Promise.all(products.map((p) => getChatProduct(p)));
@@ -102,10 +102,25 @@ export default function MessageBalloon({
         console.warn(`${failedProducts.length}개 상품 정보를 가져오지 못했습니다.`);
       }
 
+      // AI 전문가의 본문 내용을 description으로 사용
+      let agentDescription = '';
+      
+      if (sourceMessage?.agent?.agentname) {
+        // sourceMessage가 AI 전문가의 메시지인 경우 (reply.products로 호출된 경우)
+        agentDescription = `${sourceMessage.agent.agentname} - ${sourceMessage.content}`;
+      } else {
+        // sourceMessage가 없거나 사용자 메시지인 경우, replies에서 AI 전문가 메시지 찾기
+        const aiMessage = replies.find(reply => reply.agent?.agentname);
+        agentDescription = aiMessage?.agent?.agentname 
+          ? `${aiMessage.agent.agentname} - ${aiMessage.content}`
+          : message.content;
+      }
+
       const newCodination = {
         id: new Date().getTime().toString(),
         fitting_image: null,
         cloths: cloths,
+        description: agentDescription,
       };
       console.log(newCodination);
 
@@ -217,7 +232,7 @@ export default function MessageBalloon({
                                         src={product.product_url}
                                         alt={product.product_id}
                                         className="object-contain"
-                                        style={{ width: '64px', height: '64px' }}
+                                        style={{ width: '128px', height: '128px' }}
                                       />
                                     </ClothModal>
                                   ))}
@@ -236,7 +251,7 @@ export default function MessageBalloon({
                                         ? 'bg-blue text-white hover:bg-navy-600'
                                         : 'bg-white text-blue border border-blue hover:bg-blue/5')
                                     }
-                                    onClick={() => addCodinationFromProducts(reply.products)}
+                                    onClick={() => addCodinationFromProducts(reply.products, reply)}
                                     disabled={isSaved}
                                     title={isSaved ? '이미 저장됨' : '코디 저장하기'}
                                   >
@@ -314,7 +329,7 @@ export default function MessageBalloon({
                           ? 'bg-blue text-white hover:bg-navy-600'
                           : 'bg-white text-blue border border-blue hover:bg-blue/5')
                       }
-                      onClick={async () => await addCodinationFromProducts(message.products)}
+                      onClick={async () => await addCodinationFromProducts(message.products, message)}
                       disabled={isSaved}
                       title={isSaved ? '이미 저장됨' : '코디 저장하기'}
                     >

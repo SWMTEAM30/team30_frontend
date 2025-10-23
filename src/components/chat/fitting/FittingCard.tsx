@@ -3,10 +3,12 @@
 import Image from 'next/image';
 import { useAtomValue } from 'jotai';
 import { activeCodinationAtom } from '@/atoms/chatAtoms';
+import { userAtom } from '@/atoms/authAtoms';
 import { useFitting } from '@/hooks/useFitting';
 
 export default function FittingCard() {
   const activeCodination = useAtomValue(activeCodinationAtom);
+  const user = useAtomValue(userAtom);
   const { fittingStatus } = useFitting(activeCodination?.id);
 
   // 코디네이션에 저장된 피팅 이미지가 있으면 우선 표시
@@ -95,24 +97,43 @@ export default function FittingCard() {
         console.log('😴 Idle 상태 렌더링');
         return (
           <div className="text-blue-400 dark:text-navy-500 text-center">
-            <div className="w-20 h-20 mx-auto mb-4 bg-gray-200 dark:bg-slate-600 rounded-full flex items-center justify-center">
-              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </div>
-            <p className="text-base font-medium">피팅 이미지</p>
+            {user?.modelImage ? (
+              <div className="w-full h-full p-2">
+                <div className="relative w-full h-full">
+                  <Image 
+                    src={user.modelImage} 
+                    alt="사용자 모델 이미지" 
+                    fill 
+                    className="object-cover rounded-lg" 
+                  />
+                </div>
+                <div className="mt-2 text-center">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">현재 설정된 모델 이미지</p>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="w-20 h-20 mx-auto mb-4 bg-gray-200 dark:bg-slate-600 rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-base font-medium">피팅 이미지</p>
+                <p className="text-sm text-gray-500 mt-1">설정에서 모델 이미지를 업로드하세요</p>
+              </div>
+            )}
           </div>
         );
     }
   };
 
   return (
-    <div className="flex bg-gray-100 flex-col h-[60vh]">
+    <div className="flex bg-gray-100 flex-col h-full min-h-[400px]">
       <div className="flex h-full items-center justify-center">{renderContent()}</div>
     </div>
   );

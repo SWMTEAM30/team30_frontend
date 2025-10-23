@@ -1,5 +1,5 @@
 import { getAuthCookie } from '@/lib/auth';
-import AuthJotaiInitializer from './AuthJotaiInitializer';
+import AuthJotaiInitializer from '@/components/auth/AuthJotaiInitializer';
 
 interface ServerAuthProviderProps {
   children: React.ReactNode;

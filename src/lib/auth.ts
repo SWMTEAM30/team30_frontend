@@ -31,7 +31,7 @@ export const getUserFromJWT = (token: string): User | null => {
   // JWT 페이로드에서 사용자 정보 추출
   // 카카오 로그인의 경우 sub, nickname 등의 필드 사용
   const userId = payload.sub || payload.userId || payload.id;
-  const username = payload.nickname || payload.username || payload.name;
+  const username = payload.nickname || payload.username || payload.name || 'mindul';
 
   if (!userId || !username) {
     console.error('Invalid user data in JWT payload:', payload);
@@ -41,6 +41,8 @@ export const getUserFromJWT = (token: string): User | null => {
   return {
     userId: userId.toString(),
     username: username.toString(),
+    modelImage: null,
+    darkMode: false,
   };
 };
 
@@ -54,7 +56,7 @@ export const getJWTExpirationTime = (token: string): number | null => {
 export const isValidJWT = (token: string): boolean => {
   const expirationTime = getJWTExpirationTime(token);
   const currentTime = Math.floor(Date.now());
-  if (!expirationTime || expirationTime < currentTime) return false;
+  //if (!expirationTime || expirationTime < currentTime) return false;
 
   const user = getUserFromJWT(token);
   return user !== null;

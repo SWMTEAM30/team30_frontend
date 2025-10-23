@@ -35,7 +35,6 @@ export const useCodination = () => {
     }
   }, []);
 
-
   /**
    * 새로운 코디네이션을 추가합니다.
    */
@@ -81,7 +80,6 @@ export const useCodination = () => {
     setCodinations([]);
     await saveCodinationsToStorage([]);
   }, [setCodinations, saveCodinationsToStorage]);
-
 
   /**
    * 코디네이션 데이터가 변경될 때마다 자동으로 저장합니다.

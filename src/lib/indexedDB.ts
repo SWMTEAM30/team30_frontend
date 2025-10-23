@@ -44,6 +44,8 @@ const initDB = (): Promise<IDBDatabase> => {
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
+      const oldVersion = event.oldVersion;
+      const newVersion = event.newVersion;
 
       // 옷장 데이터 저장소
       if (!db.objectStoreNames.contains(STORE_NAMES.CLOSET)) {
@@ -60,6 +62,11 @@ const initDB = (): Promise<IDBDatabase> => {
       // 피팅 상태 데이터 저장소
       if (!db.objectStoreNames.contains(STORE_NAMES.FITTING_STATUS)) {
         db.createObjectStore(STORE_NAMES.FITTING_STATUS, { keyPath: 'codinationId' });
+      }
+
+      // 사용자 프로필 데이터 저장소
+      if (!db.objectStoreNames.contains(STORE_NAMES.USER_PROFILE)) {
+        db.createObjectStore(STORE_NAMES.USER_PROFILE, { keyPath: 'userId' });
       }
     };
   });
@@ -84,7 +91,7 @@ export const saveToIndexedDB = async <T>(
   // FITTING_STATUS 스토어의 경우 id 필드 검증
   if (storeName === STORE_NAMES.FITTING_STATUS) {
     const fittingData = data as any;
-    if (!fittingData.id || fittingData.id.trim() === '') {
+    if (!fittingData.codinationId || fittingData.codinationId.trim() === '') {
       throw new Error('FITTING_STATUS 저장 시 id가 필요합니다.');
     }
   }
@@ -97,6 +104,13 @@ export const saveToIndexedDB = async <T>(
     }
   }
 
+  if (storeName === STORE_NAMES.USER_PROFILE) {
+    const storeData = data as any;
+    if (!storeData.userId || storeData.userId.trim() === '') {
+      throw new Error(`${storeName} 저장 시 id가 필요합니다.`);
+    }
+  }
+
   for (let attempt = 0; attempt < config.maxRetries; attempt++) {
     try {
       const db = await initDB();
@@ -104,6 +118,7 @@ export const saveToIndexedDB = async <T>(
       const store = transaction.objectStore(storeName);
 
       await new Promise<void>((resolve, reject) => {
+        console.log(data);
         const request = store.put(data);
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
@@ -262,4 +277,24 @@ export const initializeRetryConfig = () => {
   }
 
   console.log('IndexedDB 재시도 설정이 초기화되었습니다.');
+};
+
+// ===== User 전용 함수들 =====
+
+export const saveUserProfile = async (user: User): Promise<void> => {
+  if (!user.userId) {
+    throw new Error('사용자 ID가 필요합니다.');
+  }
+
+  await saveToIndexedDB(STORE_NAMES.USER_PROFILE, user);
+};
+
+export const loadUserProfile = async (userId: string): Promise<User | null> => {
+  const Data = await loadFromIndexedDB<any>(STORE_NAMES.USER_PROFILE, userId);
+  if (!Data) return null;
+  return Data;
+};
+
+export const deleteUserProfile = async (userId: string): Promise<void> => {
+  await deleteFromIndexedDB(STORE_NAMES.USER_PROFILE, userId);
 };

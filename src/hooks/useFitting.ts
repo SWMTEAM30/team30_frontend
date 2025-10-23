@@ -30,7 +30,7 @@ export const useFitting = (codinationId?: string) => {
       try {
         setError(null);
         const dataToSave = {
-          id: codinationId!,
+          codinationId: codinationId!,
           data: fittingData,
           lastUpdated: new Date().toISOString(),
         };
@@ -72,7 +72,6 @@ export const useFitting = (codinationId?: string) => {
     }
   }, [codinationId, shouldUseStorage]);
 
-
   const updateFittingStatus = useCallback(
     async (newStatus: Partial<VirtualFittingStatus>) => {
       console.log('🔄 useFitting updateFittingStatus 호출:', {
@@ -80,19 +79,17 @@ export const useFitting = (codinationId?: string) => {
         currentStatus: fittingStatus,
         newStatus,
       });
-      
+
       const updatedStatus = { ...fittingStatus, ...newStatus };
       console.log('📝 업데이트된 상태:', updatedStatus);
-      
+
       setFittingStatus(updatedStatus);
 
       // success 상태이고 resultUrl이 있으면 코디네이션에도 저장
       if (updatedStatus.status === 'success' && updatedStatus.resultUrl && codinationId) {
         console.log('🎯 피팅 성공! 코디네이션에 resultUrl 저장:', updatedStatus.resultUrl);
-        const updatedCodinations = codinations.map(codination => 
-          codination.id === codinationId 
-            ? { ...codination, fitting_image: updatedStatus.resultUrl }
-            : codination
+        const updatedCodinations = codinations.map((codination) =>
+          codination.id === codinationId ? { ...codination, fitting_image: updatedStatus.resultUrl } : codination,
         );
         setCodinations(updatedCodinations);
       }
@@ -103,7 +100,15 @@ export const useFitting = (codinationId?: string) => {
         await saveFittingStatusToStorage(updatedStatus);
       }
     },
-    [fittingStatus, setFittingStatus, saveFittingStatusToStorage, shouldUseStorage, codinationId, codinations, setCodinations],
+    [
+      fittingStatus,
+      setFittingStatus,
+      saveFittingStatusToStorage,
+      shouldUseStorage,
+      codinationId,
+      codinations,
+      setCodinations,
+    ],
   );
 
   const resetFittingStatus = useCallback(async () => {

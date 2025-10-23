@@ -8,11 +8,13 @@ export const useVirtualFittingMutation = () => {
     mutationFn: async ({
       upper_product_id,
       lower_product_id,
+      modelImageUrl,
     }: {
       upper_product_id: string;
       lower_product_id: string;
+      modelImageUrl: string;
     }) => {
-      const response = await postFittingTryonCombo(upper_product_id, lower_product_id);
+      const response = await postFittingTryonCombo(upper_product_id, lower_product_id, modelImageUrl);
       if (response.status === 'fail') {
         throw new Error(response.message);
       }
@@ -78,6 +80,7 @@ export const useVirtualFitting = (): UseVirtualFittingResult => {
       {
         upper_product_id,
         lower_product_id,
+        modelImageUrl: '',
       },
       {
         onSuccess: (result) => {

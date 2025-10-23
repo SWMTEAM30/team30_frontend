@@ -9,12 +9,14 @@ import CodinationCard from '@/components/chat/codination/CodinationCard';
 import { useCodination } from '@/hooks/useCodination';
 import { useFitting } from '@/hooks/useFitting';
 import { getFittingStatusTaskId } from '@/api/fittingAPI';
+import { userAtom } from '@/atoms/authAtoms';
 
 export default function CodinationPanel() {
   const setPanel = useSetAtom(panelAtom);
   const setActiveCodination = useSetAtom(activeCodinationAtom);
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
   const [activeCodination] = useAtom(activeCodinationAtom);
+  const [user] = useAtom(userAtom);
   
   // 스토리지 훅 사용
   const { codinations, updateCodination } = useCodination();
@@ -102,6 +104,24 @@ export default function CodinationPanel() {
       return;
     }
 
+    // 사용자 프로필의 모델 이미지 체크
+    if (user?.userId) {
+      try {
+        const { loadUserProfile } = await import('@/lib/indexedDB');
+        const userProfile = await loadUserProfile(user.userId);
+        if (!userProfile?.modelImage) {
+          // 세팅 패널 모달 띄우기
+          setPanel('settings');
+          return;
+        }
+      } catch (error) {
+        console.error('사용자 프로필 로드 실패:', error);
+        // 세팅 패널 모달 띄우기
+        setPanel('settings');
+        return;
+      }
+    }
+
     // 가상피팅 요청 시작 (비동기로 실행, 결과를 기다리지 않음)
     console.log('🚀 startVirtualFitting 호출:', { upperId: upperCloth.id, lowerId: lowerCloth.id });
 
@@ -114,8 +134,14 @@ export default function CodinationPanel() {
       taskId: null,
     });
 
+    // 사용자 모델 이미지 가져오기
+    let modelImageUrl = '/model_image.jpg'; // 기본값
+    if (user?.modelImage) {
+      modelImageUrl = user.modelImage;
+    }
+
     // API 호출
-    postFittingTryonCombo(upperCloth.id, lowerCloth.id)
+    postFittingTryonCombo(upperCloth.id, lowerCloth.id, modelImageUrl)
       .then(async (response) => {
         console.log('📡 API 응답:', response);
         if (response.status === 'success') {

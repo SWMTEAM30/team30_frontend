@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSetAtom } from 'jotai';
 import { closetAtom, codinationsAtom } from '@/atoms/chatAtoms';
+import { isInitializedAtom } from '@/atoms/authAtoms';
 import { loadFromIndexedDB } from '@/lib/indexedDB';
 import { STORE_NAMES } from '@/config/indexedDB.config';
 
@@ -15,13 +16,10 @@ interface StorageInitializerProps {
 export default function StorageInitializer({ children }: StorageInitializerProps) {
   const setCloset = useSetAtom(closetAtom);
   const setCodinations = useSetAtom(codinationsAtom);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const setIsInitialized = useSetAtom(isInitializedAtom);
 
   useEffect(() => {
     const initialize = async () => {
-      setIsLoading(true);
-      setError(null);
       try {
         // Closet 초기화
         const closetResult = await loadFromIndexedDB<WithEnvelope<ClosetCloth>[]>(STORE_NAMES.CLOSET);
@@ -35,16 +33,16 @@ export default function StorageInitializer({ children }: StorageInitializerProps
           setCodinations(codinationsResult.map((e) => e.data));
         }
 
+        console.log('스토리지 초기화 완료');
       } catch (e) {
         console.error('스토리지 초기화 실패:', e);
-        setError(e as Error);
       } finally {
-        setIsLoading(false);
+        setIsInitialized(true);
       }
     };
 
     initialize();
-  }, [setCloset, setCodinations]);
+  }, [setCloset, setCodinations, setIsInitialized]);
 
   // 초기화 중에는 children을 그대로 렌더링하여 UI 차단을 최소화
   // 필요 시 로딩 스피너를 노출하려면 아래를 조정

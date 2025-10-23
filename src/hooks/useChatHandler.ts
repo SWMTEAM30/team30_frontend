@@ -26,7 +26,12 @@ export function useChatHandlers(): {
       const userMessage: Message = {
         id: Date.now().toString(),
         content: inputValue,
-        user: { userId: user?.userId || '!@#$', username: user?.username || 'mindul' },
+        user: {
+          userId: user?.userId || '!@#$',
+          username: user?.username || 'mindul',
+          modelImage: null,
+          darkMode: false,
+        },
         agent: null,
         message_type: 'USER',
         products: products ? [products] : [],
