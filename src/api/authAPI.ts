@@ -13,6 +13,8 @@ export const getAuthKakaoCallback = async (): Promise<APIResponse<User>> => {
     data: {
       userId: response.data.userId,
       username: response.data.nickname,
+      modelImage: null,
+      darkMode: false,
     },
   };
 };

@@ -3,8 +3,8 @@
 import { getChatRoomsRoomIdMessages } from '@/api/chatAPI';
 import { messagesAtomFamily, roomIdAtom, streamingMessageAtom, isAIRespondingAtom } from '@/atoms/chatAtoms';
 import EmptyChatStart from '@/components/chat/message/EmptyChatStart';
-import MessageBalloon from '@/components/chat/message/MessageBalloon';
-import MessageGroup from '@/components/chat/message/MessageGroup';
+import MessageBalloon from '@/components/chat/message/balloon/MessageBalloon';
+import MessageGroup from '@/components/chat/message/balloon/MessageGroup';
 import { groupMessagesIntoPosts, addMessageToGroups, MessageGroup as MessageGroupType } from '@/lib/messageGrouping';
 import { useAtom, useAtomValue } from 'jotai';
 import { useCallback, useEffect, useRef, useState } from 'react';

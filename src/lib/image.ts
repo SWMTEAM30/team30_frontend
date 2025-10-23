@@ -5,26 +5,30 @@
  */
 export async function imageToFormData(imageUrl: string): Promise<FormData> {
   try {
-    // 이미지 URL이 상대 경로인 경우 절대 경로로 변환
-    const fullUrl = imageUrl;
+    let blob: Blob;
+    let fileName: string;
 
-    // 이미지를 fetch로 가져오기
-    const response = await fetch(fullUrl);
+    // base64 데이터 URL인지 확인
+    if (imageUrl.startsWith('data:image/')) {
+      // base64 데이터 URL을 Blob으로 변환
+      const response = await fetch(imageUrl);
+      blob = await response.blob();
+      fileName = 'model_image.png';
+    } else {
+      // 일반 URL인 경우
+      const fullUrl = imageUrl;
+      const response = await fetch(fullUrl);
 
-    if (!response.ok) {
-      throw new Error(`이미지를 가져올 수 없습니다: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`이미지를 가져올 수 없습니다: ${response.status} ${response.statusText}`);
+      }
+
+      blob = await response.blob();
+      fileName = imageUrl.split('/').pop() || 'image.png';
     }
-
-    // 이미지를 Blob으로 변환
-    const blob = await response.blob();
 
     // FormData 생성
     const formData = new FormData();
-
-    // 파일명 추출 (URL에서 마지막 부분)
-    const fileName = imageUrl.split('/').pop() || 'image.png';
-
-    // FormData에 파일 추가
     formData.append('model_image', blob, fileName);
 
     return formData;

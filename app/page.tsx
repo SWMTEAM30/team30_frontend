@@ -45,7 +45,6 @@ export default function Home() {
           <Explanation />
         </div>
       </section>
-      {/* <RoomList /> */}
     </div>
   );
 }

@@ -1,0 +1,106 @@
+@startuml Data Flow & State Management
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+
+title The First Take - Data Flow & State Management
+
+' ===== 사용자 인터랙션 =====
+actor User as User
+participant "Chat Interface" as ChatUI
+participant "Storage Panels" as StorageUI
+
+' ===== 상태 관리 레이어 =====
+participant "Jotai Atoms" as Atoms
+participant "TanStack Query" as Query
+participant "Custom Hooks" as Hooks
+
+' ===== 데이터 레이어 =====
+participant "API Services" as API
+participant "IndexedDB" as IndexedDB
+participant "Backend" as Backend
+
+' ===== 채팅 플로우 =====
+group Chat Flow
+    User -> ChatUI: 메시지 입력
+    ChatUI -> Atoms: inputValueAtom 업데이트
+    ChatUI -> API: postChatSend()
+    API -> Backend: HTTP POST
+    Backend -> API: AI 응답
+    API -> ChatUI: 응답 데이터
+    ChatUI -> Atoms: messagesAtomFamily 업데이트
+    ChatUI -> User: 메시지 표시
+end
+
+' ===== 스토리지 플로우 =====
+group Storage Flow
+    User -> StorageUI: 옷장/코디네이션 조작
+    StorageUI -> Hooks: useClosetStorage/useCodinationStorage
+    Hooks -> IndexedDB: 데이터 저장/로드
+    Hooks -> Atoms: 상태 업데이트
+    StorageUI -> User: UI 업데이트
+end
+
+' ===== 인증 플로우 =====
+group Auth Flow
+    User -> ChatUI: 로그인 요청
+    ChatUI -> API: authAPI 호출
+    API -> Backend: 인증 요청
+    Backend -> API: 토큰 반환
+    API -> Atoms: userAtom 업데이트
+    ChatUI -> User: 로그인 완료
+end
+
+' ===== 실시간 업데이트 =====
+group Real-time Updates
+    Backend -> API: SSE/WebSocket
+    API -> ChatUI: 스트리밍 메시지
+    ChatUI -> Atoms: streamingMessageAtom 업데이트
+    ChatUI -> User: 실시간 메시지 표시
+end
+
+' ===== 상태 관리 구조 =====
+note over Atoms
+  **Jotai Atoms**:
+  - userAtom: 사용자 정보
+  - messagesAtomFamily: 채팅 메시지
+  - closetAtom: 옷장 데이터
+  - codinationsAtom: 코디네이션 데이터
+  - virtualFittingStatusAtom: 피팅 상태
+  - panelAtom: 현재 패널 상태
+end note
+
+note over Query
+  **TanStack Query**:
+  - 서버 상태 캐싱
+  - 자동 재시도
+  - 백그라운드 업데이트
+  - 낙관적 업데이트
+end note
+
+note over IndexedDB
+  **IndexedDB Storage**:
+  - 옷장 데이터 영구 저장
+  - 코디네이션 히스토리
+  - 피팅 상태 저장
+  - 오프라인 지원
+end note
+
+' ===== 데이터 동기화 =====
+group Data Synchronization
+    Hooks -> IndexedDB: 로컬 저장
+    Hooks -> Atoms: 상태 동기화
+    Atoms -> StorageUI: UI 업데이트
+    StorageUI -> User: 변경사항 반영
+end
+
+' ===== 에러 처리 =====
+group Error Handling
+    API -> Hooks: 에러 응답
+    Hooks -> Atoms: error 상태 업데이트
+    Atoms -> StorageUI: 에러 표시
+    StorageUI -> User: 에러 메시지
+end
+
+@enduml

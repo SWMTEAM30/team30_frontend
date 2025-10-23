@@ -26,7 +26,7 @@ export const examplesAtom = atom<string[]>([
 export const isAIRespondingAtom = atom<boolean>(false);
 export const isSidebarOpenAtom = atom<boolean>(false);
 
-export const panelAtom = atom<'chat' | 'closet' | 'codination' | 'fitting'>('chat');
+export const panelAtom = atom<'chat' | 'closet' | 'codination' | 'fitting' | 'settings'>('chat');
 export const codinationsAtom = atom<Codination[]>([]);
 export const activeCodinationAtom = atom<Codination | null>(null);
 export const closetCodinationAtom = atom<Codination | null>(null);
@@ -34,7 +34,8 @@ export const closetAtom = atom<ClosetCloth[]>([]);
 export const activeClothAtom = atom<ClosetCloth | null>(null);
 export const userModelImageAtom = atom<string | null>('/model.png');
 
-export const virtualFittingStatusAtom = atom<{
+// 피팅 상태를 전역으로 관리 (단순화된 구조)
+export const fittingStatusAtom = atom<{
   codinationId: string | null;
   status: 'idle' | 'pending' | 'success' | 'error';
   resultUrl: string | null;

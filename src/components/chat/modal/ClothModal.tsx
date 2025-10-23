@@ -8,6 +8,7 @@ import { ExternalLink, ShoppingBag } from 'lucide-react';
 import { useAtom, useSetAtom } from 'jotai';
 import { activeClothAtom, closetAtom, panelAtom } from '@/atoms/chatAtoms';
 import { getChatProduct } from '@/api/chatAPI';
+import { useCloset } from '@/hooks/useCloset';
 
 interface PhotoModalProps {
   product: Product;
@@ -16,9 +17,11 @@ interface PhotoModalProps {
 
 export default function ClothModal({ product, children }: PhotoModalProps) {
   const [activeCloth, setActiveCloth] = useAtom(activeClothAtom);
-  const [closet, setCloset] = useAtom(closetAtom);
   const [isOpen, setIsOpen] = useState(false);
   const setPanel = useSetAtom(panelAtom);
+
+  // 스토리지 훅 사용
+  const { closet, addClothToCloset } = useCloset();
 
   const handleOpenChange = useCallback(
     async (open: boolean) => {
@@ -52,14 +55,18 @@ export default function ClothModal({ product, children }: PhotoModalProps) {
     [product, setActiveCloth],
   );
 
-  const handleAddClosetCloth = useCallback(() => {
-    setCloset((prevTabs) => {
-      if (!activeCloth) return prevTabs;
-      return [...prevTabs.filter((tab) => tab.id !== activeCloth.id), activeCloth];
-    });
+  const handleAddClosetCloth = useCallback(async () => {
+    if (!activeCloth) return;
+
+    // 중복 체크
+    const exists = closet.some((cloth) => cloth.id === activeCloth.id);
+    if (!exists) {
+      await addClothToCloset(activeCloth);
+    }
+
     setPanel('closet');
     setIsOpen(false);
-  }, [setCloset, setPanel, activeCloth]);
+  }, [activeCloth, closet, addClothToCloset, setPanel]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>

@@ -1,4 +1,4 @@
-import { getAllStaticPaths, getMDXContent } from '@/lib/static-page';
+import { getAllStaticPaths, getMDXContent } from '@/lib/wikiLoader';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 
 export async function generateStaticParams() {

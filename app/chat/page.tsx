@@ -7,14 +7,12 @@ import ChatPanel from '@/components/chat/message/ChatPanel';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { panelAtom, roomIdAtom } from '@/atoms/chatAtoms';
 import { Suspense, useEffect } from 'react';
-import { userAtom } from '@/atoms/authAtoms';
 import { useRouter } from 'next/navigation';
 import { postChatRooms } from '@/api/chatAPI';
 
 export default function Chat() {
   const panel = useAtomValue(panelAtom);
   const setPanel = useSetAtom(panelAtom);
-  const user = useAtomValue(userAtom);
   const router = useRouter();
   const setRoomId = useSetAtom(roomIdAtom);
 
