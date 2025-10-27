@@ -6,16 +6,17 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, ShoppingBag } from 'lucide-react';
 import { useAtom, useSetAtom } from 'jotai';
-import { activeClothAtom, closetAtom, panelAtom } from '@/atoms/chatAtoms';
+import { activeClothAtom, panelAtom } from '@/atoms/chatAtoms';
 import { getChatProduct } from '@/api/chatAPI';
 import { useCloset } from '@/hooks/useCloset';
 
-interface PhotoModalProps {
-  product: Product;
+interface ClothModalProps {
+  product?: Product;
+  cloth?: ClosetCloth;
   children: React.ReactNode;
 }
 
-export default function ClothModal({ product, children }: PhotoModalProps) {
+export default function ClothModal({ product, cloth, children }: ClothModalProps) {
   const [activeCloth, setActiveCloth] = useAtom(activeClothAtom);
   const [isOpen, setIsOpen] = useState(false);
   const setPanel = useSetAtom(panelAtom);
@@ -26,33 +27,42 @@ export default function ClothModal({ product, children }: PhotoModalProps) {
   const handleOpenChange = useCallback(
     async (open: boolean) => {
       if (open) {
-        // 모달을 열 때
-        if (product.product_id == 'user') {
-          setActiveCloth({
-            id: 'user',
-            description: '사용자의 모델입니다.',
-            name: '유저 모델',
-            tags: ['피팅모델'],
-            url: product.product_url,
-          });
+        // cloth가 직접 제공된 경우 (코디네이션에서 사용)
+        if (cloth) {
+          setActiveCloth(cloth);
           setIsOpen(true);
           return;
         }
 
-        const data = await getChatProduct(product);
-        if (data.status === 'fail') {
-          console.log(data.message);
-          return;
+        // product가 제공된 경우 (기존 로직)
+        if (product) {
+          if (product.product_id == 'user') {
+            setActiveCloth({
+              id: 'user',
+              description: '사용자의 모델입니다.',
+              name: '유저 모델',
+              tags: ['피팅모델'],
+              url: product.product_url,
+            });
+            setIsOpen(true);
+            return;
+          }
+
+          const data = await getChatProduct(product);
+          if (data.status === 'fail') {
+            console.log(data.message);
+            return;
+          }
+          setActiveCloth(data.data);
+          setIsOpen(true);
         }
-        setActiveCloth(data.data);
-        setIsOpen(true);
       } else {
         // 모달을 닫을 때
         setActiveCloth(null);
         setIsOpen(false);
       }
     },
-    [product, setActiveCloth],
+    [product, cloth, setActiveCloth],
   );
 
   const handleAddClosetCloth = useCallback(async () => {
