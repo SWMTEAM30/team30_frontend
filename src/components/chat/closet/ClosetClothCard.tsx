@@ -16,12 +16,12 @@ export default function ClosetClothCard({ cloth }: ClosetClothCardProps) {
   };
 
   return (
-    <div className="h-128 flex flex-col relative border-2 transition-all duration-200 hover:shadow-md group">
+    <div className="aspect-[3/4] flex flex-col relative border-2 transition-all duration-200 hover:shadow-md group">
       {/* ClothModal로 감싸기 */}
       <ClothModal product={product}>
         <div className="h-full flex flex-col cursor-pointer">
           {/* 이미지 */}
-          <div className="relative aspect-square w-full h-full flex-grow overflow-hidden">
+          <div className="relative w-full flex-grow overflow-hidden">
             <Image
               src={cloth.url}
               alt={cloth.id}

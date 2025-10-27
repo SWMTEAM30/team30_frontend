@@ -127,7 +127,7 @@ export default function CodinationModal({ isOpen, onClose }: CodinationModalProp
                     )}
 
                     {/* 이미지 */}
-                    <div className="relative aspect-square w-full overflow-hidden">
+                    <div className="relative aspect-[3/4] w-full overflow-hidden">
                       <Image src={cloth.url} alt={cloth.name} fill className="object-cover" />
                     </div>
 

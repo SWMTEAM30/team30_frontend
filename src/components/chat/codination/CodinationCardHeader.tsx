@@ -31,7 +31,7 @@ const CodinationCardHeader = memo(function CodinationCardHeader({
       <div className="flex-shrink-0 p-4">
         <div className="grid grid-cols-2 gap-3 max-w-[200px]">
           {codination.cloths.map((product: ClosetCloth, clothKey: number) => (
-            <div key={clothKey} className="relative aspect-square">
+                  <div key={clothKey} className="relative aspect-[3/4]">
               <Image
                 className="object-cover rounded-lg border border-slate-200 w-full h-full"
                 src={product.url}

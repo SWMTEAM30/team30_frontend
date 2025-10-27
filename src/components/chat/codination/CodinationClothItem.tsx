@@ -12,7 +12,7 @@ const CodinationClothItem = memo(function CodinationClothItem({ cloth }: Codinat
   return (
     <ClothModal cloth={cloth}>
       <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer transition-colors">
-        <div className="relative w-20 h-20 flex-shrink-0">
+        <div className="relative w-20 aspect-[3/4] flex-shrink-0">
           <Image className="object-cover rounded-lg border border-slate-200" src={cloth.url} alt={cloth.name} fill />
         </div>
         <div className="flex flex-col flex-1 min-w-0">
