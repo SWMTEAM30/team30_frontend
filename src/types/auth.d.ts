@@ -1,8 +1,11 @@
+type UserSettings = {
+  theme: 'light' | 'dark';
+};
+
 type User = {
   userId: string;
   username: string;
   modelImage: string | null;
-  darkMode: boolean;
 };
 
 type Agent = {

@@ -151,7 +151,7 @@ export default function MessageBalloon({
       {/* 본문 + 댓글을 하나의 큰 카드 안에 배치 */}
       {isMainPost && (
         <div className="flex justify-start">
-          <div className={'w-full sm:max-w-[90%] rounded-2xl overflow-hidden bg-white border border-blue'}>
+          <div className={'w-full sm:max-w-[90%] rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-blue dark:border-slate-600'}>
             <div className="p-3 sm:p-6 space-y-4">
               {/* 본문 */}
               <div className="flex w-full min-w-0 flex-col space-y-4 overflow-hidden">
@@ -249,7 +249,7 @@ export default function MessageBalloon({
                                       `inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all self-start shadow-sm ` +
                                       (isSaved
                                         ? 'bg-blue text-white hover:bg-navy-600'
-                                        : 'bg-white text-blue border border-blue hover:bg-blue/5')
+                                        : 'bg-white dark:bg-slate-700 text-blue dark:text-blue-300 border border-blue dark:border-slate-600 hover:bg-blue/5 dark:hover:bg-slate-600')
                                     }
                                     onClick={() => addCodinationFromProducts(reply.products, reply)}
                                     disabled={isSaved}
@@ -327,7 +327,7 @@ export default function MessageBalloon({
                         `mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-full font-semibold transition-all shadow-sm w-full sm:w-auto ` +
                         (isSaved
                           ? 'bg-blue text-white hover:bg-navy-600'
-                          : 'bg-white text-blue border border-blue hover:bg-blue/5')
+                          : 'bg-white dark:bg-slate-700 text-blue dark:text-blue-300 border border-blue dark:border-slate-600 hover:bg-blue/5 dark:hover:bg-slate-600')
                       }
                       onClick={async () => await addCodinationFromProducts(message.products, message)}
                       disabled={isSaved}

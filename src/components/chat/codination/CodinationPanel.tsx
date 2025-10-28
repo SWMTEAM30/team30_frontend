@@ -81,7 +81,7 @@ export default function CodinationPanel() {
           <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md">
             AI와 대화하여 가상피팅에 사용할 옷 조합들을 추가해보세요
           </p>
-          <Button onClick={handleAddNewCodination} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3">
+          <Button onClick={handleAddNewCodination} className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-6 py-3">
             <Plus className="w-4 h-4 mr-2" />
             코디 추가하기
           </Button>
@@ -89,7 +89,7 @@ export default function CodinationPanel() {
         {closetCodination && closetCodination.cloths.length > 0 && (
           <div className="p-4 border-t border-slate-200 dark:border-slate-700">
             <button
-              className={`w-full cursor-pointer h-12 btn bg-navy text-lg text-white disabled:bg-blue-50`}
+              className={`w-full cursor-pointer h-12 btn bg-navy dark:bg-blue-600 text-lg text-white disabled:bg-blue-50 dark:disabled:bg-slate-600`}
               disabled={isDisabled}
               onClick={handleSubmitFitting}
             >

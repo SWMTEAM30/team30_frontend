@@ -86,7 +86,7 @@ export default function ModelImageUpload() {
 
   if (!user) {
     return (
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
+      <div className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg p-8 text-center bg-gray-50 dark:bg-slate-700">
         <p className="text-gray-500 mb-2">로그인이 필요합니다</p>
         <p className="text-xs text-gray-400">이미지 업로드를 위해 먼저 로그인해주세요</p>
       </div>
@@ -97,7 +97,7 @@ export default function ModelImageUpload() {
     <div className="pl-6">
       {/* 로딩 상태 */}
       {isLoading && (
-        <div className="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center bg-blue-50">
+        <div className="border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-lg p-8 text-center bg-blue-50 dark:bg-blue-900/20">
           <Loader2 className="h-12 w-12 text-blue-500 mx-auto mb-4 animate-spin" />
           <p className="text-blue-600 font-medium">이미지를 처리하는 중...</p>
         </div>
@@ -117,7 +117,7 @@ export default function ModelImageUpload() {
               <div className="flex gap-2">
                 <button
                   onClick={handleFileSelect}
-                  className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
+                  className="p-2 bg-blue-500 dark:bg-blue-600 text-white rounded-full hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
                   title="편집"
                 >
                   <Camera className="h-4 w-4" />
@@ -149,7 +149,7 @@ export default function ModelImageUpload() {
 
       {/* 이미지가 없는 경우 */}
       {!isLoading && !user?.modelImage && !previewImage && (
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-colors">
+        <div className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg p-8 text-center hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
           <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500 mb-4">가상 피팅에 사용할 모델 이미지를 업로드하세요</p>
           <p className="text-xs text-gray-400 mb-4">JPG, PNG, GIF 파일 (최대 5MB)</p>
@@ -163,7 +163,7 @@ export default function ModelImageUpload() {
           <Button
             onClick={handleFileSelect}
             variant="outline"
-            className="gap-2 hover:bg-blue-50"
+            className="gap-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
           >
             <Camera className="h-4 w-4" />
             이미지 선택

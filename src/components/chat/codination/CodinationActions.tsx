@@ -29,7 +29,7 @@ const CodinationActions = memo(function CodinationActions({
           onClick={onVirtualFitting}
           className="w-full flex items-center gap-2 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 transition-colors"
         >
-          <div className="w-4 h-4 rounded-full bg-blue-500"></div>
+          <div className="w-4 h-4 rounded-full bg-blue-500 dark:bg-blue-400"></div>
           <span className="text-lg">가상 피팅하기</span>
         </button>
       )}

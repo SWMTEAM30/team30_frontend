@@ -24,9 +24,9 @@ export default function SettingsPanel({ children }: SettingsPanelProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
             <Settings className="h-5 w-5" />
             설정
           </DialogTitle>
@@ -35,7 +35,7 @@ export default function SettingsPanel({ children }: SettingsPanelProps) {
         <div className="space-y-6">
           {/* 모델 이미지 설정 */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               <Camera className="h-4 w-4" />
               가상 피팅 모델 이미지
             </div>
@@ -44,15 +44,6 @@ export default function SettingsPanel({ children }: SettingsPanelProps) {
 
           {/* 테마 설정 */}
           <ThemeSettings />
-        </div>
-
-        <div className="mt-6 pt-4 border-t flex gap-2">
-          <Button onClick={() => setIsOpen(false)} variant="outline" className="flex-1">
-            취소
-          </Button>
-          <Button onClick={() => setIsOpen(false)} className="flex-1">
-            저장
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

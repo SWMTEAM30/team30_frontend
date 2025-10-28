@@ -68,6 +68,11 @@ const initDB = (): Promise<IDBDatabase> => {
       if (!db.objectStoreNames.contains(STORE_NAMES.USER_PROFILE)) {
         db.createObjectStore(STORE_NAMES.USER_PROFILE, { keyPath: 'userId' });
       }
+
+      // 사용자 설정 저장소
+      if (!db.objectStoreNames.contains(STORE_NAMES.USER_SETTINGS)) {
+        db.createObjectStore(STORE_NAMES.USER_SETTINGS, { keyPath: 'userId' });
+      }
     };
   });
 };
@@ -118,7 +123,6 @@ export const saveToIndexedDB = async <T>(
       const store = transaction.objectStore(storeName);
 
       await new Promise<void>((resolve, reject) => {
-        console.log(data);
         const request = store.put(data);
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
@@ -286,7 +290,7 @@ export const saveUserProfile = async (user: User): Promise<void> => {
     throw new Error('사용자 ID가 필요합니다.');
   }
 
-  await saveToIndexedDB(STORE_NAMES.USER_PROFILE, user);
+  await saveToIndexedDB(STORE_NAMES.USER_PROFILE, user, { maxRetries: 1 });
 };
 
 export const loadUserProfile = async (userId: string): Promise<User | null> => {
@@ -297,4 +301,61 @@ export const loadUserProfile = async (userId: string): Promise<User | null> => {
 
 export const deleteUserProfile = async (userId: string): Promise<void> => {
   await deleteFromIndexedDB(STORE_NAMES.USER_PROFILE, userId);
+};
+
+// ===== User Settings 전용 함수들 =====
+
+export const saveUserSettings = async (userId: string, settings: UserSettings): Promise<void> => {
+  if (!userId) {
+    throw new Error('사용자 ID가 필요합니다.');
+  }
+
+  const settingsData = { userId, settings };
+  await saveToIndexedDB(STORE_NAMES.USER_SETTINGS, settingsData, { maxRetries: 1 });
+};
+
+export const loadUserSettings = async (userId: string): Promise<UserSettings | null> => {
+  const data = await loadFromIndexedDB<{ userId: string; settings: UserSettings }>(STORE_NAMES.USER_SETTINGS, userId);
+  return data?.settings ?? null;
+};
+
+export const deleteUserSettings = async (userId: string): Promise<void> => {
+  await deleteFromIndexedDB(STORE_NAMES.USER_SETTINGS, userId);
+};
+
+// 설정 초기화 함수
+export const initializeUserSettings = async (userId: string): Promise<UserSettings> => {
+  if (!userId) {
+    throw new Error('사용자 ID가 필요합니다.');
+  }
+
+  // 기존 설정이 있는지 확인
+  const existingSettings = await loadUserSettings(userId);
+  
+  if (existingSettings) {
+    // 기존 설정이 있으면 그대로 반환
+    return existingSettings;
+  }
+
+  // 기존 설정이 없으면 기본값으로 초기화
+  const defaultSettings: UserSettings = { theme: 'light' };
+  await saveUserSettings(userId, defaultSettings);
+  
+  return defaultSettings;
+};
+
+// 다크모드 전용 헬퍼 함수들 (기존 API 호환성 유지)
+export const saveDarkModeSetting = async (userId: string, darkMode: boolean): Promise<void> => {
+  const theme: 'dark' | 'light' = darkMode ? 'dark' : 'light';
+  const currentSettings = (await loadUserSettings(userId)) || { theme: 'light' };
+  const newSettings = { ...currentSettings, theme };
+  await saveToIndexedDB(STORE_NAMES.USER_SETTINGS, newSettings, { maxRetries: 1 });
+};
+
+export const loadDarkModeSetting = async (userId: string): Promise<boolean | null> => {
+  const settings = await loadUserSettings(userId);
+  if (settings?.theme) {
+    return settings.theme === 'dark';
+  }
+  return null;
 };
