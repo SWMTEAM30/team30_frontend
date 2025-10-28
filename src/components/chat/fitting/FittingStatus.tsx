@@ -23,12 +23,7 @@ const FittingStatus = memo(function FittingStatus({
     return (
       <div className="w-full h-full p-2">
         <div className="relative w-full h-full">
-          <Image 
-            src={displayImage} 
-            alt="가상피팅 결과" 
-            fill 
-            className="object-cover rounded-lg" 
-          />
+          <Image src={displayImage} alt="가상피팅 결과" fill className="object-cover rounded-lg" />
         </div>
       </div>
     );
@@ -37,9 +32,9 @@ const FittingStatus = memo(function FittingStatus({
   switch (status) {
     case 'pending':
       return (
-        <div className="text-blue-400 dark:text-navy-500 text-center">
+        <div className="text-blue-400 dark:text-blue-200 text-center">
           <div className="w-20 h-20 mx-auto mb-4 bg-gray-150 dark:bg-slate-600 rounded-full flex items-center justify-center">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 dark:border-blue-200"></div>
           </div>
           <p className="text-base font-medium">가상피팅 진행 중...</p>
           <p className="text-sm mt-1">잠시만 기다려주세요</p>
@@ -51,12 +46,7 @@ const FittingStatus = memo(function FittingStatus({
         <div className="w-full h-full p-2">
           {resultUrl ? (
             <div className="relative w-full h-full">
-              <Image 
-                src={resultUrl} 
-                alt="가상피팅 결과" 
-                fill 
-                className="object-cover rounded-lg" 
-              />
+              <Image src={resultUrl} alt="가상피팅 결과" fill className="object-cover rounded-lg" />
             </div>
           ) : (
             <div className="text-center text-gray-500">
@@ -90,12 +80,7 @@ const FittingStatus = memo(function FittingStatus({
           {userModelImage ? (
             <div className="w-full h-full p-2">
               <div className="relative w-full h-full">
-                <Image 
-                  src={userModelImage} 
-                  alt="사용자 모델 이미지" 
-                  fill 
-                  className="object-cover rounded-lg" 
-                />
+                <Image src={userModelImage} alt="사용자 모델 이미지" fill className="object-cover rounded-lg" />
               </div>
               <div className="mt-2 text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400">현재 설정된 모델 이미지</p>

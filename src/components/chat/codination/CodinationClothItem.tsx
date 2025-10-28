@@ -16,8 +16,8 @@ const CodinationClothItem = memo(function CodinationClothItem({ cloth }: Codinat
           <Image className="object-cover rounded-lg border border-slate-200" src={cloth.url} alt={cloth.name} fill />
         </div>
         <div className="flex flex-col flex-1 min-w-0">
-          <span className="text-lg font-semibold dark:text-white truncate">{cloth.name}</span>
-          <span className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{cloth.description}</span>
+          <span className="text-lg font-semibold  truncate">{cloth.name}</span>
+          <span className="text-sm line-clamp-2">{cloth.description}</span>
         </div>
       </div>
     </ClothModal>

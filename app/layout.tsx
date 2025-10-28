@@ -89,13 +89,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/TFT_icon.png" />
       </head>
       <body className={`${plus_jakarta_sans.variable} ${noto_sans_kr.variable} antialiased min-h-screen flex flex-col`}>
-        <main className="flex-grow text-blue">
+        <main className="flex-grow text-blue dark:text-blue-250">
           <JotaiProvider>
             <QueryProvider>
               <ServerAuthProvider>
-                <StorageInitializer>
-                  {children}
-                </StorageInitializer>
+                <StorageInitializer>{children}</StorageInitializer>
               </ServerAuthProvider>
             </QueryProvider>
           </JotaiProvider>

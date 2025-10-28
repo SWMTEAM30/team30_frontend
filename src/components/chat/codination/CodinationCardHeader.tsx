@@ -27,27 +27,11 @@ const CodinationCardHeader = memo(function CodinationCardHeader({
       } ${isExpanded ? 'border-b-slate-200 dark:border-b-slate-700' : 'border-b-transparent'}`}
       onClick={onToggleExpanded}
     >
-      {/* 아이템 이미지들 */}
-      <div className="flex-shrink-0 p-4">
-        <div className="grid grid-cols-2 gap-3 max-w-[200px]">
-          {codination.cloths.map((product: ClosetCloth, clothKey: number) => (
-                  <div key={clothKey} className="relative aspect-[3/4]">
-              <Image
-                className="object-cover rounded-lg border border-slate-200 w-full h-full"
-                src={product.url}
-                alt={product.name}
-                fill
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* 코디 정보 */}
       <div className="flex-1 p-4 flex flex-col justify-between">
         <div>
           <div className="mb-2">
-            <p className="font-semibold text-2xl">
+            <p className="font-semibold text-3xl">
               코디
               <span className="text-lg"> {codination.cloths.length}개 아이템</span>
             </p>
@@ -73,7 +57,7 @@ const CodinationCardHeader = memo(function CodinationCardHeader({
             ))}
           </div> */}
         </div>
-        
+
         {/* Chevron 아이콘을 헤더 하단에 배치 */}
         <div className="flex justify-center">
           {isExpanded ? (

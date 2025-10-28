@@ -159,3 +159,4 @@ export const useVirtualFitting = ({ codinationId }: UseVirtualFittingProps) => {
     executeVirtualFitting,
   };
 };
+

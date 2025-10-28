@@ -36,16 +36,13 @@ export default function ClosetPanel() {
         )}
       </div>
       <button
-        className="cursor-pointer h-1/12 btn bg-navy text-2xl text-white hover:bg-navy-700 transition-colors"
+        className="cursor-pointer h-1/12 btn bg-blue-700 text-2xl text-white hover:bg-blue-800 transition-colors"
         onClick={handleOpenModal}
       >
         코디하기
       </button>
-      
-      <CodinationModal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal} 
-      />
+
+      <CodinationModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

@@ -6,7 +6,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { ChangeEvent, useCallback, useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { inputValueAtom, inputProductAtom, isAIRespondingAtom, roomIdAtom, tempMessageAtom, userModelImageAtom } from '@/atoms/chatAtoms';
+import {
+  inputValueAtom,
+  inputProductAtom,
+  isAIRespondingAtom,
+  roomIdAtom,
+  tempMessageAtom,
+  userModelImageAtom,
+} from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
 import { useChatStream } from '@/hooks/useChatStream';
 
@@ -61,9 +68,8 @@ export default function ChatInputBox() {
       className="
     shrink-0
     flex flex-col items-end gap-2 w-full mx-auto 
-    bg-white dark:bg-blue-800 
+    bg-white dark:bg-blue-800
     rounded-t-2xl border border-blue-500 dark:border-blue-800 
-    focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-800
     transition-all duration-200
     p-2
   "
@@ -82,17 +88,17 @@ export default function ChatInputBox() {
           }
         }}
         className="
-      flex-1 bg-transparent resize-none
-      min-h-[48px] max-h-[80px]
-      text-3xl
-      px-5 py-3
-      border-none focus-visible:border-0 focus:outline-none focus:ring-0
-      dark:text-white
-    "
+        bg-white dark:bg-blue-800
+          flex-1 resize-none
+          min-h-[48px] max-h-[80px]
+          text-3xl
+          px-5 py-3
+          border-none focus-visible:border-0 focus:outline-none focus:ring-0
+        "
         rows={1}
         disabled={disabled}
       />
-      <div className="flex space-x-5">
+      <div className="flex space-x-5 bg-transparent">
         <input
           type="file"
           ref={fileInputRef}
@@ -107,8 +113,8 @@ export default function ChatInputBox() {
       flex-shrink-0
       flex items-center justify-center
       w-16 h-16 rounded-full
-      bg-blue-500 text-white 
-      hover:bg-blue-600
+      text-white dark:bg-blue-600
+      hover:bg-blue-600 dark:hover:bg-blue-700
       disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
       transition-all duration-200
       mb-1
@@ -124,8 +130,8 @@ export default function ChatInputBox() {
       flex-shrink-0 
       flex items-center justify-center
       w-16 h-16 rounded-full
-      bg-blue-500 text-white 
-      hover:bg-blue-600
+    text-white dark:bg-blue-600
+      hover:bg-blue-600 dark:hover:bg-blue-700
       disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
       transition-all duration-200
       mb-1

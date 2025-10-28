@@ -83,11 +83,11 @@ export default function ChatHeader() {
       </header>
 
       {/* Mobile/Small screens bottom fixed nav */}
-      <nav className="dark lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-600">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-600">
         <div className="flex items-center justify-around h-16">
           <button
             aria-label="Chat"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
             onClick={handleChat}
           >
             <span className="inline-flex">
@@ -97,7 +97,7 @@ export default function ChatHeader() {
           </button>
           <button
             aria-label="Closet"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
             onClick={handleCloset}
           >
             <span className="inline-flex">
@@ -107,7 +107,7 @@ export default function ChatHeader() {
           </button>
           <button
             aria-label="Codination"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
             onClick={handleCodination}
           >
             <span className="inline-flex">
@@ -117,7 +117,7 @@ export default function ChatHeader() {
           </button>
           <button
             aria-label="Fitting"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
             onClick={handleFitting}
           >
             <span className="inline-flex">
@@ -126,7 +126,10 @@ export default function ChatHeader() {
             <span className="text-xs">피팅</span>
           </button>
           <SettingsPanel>
-            <button aria-label="Settings" className="w-16 flex flex-col items-center gap-1 text-slate-500">
+            <button
+              aria-label="Settings"
+              className="w-16 flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600"
+            >
               <span className="inline-flex">
                 <LucideIcon name={'Settings'} size={24} />
               </span>

@@ -60,7 +60,7 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
         <div className="lg:hidden">
           <ChatHeader />
         </div>
-        <div className="flex h-[calc(100vh-5rem)] lg:h-[100vh]">
+        <div className="flex h-[100vh]">
           {/* 데스크톱: 좌우 분할 레이아웃 */}
           <div className="hidden lg:flex w-full lg:w-1/2 h-full lg:transition-all lg:duration-300">
             <ChatPanel />
@@ -78,7 +78,7 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
           </div>
 
           {/* 모바일/태블릿: 단일 패널 레이아웃 */}
-          <div className="lg:hidden w-full h-[calc(100vh-5rem)]">
+          <div className="lg:hidden w-full h-[calc(100vh-4.1rem)]">
             {panel === 'chat' && <ChatPanel />}
             {panel === 'closet' && <ClosetPanel />}
             {panel === 'codination' && <CodinationPanel />}
