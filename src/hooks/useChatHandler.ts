@@ -30,7 +30,6 @@ export function useChatHandlers(): {
           userId: user?.userId || '!@#$',
           username: user?.username || 'mindul',
           modelImage: null,
-          darkMode: false,
         },
         agent: null,
         message_type: 'USER',

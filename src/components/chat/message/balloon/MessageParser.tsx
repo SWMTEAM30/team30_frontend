@@ -24,7 +24,7 @@ export default function MessageParser({ text }: { text: string }) {
         if (matchedWiki) {
           return (
             <WikiModal key={index} wiki={matchedWiki}>
-              <span className="font-semibold text-blue-600 hover:underline cursor-pointer">{part}</span>
+              <span className="font-semibold hover:underline cursor-pointer">{part}</span>
             </WikiModal>
           );
         }

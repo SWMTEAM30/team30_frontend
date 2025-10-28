@@ -67,13 +67,12 @@ export default function FittingDetail() {
           {activeCodination
             ? activeCodination.cloths.map((cloth: ClosetCloth, index: number) => (
                 <div key={index} className="flex items-center gap-3 p-3 rounded-lg">
-                  <div className="flex-shrink-0 flex items-center justify-center h-20">
+                  <div className="flex-shrink-0 flex items-center justify-center w-15 aspect-[3/4]">
                     <Image
                       src={cloth.url}
                       alt={cloth.name}
-                      width={60}
-                      height={60}
-                      className="rounded-lg object-cover h-full"
+                      fill
+                      className="rounded-lg object-cover"
                     />
                   </div>
                   {/* 텍스트 영역 */}

@@ -24,7 +24,7 @@ export const decodeJWT = (token: string): any | null => {
   }
 };
 
-export const getUserFromJWT = (token: string): User | null => {
+export const getUserFromJWT = async (token: string): Promise<User | null> => {
   const payload = decodeJWT(token);
   if (!payload) return null;
 
@@ -42,7 +42,6 @@ export const getUserFromJWT = (token: string): User | null => {
     userId: userId.toString(),
     username: username.toString(),
     modelImage: null,
-    darkMode: false,
   };
 };
 
@@ -53,19 +52,19 @@ export const getJWTExpirationTime = (token: string): number | null => {
   return payload.exp * 1000;
 };
 
-export const isValidJWT = (token: string): boolean => {
+export const isValidJWT = async (token: string): Promise<boolean> => {
   const expirationTime = getJWTExpirationTime(token);
   const currentTime = Math.floor(Date.now());
   //if (!expirationTime || expirationTime < currentTime) return false;
 
-  const user = getUserFromJWT(token);
+  const user = await getUserFromJWT(token);
   return user !== null;
 };
 
 // ===== Auth Cookie 유틸 함수들 =====
 
 export const setAuthCookie = async (jwtToken: string) => {
-  if (!isValidJWT(jwtToken)) {
+  if (!(await isValidJWT(jwtToken))) {
     console.error('Invalid JWT token provided');
     return;
   }
@@ -85,13 +84,13 @@ export const getAuthCookie = async (): Promise<User | null> => {
   const jwtToken = await getCookie(AUTH_COOKIE_NAME);
   if (!jwtToken) return null;
 
-  if (!isValidJWT(jwtToken)) {
+  if (!(await isValidJWT(jwtToken))) {
     console.error('Invalid or expired JWT token in cookie');
     await deleteAuthCookie();
     return null;
   }
 
-  const user = getUserFromJWT(jwtToken);
+  const user = await getUserFromJWT(jwtToken);
   if (!user) {
     console.error('Failed to extract user info from JWT');
     await deleteAuthCookie();
@@ -103,7 +102,7 @@ export const getAuthCookie = async (): Promise<User | null> => {
 
 export const getAuthJWT = async (): Promise<string | null> => {
   const jwtToken = await getCookie(AUTH_COOKIE_NAME);
-  if (!jwtToken || !isValidJWT(jwtToken)) return null;
+  if (!jwtToken || !(await isValidJWT(jwtToken))) return null;
   return jwtToken;
 };
 

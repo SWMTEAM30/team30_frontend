@@ -25,7 +25,6 @@ export default function AuthJotaiInitializer({ initialUser }: AuthJotaiInitializ
 
       if (initialUser.userId) {
         try {
-          console.log('asdfiiqqnq치치치치');
           await saveToIndexedDB(STORE_NAMES.USER_PROFILE, initialUser);
         } catch (profileError) {
           console.error('UserProfile 로드 실패:', profileError);

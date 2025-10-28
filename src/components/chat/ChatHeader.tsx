@@ -4,7 +4,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { activeCodinationAtom, panelAtom } from '@/atoms/chatAtoms';
 import LucideIcon from '@/components/ui/icons/LucideIcon';
-import SettingsPanel from '@/components/settings/SettingsPanel';
+import SettingsPanel from '@/components/chat/settings/SettingsPanel';
 
 export default function ChatHeader() {
   const [panel, setPanel] = useAtom(panelAtom);
@@ -37,49 +37,57 @@ export default function ChatHeader() {
   return (
     <>
       {/* Desktop/Large screens header */}
-      <header className="hidden lg:flex h-20 items-center justify-between px-4 py-6 mx-16 lg:mx-auto w-[calc(100vw-68px)] lg:w-full bg-white">
+      <header className="hidden lg:flex h-20 items-center justify-between px-4 py-6 mx-16 lg:mx-auto w-[calc(100vw-68px)] lg:w-full bg-white dark:bg-slate-800">
         <div className="flex items-center gap-4">
           <button
             className={`btn cursor-pointer text-blue text-2xl w-32 h-10 flex items-center justify-center ${isClient && panel == 'closet' ? 'font-bold' : ''}`}
             onClick={handleCloset}
           >
-            <span className="inline-flex mr-2"><LucideIcon name={'Shirt'} size={20} /></span>
+            <span className="inline-flex mr-2">
+              <LucideIcon name={'Shirt'} size={20} />
+            </span>
             옷장
           </button>
           <button
             className={`btn cursor-pointer text-blue text-2xl w-32 h-10 flex items-center justify-center ${isClient && panel == 'codination' ? 'font-bold' : ''}`}
             onClick={handleCodination}
           >
-            <span className="inline-flex mr-2"><LucideIcon name={'Layers'} size={20} /></span>
+            <span className="inline-flex mr-2">
+              <LucideIcon name={'Layers'} size={20} />
+            </span>
             코디
           </button>
           <button
             className={`btn cursor-pointer text-blue text-2xl w-32 h-10 flex items-center justify-center ${isClient && panel == 'fitting' ? 'font-bold' : ''}`}
             onClick={handleFitting}
           >
-            <span className="inline-flex mr-2"><LucideIcon name={'ScanLine'} size={20} /></span>
+            <span className="inline-flex mr-2">
+              <LucideIcon name={'ScanLine'} size={20} />
+            </span>
             피팅
           </button>
         </div>
         <div className="flex items-center gap-4">
           <SettingsPanel>
             <button className="btn cursor-pointer text-blue text-2xl w-32 h-10 flex items-center justify-center relative">
-              <span className="inline-flex mr-2"><LucideIcon name={'Settings'} size={20} /></span>
+              <span className="inline-flex mr-2">
+                <LucideIcon name={'Settings'} size={20} />
+              </span>
               설정
             </button>
           </SettingsPanel>
-          <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
+          <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold text-lg">
             U
           </div>
         </div>
       </header>
 
       {/* Mobile/Small screens bottom fixed nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-600">
         <div className="flex items-center justify-around h-16">
           <button
             aria-label="Chat"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
             onClick={handleChat}
           >
             <span className="inline-flex">
@@ -89,7 +97,7 @@ export default function ChatHeader() {
           </button>
           <button
             aria-label="Closet"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
             onClick={handleCloset}
           >
             <span className="inline-flex">
@@ -99,7 +107,7 @@ export default function ChatHeader() {
           </button>
           <button
             aria-label="Codination"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
             onClick={handleCodination}
           >
             <span className="inline-flex">
@@ -109,7 +117,7 @@ export default function ChatHeader() {
           </button>
           <button
             aria-label="Fitting"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'text-blue-600' : 'text-slate-500'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
             onClick={handleFitting}
           >
             <span className="inline-flex">
@@ -120,7 +128,7 @@ export default function ChatHeader() {
           <SettingsPanel>
             <button
               aria-label="Settings"
-              className="w-16 flex flex-col items-center gap-1 text-slate-500"
+              className="w-16 flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600"
             >
               <span className="inline-flex">
                 <LucideIcon name={'Settings'} size={24} />

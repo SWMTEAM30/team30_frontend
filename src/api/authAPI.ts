@@ -7,6 +7,7 @@ export const getAuthMe = async () => requestAPI<any>(`/api/auth/me`, 'GET');
 export const getAuthKakaoCallback = async (): Promise<APIResponse<User>> => {
   const response = await requestAPI<APIUser>(`/api/auth/kakao/callback`, 'GET');
   if (response.status == 'fail') return response;
+  
   return {
     status: response.status,
     message: response.message,
@@ -14,7 +15,6 @@ export const getAuthKakaoCallback = async (): Promise<APIResponse<User>> => {
       userId: response.data.userId,
       username: response.data.nickname,
       modelImage: null,
-      darkMode: false,
     },
   };
 };

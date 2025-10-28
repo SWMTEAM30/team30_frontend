@@ -1,5 +1,5 @@
 export const DB_NAME = 'TheFirstTakeDB';
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 
 export const DEFAULT_RETRY_CONFIG: RetryConfig = {
   maxRetries: 5,
@@ -13,4 +13,5 @@ export const STORE_NAMES = {
   CODINATIONS: 'codinations',
   FITTING_STATUS: 'fittingStatus',
   USER_PROFILE: 'userProfile',
+  USER_SETTINGS: 'userSettings',
 } as const;

@@ -117,7 +117,7 @@ export default function ChatArea() {
           {/* 이전 메시지 로딩 인디케이터 */}
           {isFetchingOlder && (
             <div className="flex justify-center py-4">
-              <div className="text-gray-500">이전 메시지를 불러오는 중...</div>
+              <div className="">이전 메시지를 불러오는 중...</div>
             </div>
           )}
           <>
@@ -142,7 +142,6 @@ export default function ChatArea() {
                           } as unknown as Message,
                         ]
                       : [];
-                  const hasStreaming = streamingReplies.length > 0;
                   const augmentedLast = {
                     ...last,
                     replies: [...last.replies, ...streamingReplies, ...typingPlaceholder],

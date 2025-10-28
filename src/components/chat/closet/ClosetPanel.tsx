@@ -28,7 +28,7 @@ export default function ClosetPanel() {
             <p className="text-sm text-blue">추천받은 아이템을 클릭하면 옷장에 자동으로 추가됩니다</p>
           </div>
         ) : (
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {closet.map((cloth, key) => (
               <ClosetClothCard key={key} cloth={cloth} />
             ))}
@@ -36,16 +36,13 @@ export default function ClosetPanel() {
         )}
       </div>
       <button
-        className="cursor-pointer h-1/12 btn bg-navy text-2xl text-white hover:bg-navy-700 transition-colors"
+        className="cursor-pointer h-1/12 btn bg-blue-700 text-2xl text-white hover:bg-blue-800 transition-colors"
         onClick={handleOpenModal}
       >
         코디하기
       </button>
-      
-      <CodinationModal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal} 
-      />
+
+      <CodinationModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

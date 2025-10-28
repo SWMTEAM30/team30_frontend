@@ -6,7 +6,7 @@ export default function Explanation() {
       <div className="py-16 space-y-8 max-w-6xl mx-auto px-4">
         {/* Card 1: 자연스러운 대화 */}
         <div className="translate-y-12 transition-all duration-1000 ease-out pointer-events-none" data-scroll="card">
-          <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
+          <div className="bg-white/90 dark:bg-slate-800/90 p-8 rounded-3xl border border-gray-200 dark:border-slate-600 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
                 <LucideIcon name={'MessageSquare'} color="blue-50" className="w-8 h-8" />
@@ -28,7 +28,7 @@ export default function Explanation() {
           data-scroll="card"
           style={{ transitionDelay: '200ms' }}
         >
-          <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
+          <div className="bg-white/90 dark:bg-slate-800/90 p-8 rounded-3xl border border-gray-200 dark:border-slate-600 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
                 <LucideIcon name={'Sparkles'} color="blue-50" className="w-8 h-8" />
@@ -50,7 +50,7 @@ export default function Explanation() {
           data-scroll="card"
           style={{ transitionDelay: '400ms' }}
         >
-          <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
+          <div className="bg-white/90 dark:bg-slate-800/90 p-8 rounded-3xl border border-gray-200 dark:border-slate-600 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
                 <LucideIcon name={'Timer'} color="blue-50" className="w-8 h-8" />
@@ -72,7 +72,7 @@ export default function Explanation() {
           data-scroll="card"
           style={{ transitionDelay: '600ms' }}
         >
-          <div className="bg-white/90 p-8 rounded-3xl border border-gray-200 shadow-xl">
+          <div className="bg-white/90 dark:bg-slate-800/90 p-8 rounded-3xl border border-gray-200 dark:border-slate-600 shadow-xl">
             <div className="flex items-start space-x-6">
               <div className="flex-shrink-0 w-16 h-16 bg-blue rounded-2xl flex items-center justify-center">
                 <LucideIcon name={'ShoppingBag'} color="blue-50" className="w-8 h-8" />

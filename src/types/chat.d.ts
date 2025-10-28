@@ -76,9 +76,11 @@ type RoomIdMessages = {
   }[];
 };
 
-type Codination = {
+interface Codination {
   id: string;
   fitting_image: string | null;
   cloths: ClosetCloth[];
   description?: string;
-};
+  createdAt?: Date;
+  updatedAt?: Date;
+}
