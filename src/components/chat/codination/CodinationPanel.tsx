@@ -15,11 +15,11 @@ export default function CodinationPanel() {
   const [closetCodination, setClosetCodination] = useAtom(closetCodinationAtom);
   const [activeCodination] = useAtom(activeCodinationAtom);
   const [user] = useAtom(userAtom);
-  
+
   // 스토리지 훅 사용
   const { codinations, updateCodination } = useCodination();
-  const { executeVirtualFitting } = useVirtualFitting({ 
-    codinationId: closetCodination?.id || activeCodination?.id || '' 
+  const { executeVirtualFitting } = useVirtualFitting({
+    codinationId: closetCodination?.id || activeCodination?.id || '',
   });
   // 상의와 하의가 모두 선택되었는지 확인
   const hasUpperAndLower =
@@ -58,13 +58,13 @@ export default function CodinationPanel() {
 
     // 가상피팅 실행
     const success = await executeVirtualFitting(closetCodination.cloths);
-    
+
     if (success) {
       // 즉시 fitting 패널로 이동
       setPanel('fitting');
       setActiveCodination(closetCodination);
       setClosetCodination(null);
-      
+
       // 코디네이션 업데이트
       await updateCodination(closetCodination);
     }
@@ -72,16 +72,17 @@ export default function CodinationPanel() {
 
   if (codinations.length === 0)
     return (
-      <div className="h-full flex flex-col">
+      <div className="h-full flex flex-col dark:bg-slate-800">
         <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-          <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6">
-            <Plus className="w-12 h-12 text-slate-400" />
+          <div className="w-24 h-24 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-6">
+            <Plus className="w-12 h-12 " />
           </div>
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">아직 코디가 없습니다</h3>
-          <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md">
-            AI와 대화하여 가상피팅에 사용할 옷 조합들을 추가해보세요
-          </p>
-          <Button onClick={handleAddNewCodination} className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-6 py-3">
+          <h3 className="text-xl font-semibold mb-3">아직 코디가 없습니다</h3>
+          <p className="mb-6 max-w-md">AI와 대화하여 가상피팅에 사용할 옷 조합들을 추가해보세요</p>
+          <Button
+            onClick={handleAddNewCodination}
+            className="bg-blue-600  hover:bg-blue-700 dark:hover:bg-blue-500 text-white px-6 py-3"
+          >
             <Plus className="w-4 h-4 mr-2" />
             코디 추가하기
           </Button>
@@ -113,9 +114,7 @@ export default function CodinationPanel() {
         <div className="p-4 border-t border-slate-200 dark:border-slate-700">
           <button
             className={`w-full cursor-pointer h-12 btn ${
-              closetCodination.fitting_image 
-                ? 'bg-green-600 hover:bg-green-700' 
-                : 'bg-navy'
+              closetCodination.fitting_image ? 'bg-green-600 hover:bg-green-700' : 'bg-navy'
             } text-lg text-white disabled:bg-blue-50`}
             disabled={isDisabled}
             onClick={handleSubmitFitting}
