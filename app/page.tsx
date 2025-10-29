@@ -7,11 +7,11 @@ export default function Home() {
   return (
     <div className="font-sans">
       <section className="h-screen flex items-center justify-center relative ">
-        <div className="absolute inset-x-0 top-0 h-1/2 bg-blue -z-20 pointer-events-none">
-          <Image className="object-cover opacity-60" src={'/logo1.png'} alt={'logo'} fill />
+        <div className="absolute inset-x-0 top-0 h-1/2 bg-blue dark:bg-blue-800 -z-20 pointer-events-none">
+          <Image className="object-cover opacity-60 dark:opacity-30" src={'/logo1.png'} alt={'logo'} fill />
         </div>
         <div className="absolute inset-0 -z-10 pointer-events-none"></div>
-        <div className="max-w-5xl mx-auto pb-24 px-4 w-full bg-white rounded-4xl shadow-2xl">
+        <div className="max-w-5xl mx-auto pb-24 px-4 w-full bg-white dark:bg-slate-800 rounded-4xl shadow-2xl">
           <HeroSection />
           <NextChat />
         </div>
@@ -40,7 +40,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="about" className="py-20 md:py-28 bg-white">
+      <section id="about" className="py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-4">
           <Explanation />
         </div>

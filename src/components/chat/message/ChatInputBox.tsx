@@ -68,7 +68,7 @@ export default function ChatInputBox() {
       className="
         shrink-0
         flex flex-col items-end gap-2 w-full mx-auto 
-        bg-white dark:bg-blue-800
+        bg-white dark:bg-slate-800
         rounded-t-2xl border border-blue-500 dark:border-blue-800 
         transition-all duration-200
         p-2
@@ -88,7 +88,7 @@ export default function ChatInputBox() {
           }
         }}
         className="
-        bg-white dark:bg-blue-800
+        bg-white dark:bg-slate-800
           flex-1 resize-none
           min-h-[48px] max-h-[80px]
           text-3xl

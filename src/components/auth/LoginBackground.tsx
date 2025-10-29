@@ -1,6 +1,6 @@
 export default function LoginBackground() {
   return (
-    <div className="fixed inset-0 w-screen h-screen z-0">
+    <div className="dark:hidden fixed inset-0 w-screen h-screen z-0">
       <svg
         viewBox="0 0 1920 1080"
         xmlns="http://www.w3.org/2000/svg"

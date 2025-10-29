@@ -90,16 +90,18 @@ export default function NextChat() {
         <div className="relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-300"></div>
           <div className="relative">
-            <div className="
+            <div
+              className="
               w-full min-h-[70px] max-h-[140px] 
-              bg-white border-2 border-gray-200 
+              bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-700
               rounded-2xl 
               focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100 
               shadow-lg hover:shadow-xl
               transition-all duration-300 ease-out
               backdrop-blur-sm
               flex items-end justify-between p-4
-            ">
+            "
+            >
               <Textarea
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -111,7 +113,8 @@ export default function NextChat() {
                 }}
                 placeholder="패션에 대해 마음대로 물어보세요! 예: '데이트룩 추천해줘'"
                 className="
-                  flex-1 bg-transparent resize-none
+                  flex-1 resize-none
+                  bg-transparent dark:bg-slate-700
                   text-lg
                   border-none focus-visible:border-0 focus:outline-none focus:ring-0
                   placeholder:text-gray-400

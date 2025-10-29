@@ -34,7 +34,7 @@ const FittingStatus = memo(function FittingStatus({
       return (
         <div className="text-blue-400 dark:text-blue-200 text-center">
           <div className="w-20 h-20 mx-auto mb-4 bg-gray-150 dark:bg-slate-600 rounded-full flex items-center justify-center">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 dark:border-blue-200"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 dark:border-blue-300"></div>
           </div>
           <p className="text-base font-medium">가상피팅 진행 중...</p>
           <p className="text-sm mt-1">잠시만 기다려주세요</p>
@@ -87,7 +87,7 @@ const FittingStatus = memo(function FittingStatus({
               </div>
             </div>
           ) : (
-            <div>
+            <div className="dark:text-blue-300">
               <div className="w-20 h-20 mx-auto mb-4 bg-gray-200 dark:bg-slate-600 rounded-full flex items-center justify-center">
                 <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -99,7 +99,7 @@ const FittingStatus = memo(function FittingStatus({
                 </svg>
               </div>
               <p className="text-base font-medium">피팅 이미지</p>
-              <p className="text-sm text-gray-500 mt-1">설정에서 모델 이미지를 업로드하세요</p>
+              <p className="text-sm mt-1">설정에서 모델 이미지를 업로드하세요</p>
             </div>
           )}
         </div>

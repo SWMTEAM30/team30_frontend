@@ -36,10 +36,9 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
     setTempMessage(null);
   }, [roomId, mutate, setTempMessage, tempMessage?.roomId, tempMessage?.userMessage]);
 
-
   return (
     <Suspense>
-      <div className="flex flex-col">
+      <div className="flex flex-col max-w-[1024px]">
         {/* 상단에 메뉴 표시 */}
         <div>
           <ChatMenu />

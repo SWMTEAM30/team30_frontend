@@ -15,7 +15,7 @@ export default function FittingCard() {
   const displayImage = activeCodination?.fitting_image || fittingStatus.resultUrl;
 
   return (
-    <div className="flex bg-gray-100 dark:bg-slate-700 flex-col h-full min-h-[400px]">
+    <div className="flex bg-gray-100 dark:bg-slate-800 flex-col h-full min-h-[400px]">
       <div className="flex h-full items-center justify-center">
         <FittingStatus
           status={fittingStatus.status}
