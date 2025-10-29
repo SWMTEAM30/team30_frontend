@@ -25,10 +25,10 @@ export default function MainPost({ message, replies, onSaveCodination, isSaved }
           {/* 본문 */}
           <div className="flex w-full min-w-0 flex-col space-y-4 overflow-hidden">
             <p className="flex space-x-3 text-lg">
-              <span className="font-extrabold">{message.user?.username || '사용자'}</span>
+              {/* <span className="font-extrabold">{message.user?.username || '사용자'}</span> */}
               <span className="text-gray-500">{elapsedTimeText(message.createdAt)}</span>
             </p>
-            <p className="text-xl whitespace-pre-line break-words">{message.content}</p>
+            <p className="text-xl whitespace-pre-line font-bold break-words">{message.content}</p>
 
             {message.products.length > 0 && <ProductGallery products={message.products} />}
           </div>

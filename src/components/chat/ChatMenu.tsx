@@ -41,7 +41,7 @@ export default function ChatMenu() {
         <div className="flex items-center justify-around h-16 w-full">
           <button
             aria-label="Chat"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'font-bold text-blue-600 dark:text-slate-100 rounded-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 rounded-md transition-colors'}`}
             onClick={handleChat}
           >
             <span className="inline-flex">
@@ -51,7 +51,7 @@ export default function ChatMenu() {
           </button>
           <button
             aria-label="Closet"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'font-bold text-blue-600 dark:text-slate-100 rounded-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 rounded-md transition-colors'}`}
             onClick={handleCloset}
           >
             <span className="inline-flex">
@@ -61,7 +61,7 @@ export default function ChatMenu() {
           </button>
           <button
             aria-label="Codination"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'font-bold text-blue-600 dark:text-slate-100 rounded-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 rounded-md transition-colors'}`}
             onClick={handleCodination}
           >
             <span className="inline-flex">
@@ -71,7 +71,7 @@ export default function ChatMenu() {
           </button>
           <button
             aria-label="Fitting"
-            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
+            className={`w-16 flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'font-bold text-blue-600 dark:text-slate-100 rounded-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 rounded-md transition-colors'}`}
             onClick={handleFitting}
           >
             <span className="inline-flex">
@@ -82,7 +82,7 @@ export default function ChatMenu() {
           <SettingsPanel>
             <button
               aria-label="Settings"
-              className="w-16 flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600"
+              className="w-16 flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100"
             >
               <span className="inline-flex">
                 <LucideIcon name={'Settings'} size={24} />
@@ -98,7 +98,7 @@ export default function ChatMenu() {
         <div className="flex flex-col items-center justify-center gap-10 w-full h-full">
           <button
             aria-label="Chat"
-            className={`w-full flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
+            className={`w-full flex flex-col items-center gap-1 ${isClient && panel == 'chat' ? 'font-bold text-blue-600 dark:text-slate-100 rounded-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 rounded-md transition-colors'}`}
             onClick={handleChat}
           >
             <span className="inline-flex">
@@ -108,7 +108,7 @@ export default function ChatMenu() {
           </button>
           <button
             aria-label="Closet"
-            className={`w-full flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
+            className={`w-full flex flex-col items-center gap-1 ${isClient && panel == 'closet' ? 'font-bold text-blue-600 dark:text-slate-100 rounded-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 rounded-md transition-colors'}`}
             onClick={handleCloset}
           >
             <span className="inline-flex">
@@ -118,7 +118,7 @@ export default function ChatMenu() {
           </button>
           <button
             aria-label="Codination"
-            className={`w-full flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
+            className={`w-full flex flex-col items-center gap-1 ${isClient && panel == 'codination' ? 'font-bold text-blue-600 dark:text-slate-100 rounded-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 rounded-md transition-colors'}`}
             onClick={handleCodination}
           >
             <span className="inline-flex">
@@ -128,7 +128,7 @@ export default function ChatMenu() {
           </button>
           <button
             aria-label="Fitting"
-            className={`w-full flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`}
+            className={`w-full flex flex-col items-center gap-1 ${isClient && panel == 'fitting' ? 'font-bold text-blue-600 dark:text-slate-100 rounded-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 rounded-md transition-colors'}`}
             onClick={handleFitting}
           >
             <span className="inline-flex">
@@ -139,7 +139,7 @@ export default function ChatMenu() {
           <SettingsPanel>
             <button
               aria-label="Settings"
-              className="w-full flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600"
+              className="w-full flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-100"
             >
               <span className="inline-flex">
                 <LucideIcon name={'Settings'} size={24} />

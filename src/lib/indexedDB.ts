@@ -349,7 +349,8 @@ export const saveDarkModeSetting = async (userId: string, darkMode: boolean): Pr
   const theme: 'dark' | 'light' = darkMode ? 'dark' : 'light';
   const currentSettings = (await loadUserSettings(userId)) || { theme: 'light' };
   const newSettings = { ...currentSettings, theme };
-  await saveToIndexedDB(STORE_NAMES.USER_SETTINGS, newSettings, { maxRetries: 1 });
+  // USER_SETTINGS 스토어의 keyPath는 'userId' 이므로 래퍼를 통해 저장해야 함
+  await saveUserSettings(userId, newSettings);
 };
 
 export const loadDarkModeSetting = async (userId: string): Promise<boolean | null> => {

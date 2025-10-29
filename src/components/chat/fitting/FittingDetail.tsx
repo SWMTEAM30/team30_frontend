@@ -21,7 +21,7 @@ export default function FittingDetail() {
     <div className="flex flex-col space-y-4 h-full">
       {/* 모델 이미지 정보 */}
       <div className="border border-blue dark:bg-slate-800 rounded-2xl p-4">
-        <h3 className="text-2xl font-bold text-navy-500 dark:text-white mb-4">피팅 모델</h3>
+        <h3 className="text-2xl font-bold mb-4">피팅 모델</h3>
         <div className="flex items-center gap-4">
           {user?.modelImage ? (
             <>
@@ -35,7 +35,7 @@ export default function FittingDetail() {
                 />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-lg text-navy-500 dark:text-white mb-1">개인 모델 이미지</p>
+                <p className="font-bold text-lg mb-1">개인 모델 이미지</p>
                 <p className="text-sm text-green-600 dark:text-green-400">✅ 설정된 모델 이미지가 사용됩니다</p>
               </div>
             </>
@@ -52,8 +52,8 @@ export default function FittingDetail() {
                 </svg>
               </div>
               <div className="flex-1">
-                <p className="font-bold text-lg text-navy-500 dark:text-white mb-1">기본 모델 이미지</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">설정에서 개인 모델 이미지를 업로드하세요</p>
+                <p className="font-bold text-lg  mb-1">기본 모델 이미지</p>
+                <p className="text-sm text-gray-500 ">[설정]에서 개인 모델 이미지를 업로드하세요</p>
               </div>
             </>
           )}
@@ -62,7 +62,7 @@ export default function FittingDetail() {
 
       {/* 코디 아이템 정보 */}
       <div className="flex-1 min-h-0 border border-blue dark:bg-slate-800 rounded-2xl p-4">
-        <h3 className="text-2xl font-bold text-navy-500 dark:text-white mb-4">코디 아이템</h3>
+        <h3 className="text-2xl font-bold mb-4">코디 아이템</h3>
         <div className="space-y-2 overflow-y-auto">
           {activeCodination
             ? activeCodination.cloths.map((cloth: ClosetCloth, index: number) => (
