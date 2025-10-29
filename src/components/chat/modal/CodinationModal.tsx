@@ -89,7 +89,13 @@ export default function CodinationModal({ isOpen, onClose }: CodinationModalProp
                   key={cloth.id}
                   className="flex items-center space-x-2 px-2 py-1 bg-blue-100 dark:bg-blue-800/30 rounded text-sm"
                 >
-                  <img src={cloth.url} alt={cloth.name} className="w-6 h-6 object-cover rounded" />
+                  <Image
+                    src={cloth.url}
+                    alt={cloth.name}
+                    width={300}
+                    height={300}
+                    className="w-6 h-6 object-cover rounded"
+                  />
                   <span className="text-blue-800 dark:text-blue-200 text-xs truncate max-w-20">{cloth.name}</span>
                 </div>
               ))}

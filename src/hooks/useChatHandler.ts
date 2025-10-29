@@ -46,7 +46,7 @@ export function useChatHandlers(): {
 
       setMessages((prev) => [...prev, userMessage]);
     },
-    [roomId],
+    [roomId, resetAtomState, setMessages, user?.userId, user?.username],
   );
 
   const handleExampleSelect = useCallback(

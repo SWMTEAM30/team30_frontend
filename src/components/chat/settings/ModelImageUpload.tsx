@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Camera, X, Loader2 } from 'lucide-react';
 import { saveUserProfile } from '@/lib/indexedDB';
 import { postChatUpload } from '@/api/chatAPI';
+import Image from 'next/image';
 
 export default function ModelImageUpload() {
   const [user, setUser] = useAtom(userAtom);
@@ -14,55 +15,58 @@ export default function ModelImageUpload() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleImageUpload = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
 
-    if (file && user) {
-      setIsLoading(true);
+      if (file && user) {
+        setIsLoading(true);
 
-      // 파일 크기 검증 (5MB 제한)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('파일 크기는 5MB 이하여야 합니다.');
-        setIsLoading(false);
-        return;
-      }
-
-      // 파일 타입 검증
-      if (!file.type.startsWith('image/')) {
-        alert('이미지 파일만 업로드 가능합니다.');
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await postChatUpload(formData);
-        if (response.status === 'fail') {
-          console.error('사진 업로드 중 에러');
+        // 파일 크기 검증 (5MB 제한)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('파일 크기는 5MB 이하여야 합니다.');
           setIsLoading(false);
           return;
         }
 
-        const result = response.data;
-        setPreviewImage(result);
+        // 파일 타입 검증
+        if (!file.type.startsWith('image/')) {
+          alert('이미지 파일만 업로드 가능합니다.');
+          setIsLoading(false);
+          return;
+        }
 
-        const newProfile: User = {
-          ...user,
-          modelImage: result,
-        };
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
 
-        setUser(newProfile);
-        await saveUserProfile(newProfile);
-      } catch (error) {
-        console.error('이미지 업로드 실패:', error);
-        alert('이미지 업로드에 실패했습니다.');
-      } finally {
-        setIsLoading(false);
+          const response = await postChatUpload(formData);
+          if (response.status === 'fail') {
+            console.error('사진 업로드 중 에러');
+            setIsLoading(false);
+            return;
+          }
+
+          const result = response.data;
+          setPreviewImage(result);
+
+          const newProfile: User = {
+            ...user,
+            modelImage: result,
+          };
+
+          setUser(newProfile);
+          await saveUserProfile(newProfile);
+        } catch (error) {
+          console.error('이미지 업로드 실패:', error);
+          alert('이미지 업로드에 실패했습니다.');
+        } finally {
+          setIsLoading(false);
+        }
       }
-    }
-  }, [user, setUser]);
+    },
+    [user, setUser],
+  );
 
   const handleRemoveImage = useCallback(async () => {
     if (user) {
@@ -107,9 +111,11 @@ export default function ModelImageUpload() {
       {!isLoading && (user?.modelImage || previewImage) && (
         <div className="space-y-3">
           <div className="relative group">
-            <img
+            <Image
               src={previewImage || user?.modelImage || '/model_image.jpg'}
               alt="현재 설정된 모델 이미지"
+              width={300}
+              height={300}
               className="w-full h-48 object-cover rounded-lg border border-gray-200 shadow-sm"
             />
             {/* 오버레이 버튼들 */}
@@ -132,13 +138,7 @@ export default function ModelImageUpload() {
               </div>
             </div>
             {/* 숨겨진 파일 입력 */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           </div>
           <div className="text-center">
             <p className="text-sm text-green-600 font-medium">✅ 모델 이미지가 설정되었습니다</p>
@@ -153,13 +153,7 @@ export default function ModelImageUpload() {
           <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500 mb-4">가상 피팅에 사용할 모델 이미지를 업로드하세요</p>
           <p className="text-xs text-gray-400 mb-4">JPG, PNG, GIF 파일 (최대 5MB)</p>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           <Button
             onClick={handleFileSelect}
             variant="outline"

@@ -41,7 +41,7 @@ export const useChatMessage = (chatId: string | null) => {
       if (oldMessages.some((msg) => msg.id === newMessage.id)) return oldMessages;
       return [...oldMessages, newMessage];
     });
-  }, [queryResult, status, queryClient]);
+  }, [queryResult, status, queryClient, chatId, roomId, store]);
 
   // 메시지 보내기 mutation
   const { mutate, isPending: isSending } = useMutation({
@@ -73,7 +73,7 @@ export const useChatMessage = (chatId: string | null) => {
         );
       });
     },
-    [chatId, store],
+    [store, roomId],
   );
 
   if (!chatId) {

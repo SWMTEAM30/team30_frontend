@@ -12,25 +12,28 @@ export interface Toast {
 export const useToast = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const newToast: Toast = {
-      id,
-      duration: 5000, // 기본 5초
-      ...toast,
-    };
-
-    setToasts((prev) => [...prev, newToast]);
-
-    // 자동 제거
-    setTimeout(() => {
-      removeToast(id);
-    }, newToast.duration);
-  }, []);
-
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
+
+  const addToast = useCallback(
+    (toast: Omit<Toast, 'id'>) => {
+      const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newToast: Toast = {
+        id,
+        duration: 5000, // 기본 5초
+        ...toast,
+      };
+
+      setToasts((prev) => [...prev, newToast]);
+
+      // 자동 제거
+      setTimeout(() => {
+        removeToast(id);
+      }, newToast.duration);
+    },
+    [removeToast],
+  );
 
   const showSuccess = useCallback(
     (message: string, duration?: number) => {
@@ -70,7 +73,3 @@ export const useToast = () => {
     showInfo,
   };
 };
-
-
-
-

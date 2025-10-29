@@ -118,7 +118,7 @@ export function useCodinationSave() {
       const key = makeProductsKey(products);
       setLocallySavedKeys((prev) => new Set(prev).add(key));
     },
-    [codinations, addCodination, setActiveCodination, setPanel, closet, addClothesToCloset, makeProductsKey],
+    [codinations, addCodination, setActiveCodination, setPanel, addClothesToCloset, makeProductsKey],
   );
 
   const isSaved = useCallback(
@@ -134,3 +134,4 @@ export function useCodinationSave() {
     isSaved,
   };
 }
+
