@@ -66,13 +66,13 @@ export default function ChatInputBox() {
   return (
     <div
       className="
-    shrink-0
-    flex flex-col items-end gap-2 w-full mx-auto 
-    bg-white dark:bg-blue-800
-    rounded-t-2xl border border-blue-500 dark:border-blue-800 
-    transition-all duration-200
-    p-2
-  "
+        shrink-0
+        flex flex-col items-end gap-2 w-full mx-auto 
+        bg-white dark:bg-blue-800
+        rounded-t-2xl border border-blue-500 dark:border-blue-800 
+        transition-all duration-200
+        p-2
+      "
     >
       <div className="flex space-x-5 items-start">
         {inputProduct && <Image src={inputProduct.product_url} alt={''} width={100} height={100} />}
@@ -110,15 +110,16 @@ export default function ChatInputBox() {
         <Button
           onClick={handleButtonClick}
           className="
-      flex-shrink-0
-      flex items-center justify-center
-      w-16 h-16 rounded-full
-      text-white dark:bg-blue-600
-      hover:bg-blue-600 dark:hover:bg-blue-700
-      disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
-      transition-all duration-200
-      mb-1
-    "
+            flex-shrink-0
+            flex items-center justify-center
+            w-16 h-16 rounded-full
+            text-white
+            bg-blue dark:bg-blue-600
+            hover:bg-blue-600 dark:hover:bg-blue-700
+            disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
+            transition-all duration-200
+            mb-1
+          "
           disabled={disabled}
         >
           <Plus />
@@ -127,15 +128,16 @@ export default function ChatInputBox() {
           onClick={handleSendMessage}
           disabled={inputValue.trim() === '' || disabled}
           className="
-      flex-shrink-0 
-      flex items-center justify-center
-      w-16 h-16 rounded-full
-    text-white dark:bg-blue-600
-      hover:bg-blue-600 dark:hover:bg-blue-700
-      disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
-      transition-all duration-200
-      mb-1
-    "
+            flex-shrink-0 
+            flex items-center justify-center
+            w-16 h-16 rounded-full
+          text-white
+          bg-blue dark:bg-blue-600
+            hover:bg-blue-600 dark:hover:bg-blue-700
+            disabled:bg-slate-300 disabled:dark:bg-slate-600 disabled:cursor-not-allowed
+            transition-all duration-200
+            mb-1
+          "
         >
           <Send className="w-5 h-5" />
         </Button>
