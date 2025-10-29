@@ -34,7 +34,7 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
     if (tempMessage?.roomId != roomId || !tempMessage?.userMessage) return;
     mutate({ inputValue: tempMessage.userMessage });
     setTempMessage(null);
-  }, [roomId]);
+  }, [roomId, mutate, setTempMessage, tempMessage?.roomId, tempMessage?.userMessage]);
 
   // lg 이상일 때 panel이 'chat'이면 자동으로 'closet'으로 전환
   useEffect(() => {

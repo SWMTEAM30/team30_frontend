@@ -33,7 +33,7 @@ export default function AuthJotaiInitializer({ initialUser }: AuthJotaiInitializ
     };
 
     initialize();
-  }, [initialUser]);
+  }, [initialUser, setUser]);
 
   return null;
 }

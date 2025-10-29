@@ -53,7 +53,7 @@ export default function ChatArea() {
   // 첫 마운트 시에 대화 내용 불러오기
   useEffect(() => {
     loadMessages();
-  }, [roomId]);
+  }, [roomId, loadMessages]);
 
   // 메시지가 변경될 때마다 그룹 업데이트
   useEffect(() => {

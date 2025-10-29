@@ -140,7 +140,7 @@ export const useFitting = (codinationId?: string) => {
     };
 
     initializeFittingStatus();
-  }, [isLoading, loadFittingStatusFromStorage, setFittingStatus, shouldUseStorage]);
+  }, [isLoading, loadFittingStatusFromStorage, setFittingStatus, shouldUseStorage, codinationId]);
 
   useEffect(() => {
     if (fittingStatus.status !== 'idle' && shouldUseStorage) {
