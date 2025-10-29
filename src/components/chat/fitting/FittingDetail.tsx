@@ -16,7 +16,7 @@ interface ClosetCloth {
 export default function FittingDetail() {
   const [activeCodination, setActiveCodination] = useAtom(activeCodinationAtom);
   const user = useAtomValue(userAtom);
-  
+
   return (
     <div className="flex flex-col space-y-4 h-full">
       {/* 모델 이미지 정보 */}
@@ -68,12 +68,7 @@ export default function FittingDetail() {
             ? activeCodination.cloths.map((cloth: ClosetCloth, index: number) => (
                 <div key={index} className="flex items-center gap-3 p-3 rounded-lg">
                   <div className="flex-shrink-0 flex items-center justify-center w-15 aspect-[3/4]">
-                    <Image
-                      src={cloth.url}
-                      alt={cloth.name}
-                      fill
-                      className="rounded-lg object-cover"
-                    />
+                    <Image src={cloth.url} alt={cloth.name} fill className="rounded-lg object-cover" />
                   </div>
                   {/* 텍스트 영역 */}
                   <div className="flex-1 min-w-0">

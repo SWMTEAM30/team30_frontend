@@ -90,6 +90,7 @@ export default function RootLayout({
       </head>
       <body className={`${plus_jakarta_sans.variable} ${noto_sans_kr.variable} antialiased min-h-screen flex flex-col`}>
         <main className="flex-grow text-blue dark:text-blue-250">
+          <div className="w-full max-w-[1024px] mx-auto">
           <JotaiProvider>
             <QueryProvider>
               <ServerAuthProvider>
@@ -97,6 +98,7 @@ export default function RootLayout({
               </ServerAuthProvider>
             </QueryProvider>
           </JotaiProvider>
+          </div>
         </main>
         <Suspense fallback={null}>
           <WebVitals />

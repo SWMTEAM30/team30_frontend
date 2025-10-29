@@ -18,7 +18,7 @@ export default function MainPost({ message, replies, onSaveCodination, isSaved }
     <div className="flex justify-start">
       <div
         className={
-          'w-full sm:max-w-[90%] rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-blue dark:border-slate-600'
+          'w-full rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-blue dark:border-slate-600'
         }
       >
         <div className="p-6 space-y-4">
