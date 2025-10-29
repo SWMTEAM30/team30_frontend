@@ -1,18 +1,20 @@
 import SigninSNSForm from '@/components/auth/SigninSNSForm';
 import LoginBackground from '@/components/auth/LoginBackground';
 import Image from 'next/image';
+import LoginBackgroundDark from '@/components/auth/LoginBackgroundDark';
 
 export default function SigninPage() {
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <LoginBackground />
+      <LoginBackgroundDark />
 
       {/* 메인 컨텐츠 */}
       <div className="relative z-10 w-full max-w-4xl mx-4">
-        <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-16 space-y-12">
+        <div className="bg-white/70 dark:bg-slate-800 backdrop-blur-xl rounded-3xl shadow-2xl  p-16 space-y-12">
           {/* 헤더 섹션 */}
           <div className="text-center space-y-8">
-            <div className="inline-flex items-center justify-center w-32 h-32 bg-white rounded-3xl shadow-lg p-4">
+            <div className="inline-flex items-center justify-center w-32 h-32 bg-white dark:bg-slate-800 rounded-3xl shadow-lg dark:shadow-none p-4">
               <Image
                 src="/TFT_icon.png"
                 alt="The First Take"
