@@ -34,7 +34,6 @@ export const useFitting = (codinationId?: string) => {
           data: fittingData,
           lastUpdated: new Date().toISOString(),
         };
-        console.log('💾 saveFittingStatusToStorage 호출', { store: STORE_NAMES.FITTING_STATUS, dataToSave });
         await saveToIndexedDB(STORE_NAMES.FITTING_STATUS, dataToSave);
         return true;
       } catch (error) {
@@ -59,9 +58,7 @@ export const useFitting = (codinationId?: string) => {
         STORE_NAMES.FITTING_STATUS,
         codinationId!,
       );
-      console.log('📥 loadFittingStatusFromStorage 결과', { store: STORE_NAMES.FITTING_STATUS, result });
       const loaded = result?.data || null;
-      console.log('📦 매핑된 피팅 데이터', loaded);
       return loaded;
     } catch (error) {
       console.error('피팅 상태 데이터 불러오기 실패:', error);
@@ -81,13 +78,11 @@ export const useFitting = (codinationId?: string) => {
       });
 
       const updatedStatus = { ...fittingStatus, ...newStatus };
-      console.log('📝 업데이트된 상태:', updatedStatus);
 
       setFittingStatus(updatedStatus);
 
       // success 상태이고 resultUrl이 있으면 코디네이션에도 저장
       if (updatedStatus.status === 'success' && updatedStatus.resultUrl && codinationId) {
-        console.log('🎯 피팅 성공! 코디네이션에 resultUrl 저장:', updatedStatus.resultUrl);
         const updatedCodinations = codinations.map((codination) =>
           codination.id === codinationId ? { ...codination, fitting_image: updatedStatus.resultUrl } : codination,
         );
@@ -96,7 +91,6 @@ export const useFitting = (codinationId?: string) => {
 
       // codinationId가 있을 때만 저장
       if (shouldUseStorage) {
-        console.log('💾 IndexedDB에 피팅 상태 저장:', updatedStatus);
         await saveFittingStatusToStorage(updatedStatus);
       }
     },
@@ -129,10 +123,8 @@ export const useFitting = (codinationId?: string) => {
 
   useEffect(() => {
     const initializeFittingStatus = async () => {
-      console.log('🚚 피팅 초기화 시작', { codinationId, shouldUseStorage });
       if (!isLoading && shouldUseStorage) {
         const loadedData = await loadFittingStatusFromStorage();
-        console.log('✅ 피팅 초기화 로드 완료', loadedData);
         if (loadedData && loadedData.status !== 'idle') {
           setFittingStatus(loadedData);
         }

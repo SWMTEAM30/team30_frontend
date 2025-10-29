@@ -78,20 +78,12 @@ const startChatStream = ({
     }
   });
 
-  eventSource.addEventListener('content', (event) => {
+  eventSource.addEventListener('content', async (event) => {
     const parsedData = JSON.parse(event.data);
     console.log(parsedData);
     if (parsedData.status === 'success') {
       if (parsedData?.data?.message?.includes('Claude API 스트리밍 호출 실패')) {
-        onError(
-          new Error(
-            'Claude API 스트리밍 호출 실패' +
-              parsedData.data.message.slice(
-                parsedData.data.message.findIndex("'message'") + 11,
-                parsedData.data.message.findIndex("'},"),
-              ),
-          ),
-        );
+        onError(new Error(parsedData.data.message));
         eventSource.close();
         return;
       }
@@ -151,9 +143,6 @@ export const useChatStream = () => {
         }
 
         // 사용자 메시지 추가
-        //console.log(user);
-        //if (!user) return;
-        console.log(roomId);
         const userMessage: Message = {
           id: Date.now().toString(),
           content: inputValue,
@@ -174,7 +163,6 @@ export const useChatStream = () => {
             setIsAIResponding(true);
           },
           onContent: (data: ContentResponse) => {
-            console.log('SSE content', data);
             setStreamingMessage((prev) => {
               const next = new Map(prev);
               let newMessage = next.get(data.agent_id);
@@ -241,7 +229,7 @@ export const useChatStream = () => {
 
             const completedMessage = {
               id: Date.now().toString(),
-              content: 'SSE 처리 중 에러가 발생했습니다: ' + error.message,
+              content: 'SSE 처리 중 에러가 발생했습니다.\n' + error.message,
               user: null,
               agent: {
                 agentname: '에러 감지기',
