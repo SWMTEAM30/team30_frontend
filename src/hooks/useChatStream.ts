@@ -163,6 +163,7 @@ export const useChatStream = () => {
             setIsAIResponding(true);
           },
           onContent: (data: ContentResponse) => {
+            console.log('SSE Content:', data);
             setStreamingMessage((prev) => {
               const next = new Map(prev);
               let newMessage = next.get(data.agent_id);

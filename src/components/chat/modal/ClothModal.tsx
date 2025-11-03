@@ -91,7 +91,7 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
                   src={activeCloth.url}
                   alt={activeCloth.id}
                   fill
-                  className="object-cover rounded-lg"
+                  className="object-contain rounded-lg"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
                 />
               </div>
@@ -105,22 +105,22 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
 
               <div className="space-y-6">
                 {/* 상품 설명 */}
-                <div>
+                {/* <div>
                   <h3 className="text-2xl font-semibold mb-4">상품 설명</h3>
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{activeCloth.description}</p>
                   </div>
-                </div>
+                </div> */}
 
                 {/* 스타일 정보 */}
                 <div>
                   <h3 className="text-2xl font-semibold mb-4">스타일 정보</h3>
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div className=" p-4 rounded-lg">
                     <div className="flex flex-wrap gap-2">
                       {activeCloth.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm rounded-full"
+                          className="px-3 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-md rounded-full"
                         >
                           {tag}
                         </span>
@@ -131,7 +131,6 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
 
                 {/* 액션 버튼들 */}
                 <div>
-                  <h3 className="text-2xl font-semibold mb-4">액션</h3>
                   <div className="space-y-3">
                     <Button
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12 text-lg"
