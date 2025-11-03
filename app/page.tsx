@@ -2,6 +2,8 @@ import HeroSection from '@/components/landing/HeroSection';
 import NextChat from '@/components/landing/NextChat';
 import Explanation from '@/components/landing/Explanation';
 import Image from 'next/image';
+import Features from '@/components/landing/Features';
+import FAQ from '@/components/landing/FAQ';
 
 export default function Home() {
   return (
@@ -39,12 +41,9 @@ export default function Home() {
           </a>
         </div>
       </section>
-
-      <section id="about" className="py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-4">
-          <Explanation />
-        </div>
-      </section>
+      <Explanation />
+      <Features />
+      <FAQ />
     </div>
   );
 }

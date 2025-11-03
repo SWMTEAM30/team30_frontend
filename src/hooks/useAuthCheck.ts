@@ -31,6 +31,7 @@ export function useAuthCheck() {
       } catch (error: any) {
         try {
           const refreshResponse = await postAuthRefresh();
+          console.log(refreshResponse);
           if (refreshResponse.status === 'success') {
             const retryResponse = await getAuthMe();
             if (retryResponse.status === 'success' && retryResponse.data) {
