@@ -38,29 +38,31 @@ export default function Features() {
   ];
 
   return (
-    <section className="w-full px-4 py-20">
+    <section className="w-full py-20">
       {features.map((feature, index) => (
         <div
           key={index}
           className={`flex flex-col ${
-            feature.align === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'
-          } items-center gap-12 m-24 last:mb-0 animate-slide-up`}
+            feature.align === 'right' ? 'md:flex-row-reverse' : 'md:flex-row bg-blue-700'
+          } items-center gap-12 py-24 last:mb-0 animate-slide-up`}
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          <div className="flex-1">
+          <div className="flex-1 px-12">
             <div className="bg-primary-lighter p-6 rounded-2xl w-fit mb-6">
-              <feature.icon className="w-12 h-12 text-primary" />
+              <feature.icon className={`w-12 h-12 ${feature.align === 'left' && 'text-white'}`} />
             </div>
-            <h3 className="text-3xl font-bold mb-4 text-foreground">{feature.title}</h3>
-            <p className="text-lg text-muted-foreground leading-relaxed">{feature.description}</p>
+            <h3 className={`text-3xl font-bold mb-4  ${feature.align === 'left' && 'text-white'}`}>{feature.title}</h3>
+            <p className={`text-lg  leading-relaxed ${feature.align === 'left' && 'text-white'}`}>
+              {feature.description}
+            </p>
           </div>
-          <div className={`relative flex-1 w-[400px] h-[600px]`}>
+          <div className={`relative md:flex-1 w-[400px] h-[300px] md:h-[600px]`}>
             {feature.img ? (
               <Image src={feature.img} alt={feature.title} fill className="object-contain" />
             ) : (
               <div className="bg-gradient-subtle rounded-2xl p-12 h-80 shadow-md flex items-center justify-center">
                 <div className="text-center">
-                  <feature.icon className="w-24 h-24 text-primary mx-auto opacity-20" />
+                  <feature.icon className="w-24 h-24 mx-auto opacity-20" />
                 </div>
               </div>
             )}
