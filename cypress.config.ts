@@ -7,11 +7,4 @@ export default defineConfig({
     video: false,
     screenshotOnRunFailure: false,
   },
-
-  component: {
-    devServer: {
-      framework: "next",
-      bundler: "webpack",
-    },
-  },
 });

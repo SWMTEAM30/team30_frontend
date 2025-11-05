@@ -114,6 +114,113 @@ const startChatStream = ({
   return eventSource;
 };
 
+// SSE 재연결을 관리하는 래퍼
+const startChatStreamWithReconnect = ({
+  roomId,
+  inputValue,
+  products,
+  onConnect,
+  onContent,
+  onComplete,
+  onFinalComplete,
+  onError,
+  setGlobalEventSource,
+}: {
+  roomId: string | null;
+  inputValue: string;
+  products?: Product;
+  onConnect: (data: ConnectResponse) => void;
+  onContent: (data: ContentResponse) => void;
+  onComplete: (data: CompleteResponse) => void;
+  onFinalComplete: (data: FinalCompleteResponse) => void;
+  onError: (error: any) => void;
+  setGlobalEventSource: (es: EventSource | null) => void;
+}) => {
+  let currentES: EventSource | null = null;
+  let reconnectAttempt = 0;
+  let closedManually = false;
+
+  const maxDelay = 30000; // 30s cap
+  const baseDelay = 1000; // 1s
+
+  const connect = () => {
+    if (closedManually) return;
+    try {
+      currentES = startChatStream({
+        roomId,
+        inputValue,
+        products,
+        onConnect: (d) => {
+          reconnectAttempt = 0; // 성공 시 초기화
+          onConnect(d);
+        },
+        onContent,
+        onComplete,
+        onFinalComplete: (d) => {
+          onFinalComplete(d);
+          // 서버에서 명시적 종료 -> 수동 종료 처리
+          cleanup();
+        },
+        onError: (e) => {
+          onError(e);
+          scheduleReconnect();
+        },
+      });
+      setGlobalEventSource(currentES);
+    } catch (e) {
+      onError(e);
+      scheduleReconnect();
+    }
+  };
+
+  const scheduleReconnect = () => {
+    if (closedManually) return;
+    reconnectAttempt += 1;
+    const delay = Math.min(baseDelay * Math.pow(2, reconnectAttempt - 1), maxDelay);
+    // 페이지가 백그라운드면 가시성 다시 돌아올 때까지 대기
+    if (typeof document !== 'undefined' && document.hidden) return;
+    setTimeout(() => {
+      cleanup(false);
+      connect();
+    }, delay);
+  };
+
+  const handleVisibility = () => {
+    if (typeof document === 'undefined') return;
+    if (!document.hidden && !currentES) {
+      // 포그라운드 복귀 시 재연결
+      scheduleReconnect();
+    } else if (document.hidden) {
+      // 백그라운드 전환 시 연결 정리
+      cleanup(false);
+    }
+  };
+
+  const cleanup = (manual = true) => {
+    if (manual) closedManually = true;
+    if (currentES && typeof currentES.close === 'function') {
+      currentES.close();
+    }
+    currentES = null;
+    setGlobalEventSource(null);
+  };
+
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', handleVisibility);
+  }
+
+  connect();
+
+  return {
+    close: () => {
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', handleVisibility);
+      }
+      cleanup(true);
+    },
+  };
+};
+
 export const useChatStream = () => {
   const roomId = useAtomValue(roomIdAtom);
   const setInputValue = useSetAtom(inputValueAtom);
@@ -154,7 +261,7 @@ export const useChatStream = () => {
         };
         setMessages((prev) => [...prev, userMessage]);
 
-        const eventSource = startChatStream({
+        const controller = startChatStreamWithReconnect({
           roomId,
           inputValue,
           products,
@@ -246,8 +353,11 @@ export const useChatStream = () => {
             setGlobalEventSource(null);
             reject(error);
           },
+          setGlobalEventSource,
         });
-        setGlobalEventSource(eventSource);
+        // 기존 API와 호환되도록 EventSource 유사 객체를 저장하고, onMutate에서 close 호출되게 유지
+        // @ts-ignore
+        setGlobalEventSource({ close: () => controller.close() } as any);
       });
     },
     onMutate: () => {
