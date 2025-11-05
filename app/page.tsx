@@ -44,6 +44,10 @@ export default function Home() {
       <Explanation />
       <Features />
       <FAQ />
+
+      <div className="border-t bg-blue-700 border-border m-8 p-8 text-center text-md text-muted-foreground">
+        <p>© 2025 the first take. All rights reserved.</p>
+      </div>
     </div>
   );
 }

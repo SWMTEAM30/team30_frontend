@@ -10,6 +10,38 @@ interface RetryConfig {
 let globalRetryConfig: RetryConfig = { ...DEFAULT_RETRY_CONFIG };
 
 let dbInstance: IDBDatabase | null = null;
+let indexedDBUnavailable = false; // 프라이빗 모드/에러 등으로 사용 불가 상태
+
+// 메모리 폴백 스토리지 (사파리 프라이빗 모드 대응)
+const memoryStores: Map<string, Map<string, any>> = new Map();
+
+const getMemoryStore = (storeName: string): Map<string, any> => {
+  if (!memoryStores.has(storeName)) {
+    memoryStores.set(storeName, new Map());
+  }
+  return memoryStores.get(storeName)!;
+};
+
+const getKeyForStore = (storeName: string, data: any): string => {
+  switch (storeName) {
+    case STORE_NAMES.CLOSET:
+    case STORE_NAMES.CODINATIONS:
+      return data.id;
+    case STORE_NAMES.FITTING_STATUS:
+      return data.codinationId;
+    case STORE_NAMES.USER_PROFILE:
+    case STORE_NAMES.USER_SETTINGS:
+      return data.userId;
+    default:
+      return data.id ?? '';
+  }
+};
+
+const shouldUseMemory = (): boolean => {
+  if (typeof window === 'undefined') return true;
+  if (indexedDBUnavailable) return true;
+  return !('indexedDB' in window);
+};
 
 const setRetryConfig = (config: Partial<RetryConfig>) => {
   globalRetryConfig = { ...globalRetryConfig, ...config };
@@ -30,10 +62,22 @@ const initDB = (): Promise<IDBDatabase> => {
       return;
     }
 
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    if (shouldUseMemory()) {
+      indexedDBUnavailable = true;
+      return reject(new Error('IndexedDB not available, using memory fallback.'));
+    }
+
+    let request: IDBOpenDBRequest;
+    try {
+      request = indexedDB.open(DB_NAME, DB_VERSION);
+    } catch (e) {
+      indexedDBUnavailable = true;
+      return reject(e);
+    }
 
     request.onerror = () => {
       console.error('IndexedDB 열기 실패:', request.error);
+      indexedDBUnavailable = true;
       reject(request.error);
     };
 
@@ -82,8 +126,12 @@ export const saveToIndexedDB = async <T>(
   data: T,
   retryConfig?: Partial<RetryConfig>,
 ): Promise<void> => {
-  if (!isIndexedDBSupported()) {
-    throw new Error('IndexedDB가 지원되지 않는 브라우저입니다.');
+  if (shouldUseMemory()) {
+    const store = getMemoryStore(storeName);
+    const key = getKeyForStore(storeName, data as any);
+    if (!key) throw new Error(`${storeName} 저장 시 키가 필요합니다.`);
+    store.set(String(key), data);
+    return;
   }
 
   const config = { ...globalRetryConfig, ...retryConfig };
@@ -136,8 +184,13 @@ export const saveToIndexedDB = async <T>(
         await new Promise((r) => setTimeout(r, delay));
         continue;
       }
-
-      throw error;
+      // 모든 재시도 소진 후 메모리 폴백으로 전환
+      indexedDBUnavailable = true;
+      const store = getMemoryStore(storeName);
+      const key = getKeyForStore(storeName, data as any);
+      if (!key) throw error;
+      store.set(String(key), data);
+      return;
     }
   }
 };
@@ -147,8 +200,13 @@ export const loadFromIndexedDB = async <T>(
   key?: string,
   retryConfig?: Partial<RetryConfig>,
 ): Promise<T | null> => {
-  if (!isIndexedDBSupported()) {
-    throw new Error('IndexedDB가 지원되지 않는 브라우저입니다.');
+  if (shouldUseMemory()) {
+    const store = getMemoryStore(storeName);
+    if (key) {
+      return (store.get(String(key)) as T) ?? null;
+    }
+    // getAll
+    return (Array.from(store.values()) as unknown as T) ?? (null as any);
   }
 
   const config = { ...globalRetryConfig, ...retryConfig };
@@ -171,15 +229,21 @@ export const loadFromIndexedDB = async <T>(
         await new Promise((r) => setTimeout(r, delay));
         continue;
       }
-      return null;
+      // 모든 재시도 소진 후 메모리 폴백 사용
+      indexedDBUnavailable = true;
+      const mem = getMemoryStore(storeName);
+      if (key) return (mem.get(String(key)) as T) ?? null;
+      return (Array.from(mem.values()) as unknown as T) ?? (null as any);
     }
   }
   return null;
 };
 
 export const deleteFromIndexedDB = async (storeName: string, key: string): Promise<void> => {
-  if (!isIndexedDBSupported()) {
-    throw new Error('IndexedDB가 지원되지 않는 브라우저입니다.');
+  if (shouldUseMemory()) {
+    const store = getMemoryStore(storeName);
+    store.delete(String(key));
+    return;
   }
 
   try {
@@ -194,13 +258,19 @@ export const deleteFromIndexedDB = async (storeName: string, key: string): Promi
     });
   } catch (error) {
     console.error(`IndexedDB 삭제 실패 (${storeName}):`, error);
-    throw error;
+    // 메모리 폴백으로 삭제 시도 후 성공 시 에러 전파하지 않음
+    indexedDBUnavailable = true;
+    const store = getMemoryStore(storeName);
+    store.delete(String(key));
+    return;
   }
 };
 
 export const clearIndexedDB = async (storeName: string): Promise<void> => {
-  if (!isIndexedDBSupported()) {
-    throw new Error('IndexedDB가 지원되지 않는 브라우저입니다.');
+  if (shouldUseMemory()) {
+    const store = getMemoryStore(storeName);
+    store.clear();
+    return;
   }
 
   try {
@@ -215,7 +285,10 @@ export const clearIndexedDB = async (storeName: string): Promise<void> => {
     });
   } catch (error) {
     console.error(`IndexedDB 전체 삭제 실패 (${storeName}):`, error);
-    throw error;
+    indexedDBUnavailable = true;
+    const store = getMemoryStore(storeName);
+    store.clear();
+    return;
   }
 };
 
