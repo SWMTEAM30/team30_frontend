@@ -1,4 +1,4 @@
-import { expect, afterEach, vi } from 'vitest';
+import { afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
@@ -9,22 +9,24 @@ import { handlers } from './msw/handlers';
 const server = setupServer(...handlers);
 
 // Start/stop server
-beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+before(() => server.listen({ onUnhandledRequest: 'bypass' }));
 afterAll(() => server.close());
 afterEach(() => {
-	server.resetHandlers();
-	cleanup();
+  server.resetHandlers();
+  cleanup();
 });
 
 // Global mocks
 global.fetch = vi.fn();
 
 if (typeof window !== 'undefined') {
-	Object.defineProperty(window, 'indexedDB', {
-		writable: true,
-		value: {
-			open: vi.fn(),
-		},
-	});
+  Object.defineProperty(window, 'indexedDB', {
+    writable: true,
+    value: {
+      open: vi.fn(),
+    },
+  });
 }
-
+function afterAll(arg0: () => void) {
+  throw new Error('Function not implemented.');
+}
