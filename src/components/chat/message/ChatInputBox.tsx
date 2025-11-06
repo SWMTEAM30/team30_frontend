@@ -91,7 +91,7 @@ export default function ChatInputBox() {
         bg-white dark:bg-slate-800
           flex-1 resize-none
           min-h-[48px] max-h-[80px]
-          text-3xl
+          text-xl
           px-5 py-3
           border-none focus-visible:border-0 focus:outline-none focus:ring-0
         "

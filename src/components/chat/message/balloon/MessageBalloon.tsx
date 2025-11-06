@@ -1,5 +1,5 @@
-import MainPost from './MainPost';
-import SingleMessage from './SingleMessage';
+import MainPost from '@/components/chat/message/balloon/MainPost';
+import SingleMessage from '@/components/chat/message/balloon/SingleMessage';
 import { useCodinationSave } from '@/hooks/useCodinationSave';
 
 export default function MessageBalloon({

@@ -2,8 +2,8 @@ import Image from 'next/image';
 import MessageParser from '@/components/chat/message/balloon/MessageParser';
 import { elapsedTimeText } from '@/lib/utils';
 import { messageColor } from '@/styles/chat';
-import ProductGallery from './ProductGallery';
-import SaveCodinationButton from './SaveCodinationButton';
+import ProductGallery from '@/components/chat/message/balloon/ProductGallery';
+import SaveCodinationButton from '@/components/chat/message/balloon/SaveCodinationButton';
 
 interface SingleMessageProps {
   message: Message;

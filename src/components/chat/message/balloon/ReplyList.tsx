@@ -2,8 +2,8 @@ import Image from 'next/image';
 import MessageParser from '@/components/chat/message/balloon/MessageParser';
 import { elapsedTimeText } from '@/lib/utils';
 import { messageColor } from '@/styles/chat';
-import ProductGallery from './ProductGallery';
-import SaveCodinationButton from './SaveCodinationButton';
+import ProductGallery from '@/components/chat/message/balloon/ProductGallery';
+import SaveCodinationButton from '@/components/chat/message/balloon/SaveCodinationButton';
 
 interface ReplyListProps {
   replies: Message[];
@@ -37,7 +37,7 @@ export default function ReplyList({ replies, onSaveCodination, isSaved }: ReplyL
           </div>
 
           <div className="flex w-full min-w-0 flex-col space-y-3 overflow-hidden dark:text-blue-300">
-            <p className="flex space-x-2 text-sm">
+            <p className="flex space-x-2 text-xl">
               <span className="font-extrabold">{reply.agent?.agentname || 'AI'}</span>
               <span className="text-gray-500">{elapsedTimeText(reply.createdAt)}</span>
             </p>
