@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { encrypt } from './crypt';
+import { encrypt } from '@/lib/crypt';
 import CryptoJS from 'crypto-js';
 
 describe('crypt', () => {

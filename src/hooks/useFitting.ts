@@ -84,7 +84,7 @@ export const useFitting = (codinationId?: string) => {
       // success 상태이고 resultUrl이 있으면 코디네이션에도 저장
       if (updatedStatus.status === 'success' && updatedStatus.resultUrl && codinationId) {
         const updatedCodinations = codinations.map((codination) =>
-          codination.id === codinationId ? { ...codination, fitting_image: updatedStatus.resultUrl } : codination,
+          codination.id === codinationId ? { ...codination, fitting_id: codinationId } : codination,
         );
         setCodinations(updatedCodinations);
       }

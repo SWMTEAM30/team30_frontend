@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { cn, moveItemToFront, getStringNumbersOnly, elapsedTimeText } from './utils';
+import { cn, moveItemToFront, getStringNumbersOnly, elapsedTimeText } from '@/lib/utils';
 
 describe('utils', () => {
   describe('cn', () => {

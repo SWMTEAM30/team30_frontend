@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { requestAPI } from './API';
+import { requestAPI } from '@/api/API';
 
 // Ensure env for tests
 process.env.NEXT_PUBLIC_TFT_BACKEND_URL = 'http://localhost:3000';

@@ -22,14 +22,14 @@ export default function ClosetClothCard({ cloth }: ClosetClothCardProps) {
       {/* 삭제 버튼 (우상단) */}
       <button
         aria-label="remove-from-closet"
-        className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-700 text-slate-600 dark:text-slate-200 shadow hover:bg-white dark:hover:bg-slate-600 flex items-center justify-center"
+        className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-700 text-slate-600 dark:text-white shadow hover:bg-white dark:hover:bg-slate-600 flex items-center justify-center"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           removeClothFromCloset(cloth.id);
         }}
       >
-        <LucideIcon name={'X'} size={16} />
+        <LucideIcon name={'X'} color={'blue-100'} size={16} />
       </button>
       {/* ClothModal로 감싸기 */}
       <ClothModal product={product}>

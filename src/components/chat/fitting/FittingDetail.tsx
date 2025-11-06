@@ -23,39 +23,25 @@ export default function FittingDetail() {
       <div className="border border-blue dark:bg-slate-800 rounded-2xl p-4">
         <h3 className="text-2xl font-bold mb-4">피팅 모델</h3>
         <div className="flex items-center gap-4">
+          <div className="flex-shrink-0">
+            <Image
+              src={user?.modelImage || '/model_image.jpg'}
+              alt="사용자 모델 이미지"
+              width={80}
+              height={80}
+              className="rounded-lg object-cover"
+            />
+          </div>
           {user?.modelImage ? (
-            <>
-              <div className="flex-shrink-0">
-                <Image
-                  src={user.modelImage}
-                  alt="사용자 모델 이미지"
-                  width={80}
-                  height={80}
-                  className="rounded-lg object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <p className="font-bold text-lg mb-1">개인 모델 이미지</p>
-                <p className="text-sm text-green-600 dark:text-green-400">✅ 설정된 모델 이미지가 사용됩니다</p>
-              </div>
-            </>
+            <div className="flex-1">
+              <p className="font-bold text-lg mb-1">개인 모델 이미지</p>
+              <p className="text-sm text-green-600 dark:text-green-400">✅ 설정된 모델 이미지가 사용됩니다</p>
+            </div>
           ) : (
-            <>
-              <div className="flex-shrink-0 w-20 h-20 bg-gray-200 dark:bg-slate-600 rounded-lg flex items-center justify-center">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <p className="font-bold text-lg  mb-1">기본 모델 이미지</p>
-                <p className="text-sm text-gray-500 ">[설정]에서 개인 모델 이미지를 업로드하세요</p>
-              </div>
-            </>
+            <div className="flex-1">
+              <p className="font-bold text-lg  mb-1">기본 모델 이미지</p>
+              <p className="text-sm text-gray-500 ">[설정]에서 개인 모델 이미지를 업로드하세요</p>
+            </div>
           )}
         </div>
       </div>
@@ -68,7 +54,13 @@ export default function FittingDetail() {
             ? activeCodination.cloths.map((cloth: ClosetCloth, index: number) => (
                 <div key={index} className="flex items-center gap-3 p-3 rounded-lg">
                   <div className="flex-shrink-0 flex items-center justify-center w-15 aspect-[3/4]">
-                    <Image src={cloth.url} alt={cloth.name} fill className="rounded-lg object-cover" />
+                    <Image
+                      src={cloth.url}
+                      alt={cloth.name}
+                      width={100}
+                      height={100}
+                      className="rounded-lg object-cover"
+                    />
                   </div>
                   {/* 텍스트 영역 */}
                   <div className="flex-1 min-w-0">

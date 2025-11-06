@@ -104,14 +104,6 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
               </DialogHeader>
 
               <div className="space-y-6">
-                {/* 상품 설명 */}
-                {/* <div>
-                  <h3 className="text-2xl font-semibold mb-4">상품 설명</h3>
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{activeCloth.description}</p>
-                  </div>
-                </div> */}
-
                 {/* 스타일 정보 */}
                 <div>
                   <h3 className="text-2xl font-semibold mb-4">스타일 정보</h3>

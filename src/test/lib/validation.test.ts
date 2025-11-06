@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { matchThevalueinMessage } from './validation';
+import { matchThevalueinMessage } from '@/lib/validation';
 
 describe('validation', () => {
   describe('matchThevalueinMessage', () => {

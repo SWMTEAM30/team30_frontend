@@ -11,9 +11,6 @@ export default function FittingCard() {
   const user = useAtomValue(userAtom);
   const { fittingStatus } = useFitting(activeCodination?.id);
 
-  // 코디네이션에 저장된 피팅 이미지가 있으면 우선 표시
-  const displayImage = activeCodination?.fitting_image || fittingStatus.resultUrl;
-
   return (
     <div className="flex bg-gray-100 dark:bg-slate-800 flex-col h-full min-h-[400px]">
       <div className="flex h-full items-center justify-center">
@@ -22,7 +19,7 @@ export default function FittingCard() {
           resultUrl={fittingStatus.resultUrl}
           errorMessage={fittingStatus.errorMessage}
           userModelImage={user?.modelImage}
-          displayImage={displayImage}
+          displayImage={fittingStatus.resultUrl}
         />
       </div>
     </div>
