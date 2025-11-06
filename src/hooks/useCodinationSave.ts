@@ -93,7 +93,7 @@ export function useCodinationSave() {
 
       const newCodination = {
         id: new Date().getTime().toString(),
-        fitting_image: null,
+        fitting_id: null,
         cloths: cloths,
         description: agentDescription,
       };
@@ -134,4 +134,3 @@ export function useCodinationSave() {
     isSaved,
   };
 }
-
