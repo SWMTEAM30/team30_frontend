@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { parseColorSet } from './color';
+import { parseColorSet } from '@/lib/color';
 
 // colorSet 모킹
 vi.mock('@/styles/generated-palette', () => ({

@@ -9,7 +9,7 @@ export interface LucideIconProps extends HTMLAttributes<HTMLOrSVGElement> {
   size?: number;
 }
 
-export default function LucideIcon({ name, color = 'blue-500', size = 16, ...props }: LucideIconProps) {
+export default function LucideIcon({ name, color, size = 16, ...props }: LucideIconProps) {
   const SelectLucideIcon = icons[name];
 
   const isClickEvent = !!props.onClick;
@@ -17,7 +17,7 @@ export default function LucideIcon({ name, color = 'blue-500', size = 16, ...pro
 
   return (
     <SelectLucideIcon
-      color={parseColorSet(color, props.className?.includes('dark'))}
+      color={color && parseColorSet(color, props.className?.includes('dark'))}
       size={size}
       className={cn(pointerStyle, props.className)}
       {...props}

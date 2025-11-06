@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useCloset } from './useCloset';
+import { useCloset } from '@/hooks/useCloset';
 import { useAtom } from 'jotai';
 import { closetAtom } from '@/atoms/chatAtoms';
 

@@ -16,7 +16,7 @@ const CodinationActions = memo(function CodinationActions({
 }: CodinationActionsProps) {
   return (
     <div className="space-y-2">
-      {codination.fitting_image ? (
+      {codination.fitting_id ? (
         <button
           onClick={onVirtualFitting}
           className="w-full flex items-center gap-2 p-3 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 text-green-600 dark:text-green-400 transition-colors"

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { groupMessagesIntoPosts, addMessageToGroups, type MessageGroup } from './messageGrouping';
+import { groupMessagesIntoPosts, addMessageToGroups, type MessageGroup } from '@/lib/messageGrouping';
 
 describe('messageGrouping', () => {
   const createUserMessage = (id: string, content: string, createdAt?: Date): Message => ({

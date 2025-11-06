@@ -41,7 +41,7 @@ export default function CodinationModal({ isOpen, onClose }: CodinationModalProp
     if (!closetCodination) {
       setClosetCodination({
         id: '',
-        fitting_image: null,
+        fitting_id: null,
         cloths: [cloth],
       });
       return;
@@ -126,7 +126,7 @@ export default function CodinationModal({ isOpen, onClose }: CodinationModalProp
                     {/* 선택 표시 */}
                     {isSelected && (
                       <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center z-10">
-                        <span className=" text-xs">✓</span>
+                        <span className=" text-xs text-white">✓</span>
                       </div>
                     )}
 
@@ -157,7 +157,7 @@ export default function CodinationModal({ isOpen, onClose }: CodinationModalProp
           <button
             onClick={handleCreateCodination}
             disabled={selectedCloths.length === 0 || isCreating}
-            className="w-full sm:flex-1 px-4 py-3 bg-blue-600 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-500 disabled:bg-blue-200 disabled:dark:bg-blue-800 disabled:dark:hover:bg-blue-800 disabled:cursor-not-allowed transition-colors"
+            className="w-full sm:flex-1 px-4 py-3 bg-blue-600 rounded-lg text-white hover:bg-blue-700 dark:hover:bg-blue-500  disabled:bg-blue-200 disabled:dark:bg-blue-800 disabled:dark:hover:bg-blue-800 disabled:cursor-not-allowed transition-colors"
           >
             {isCreating ? '생성 중...' : `코디 생성 (${selectedCloths.length}개)`}
           </button>

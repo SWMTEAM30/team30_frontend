@@ -1,22 +1,21 @@
 'use client';
 
-import { activeCodinationAtom } from '@/atoms/chatAtoms';
+import { activeCodinationAtom, panelAtom } from '@/atoms/chatAtoms';
 import { useAtom } from 'jotai';
 import { useState, useCallback, memo } from 'react';
 import { useCodination } from '@/hooks/useCodination';
 import { useVirtualFitting } from '@/hooks/useVirtualFitting';
 import CodinationCardHeader from './CodinationCardHeader';
-import CodinationClothItem from './CodinationClothItem';
 import CodinationActions from './CodinationActions';
-import ClothModal from '@/components/chat/modal/ClothModal';
 
 interface CodinationCardProps {
   codination: Codination;
 }
 
 const CodinationCard = memo(function CodinationCard({ codination }: CodinationCardProps) {
-  const [activeCodination] = useAtom(activeCodinationAtom);
+  const [activeCodination, setActiveCodination] = useAtom(activeCodinationAtom);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [_, setPanel] = useAtom(panelAtom);
 
   // 스토리지 훅 사용
   const { removeCodination } = useCodination();
@@ -30,6 +29,12 @@ const CodinationCard = memo(function CodinationCard({ codination }: CodinationCa
   );
 
   const handleVirtualFitting = useCallback(async () => {
+    if (codination?.fitting_id) {
+      setActiveCodination(codination);
+      setPanel('fitting');
+      return;
+    }
+    setActiveCodination(codination);
     await executeVirtualFitting(codination.cloths);
   }, [executeVirtualFitting, codination.cloths]);
 

@@ -8,7 +8,7 @@ import {
   getAuthCookie,
   getAuthJWT,
   deleteAuthCookie,
-} from './auth';
+} from '@/lib/auth';
 
 // cookies 모듈 모킹
 vi.mock('@/lib/cookies', () => ({

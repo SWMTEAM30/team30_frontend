@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatMessage, formatRoomMessage } from './chat_formatter';
+import { formatMessage, formatRoomMessage } from '@/lib/chat_formatter';
 
 describe('chat_formatter', () => {
   describe('formatMessage', () => {

@@ -32,7 +32,7 @@ export const useCodinationCreation = () => {
     const isDuplicate = codinations.some((existingCodination) =>
       isSameCodination(existingCodination, {
         id: '',
-        fitting_image: null,
+        fitting_id: null,
         cloths: closetCodination.cloths,
       }),
     );
@@ -44,7 +44,7 @@ export const useCodinationCreation = () => {
 
     const newCodination: Codination = {
       id: `codination-${Date.now()}`,
-      fitting_image: null,
+      fitting_id: null,
       cloths: [...closetCodination.cloths],
     };
 
@@ -53,7 +53,7 @@ export const useCodinationCreation = () => {
       await addCodination(newCodination);
       setClosetCodination(null);
       setPanel('codination');
-      
+
       console.log('새 코디네이션 생성됨:', newCodination);
       return true;
     } catch (error) {
