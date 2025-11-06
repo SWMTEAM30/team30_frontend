@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import LucideIcon from '@/components/ui/icons/LucideIcon';
 import { elapsedTimeText } from '@/lib/utils';
-import ReplyList from './ReplyList';
-import ProductGallery from './ProductGallery';
+import ReplyList from '@/components/chat/message/balloon/ReplyList';
+import ProductGallery from '@/components/chat/message/balloon/ProductGallery';
 
 interface MainPostProps {
   message: Message;
@@ -38,7 +38,7 @@ export default function MainPost({ message, replies, onSaveCodination, isSaved }
             <div className="pt-3 ">
               <button
                 onClick={() => setIsRepliesCollapsed(!isRepliesCollapsed)}
-                className="flex items-center space-x-2 text-md mb-3 "
+                className="flex items-center space-x-2 text-xl mb-3 "
               >
                 <LucideIcon
                   name={isRepliesCollapsed ? 'ChevronRight' : 'ChevronDown'}

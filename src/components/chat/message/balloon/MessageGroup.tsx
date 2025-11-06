@@ -1,5 +1,5 @@
-import MessageBalloon from './MessageBalloon';
-import MessageDivider from './MessageDivider';
+import MessageBalloon from '@/components/chat/message/balloon/MessageBalloon';
+import MessageDivider from '@/components/chat/message/balloon/MessageDivider';
 
 interface MessageGroup {
   id: string;
