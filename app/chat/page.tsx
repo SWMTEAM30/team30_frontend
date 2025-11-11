@@ -55,35 +55,35 @@ export default function Chat() {
 
   return (
     <Suspense>
-      <div className="flex flex-col">
+      <main className="flex flex-col">
         {/* 모바일/태블릿에서는 상단에 메뉴 표시 */}
-        <div className="lg:hidden">
+        <nav className="lg:hidden">
           <ChatMenu />
-        </div>
+        </nav>
         <div className="flex h-[calc(100vh-5rem)] lg:h-[100vh] min-[1440px]:pl-28">
           {/* 데스크톱: 좌우 분할 레이아웃 */}
-          <div className="hidden lg:flex w-full lg:w-1/2 h-full lg:transition-all lg:duration-300">
+          <section className="hidden lg:flex w-full lg:w-1/2 h-full lg:transition-all lg:duration-300">
             <ChatPanel />
-          </div>
+          </section>
 
-          <div className="hidden lg:flex flex-col h-full w-full lg:w-1/2 border-l border-navy-200">
-            <div className="flex-shrink-0">
+          <aside className="hidden lg:flex flex-col h-full w-full lg:w-1/2 border-l border-navy-200">
+            <nav className="flex-shrink-0">
               <ChatMenu />
-            </div>
+            </nav>
             <div className="flex-1 min-h-0">
               {panel === 'closet' && <ClosetPanel />}
               {panel === 'fitting' && <FittingPanel />}
             </div>
-          </div>
+          </aside>
 
           {/* 모바일/태블릿: 단일 패널 레이아웃 */}
-          <div className="lg:hidden w-full h-[calc(100vh-5rem)] min-[1440px]:h-[100vh]">
+          <section className="lg:hidden w-full h-[calc(100vh-5rem)] min-[1440px]:h-[100vh]">
             {panel === 'chat' && <ChatPanel />}
             {panel === 'closet' && <ClosetPanel />}
             {panel === 'fitting' && <FittingPanel />}
-          </div>
+          </section>
         </div>
-      </div>
+      </main>
     </Suspense>
   );
 }
