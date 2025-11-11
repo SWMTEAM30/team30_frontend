@@ -38,21 +38,21 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
 
   return (
     <Suspense>
-      <div className="flex flex-col">
+      <main className="flex flex-col">
         {/* 상단에 메뉴 표시 */}
-        <div>
+        <nav>
           <ChatMenu />
-        </div>
+        </nav>
         <div className="flex justify-center w-full h-[100vh] min-[1440px]:pl-28">
           {/* 단일 패널 레이아웃 */}
-          <div className="w-[1024px] h-[calc(100vh-4.1rem)] min-[1440px]:h-[100vh]">
+          <section className="w-[1024px] h-[calc(100vh-4.1rem)] min-[1440px]:h-[100vh]">
             {panel === 'chat' && <ChatPanel />}
             {panel === 'closet' && <ClosetPanel />}
             {panel === 'codination' && <CodinationPanel />}
             {panel === 'fitting' && <FittingPanel />}
-          </div>
+          </section>
         </div>
-      </div>
+      </main>
     </Suspense>
   );
 }

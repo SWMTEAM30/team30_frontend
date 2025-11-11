@@ -7,7 +7,7 @@ import FAQ from '@/components/landing/FAQ';
 
 export default function Home() {
   return (
-    <div className="font-sans">
+    <main className="font-sans">
       <section className="h-screen flex items-center justify-center relative ">
         <div className="absolute inset-x-0 top-0 h-1/2 bg-blue dark:bg-blue-800 -z-20 pointer-events-none">
           <Image className="object-cover opacity-60 dark:opacity-30" src={'/logo1.png'} alt={'logo'} fill />
@@ -45,9 +45,9 @@ export default function Home() {
       <Features />
       <FAQ />
 
-      <div className="border-t bg-blue-700 border-border m-8 p-8 text-center text-md text-muted-foreground">
+      <footer className="border-t bg-blue-700 border-border m-8 p-8 text-center text-md text-muted-foreground">
         <p>© 2025 the first take. All rights reserved.</p>
-      </div>
-    </div>
+      </footer>
+    </main>
   );
 }
