@@ -40,22 +40,22 @@ describe('color', () => {
     });
 
     it('should return default color for invalid color', () => {
-      const result = parseColorSet('invalid-color-500', false, '#000000');
+      const result = parseColorSet('invalid-color-500' as any, false, '#000000');
       expect(result).toBe('#000000');
     });
 
     it('should return default color for invalid shade', () => {
-      const result = parseColorSet('blue-999', false, '#000000');
+      const result = parseColorSet('blue-999' as any, false, '#000000');
       expect(result).toBe('#000000');
     });
 
     it('should use default defaultColor when provided', () => {
-      const result = parseColorSet('invalid-500', false, '#ff00ff');
+      const result = parseColorSet('invalid-500' as any, false, '#ff00ff');
       expect(result).toBe('#ff00ff');
     });
 
     it('should handle different color names', () => {
-      const result = parseColorSet('red-500', false);
+      const result = parseColorSet('red-500' as any, false);
       expect(result).toBe('#ff0000');
     });
   });

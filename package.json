@@ -78,6 +78,24 @@
     "ts-node": "^10.9.2",
     "typescript-eslint": "^8.44.1"
   },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all",
+      "not ie <= 11",
+      "not chrome < 105",
+      "not firefox < 100",
+      "not safari < 14",
+      "not edge < 105"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version",
+      "last 1 edge version"
+    ]
+  },
   "pnpm": {
     "overrides": {
       "@eslint/plugin-kit": "0.3.4"

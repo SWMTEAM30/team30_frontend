@@ -9,8 +9,16 @@ import { panelAtom, roomIdAtom } from '@/atoms/chatAtoms';
 import { Suspense, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { postChatRooms } from '@/api/chatAPI';
+import JsonLd from '@/components/seo/JsonLd';
+import { createSoftwareApplicationSchema } from '@/lib/schema';
 
 export default function Chat() {
+  const softwareApplicationSchema = createSoftwareApplicationSchema(
+    'The First Take - AI 패션 채팅',
+    'AI 패션 어시스턴트와 실시간으로 대화하며 맞춤형 스타일 추천을 받아보세요.',
+    'https://the-first-take.com/chat',
+    '/TFT_icon.png'
+  );
   const panel = useAtomValue(panelAtom);
   const setPanel = useSetAtom(panelAtom);
   const router = useRouter();
@@ -55,6 +63,7 @@ export default function Chat() {
 
   return (
     <Suspense>
+      <JsonLd data={softwareApplicationSchema} />
       <main className="flex flex-col">
         {/* 모바일/태블릿에서는 상단에 메뉴 표시 */}
         <nav className="lg:hidden">
