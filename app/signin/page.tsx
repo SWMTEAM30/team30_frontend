@@ -2,10 +2,20 @@ import SigninSNSForm from '@/components/auth/SigninSNSForm';
 import LoginBackground from '@/components/auth/LoginBackground';
 import Image from 'next/image';
 import LoginBackgroundDark from '@/components/auth/LoginBackgroundDark';
+import JsonLd from '@/components/seo/JsonLd';
+import { createWebPageSchema } from '@/lib/schema';
 
 export default function SigninPage() {
+  const webPageSchema = createWebPageSchema(
+    'SNS 로그인 - The First Take',
+    '패션 AI와 함께 나만의 스타일을 찾아보세요. SNS 계정으로 간편하게 로그인하세요.',
+    'https://the-first-take.com/signin'
+  );
+
   return (
-    <main className="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <>
+      <JsonLd data={webPageSchema} />
+      <main className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <LoginBackground />
       <LoginBackgroundDark />
 
@@ -45,5 +55,6 @@ export default function SigninPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

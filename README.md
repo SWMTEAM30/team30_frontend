@@ -47,3 +47,29 @@ LLM 기반의 대화형 인터페이스를 통해 사용자의 체형, 취향, T
 
 - **Backend**: Spring, PostgreSQL, Redis
 - **AI**: FastAPI, LangChain, LangGraph, MongoDB
+
+---
+
+## 🌐 Browser Support
+
+이 프로젝트는 다음 브라우저를 지원합니다:
+
+### **데스크톱 브라우저**
+- ✅ Chrome 105+
+- ✅ Edge 105+ (Chromium 기반)
+- ✅ Firefox 100+
+- ✅ Safari 14+
+- ✅ Opera 90+
+
+### **모바일 브라우저**
+- ✅ iOS Safari 14+
+- ✅ Android Chrome 105+
+- ✅ Samsung Internet 15+
+- ✅ Android Browser 105+
+
+### **지원하지 않는 브라우저**
+- ❌ Internet Explorer 11 이하
+- ❌ Opera Mini
+- ❌ 구형 모바일 브라우저 (시장 점유율 0.2% 미만)
+
+> **참고**: 최신 브라우저 기능을 활용하기 위해 ES2017+ 표준을 사용합니다. 구형 브라우저에서는 일부 기능이 제한될 수 있습니다.
