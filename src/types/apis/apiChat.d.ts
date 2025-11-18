@@ -39,3 +39,5 @@ type APIProduct = {
   style_tags: string[];
   tpo_tags: string[];
 };
+
+type APIProductDescription = string;
