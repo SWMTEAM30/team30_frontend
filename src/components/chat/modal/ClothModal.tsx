@@ -4,10 +4,10 @@ import React, { useCallback, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, ShoppingBag } from 'lucide-react';
+import { ExternalLink, ShoppingBag, Loader2 } from 'lucide-react';
 import { useAtom, useSetAtom } from 'jotai';
 import { activeClothAtom, panelAtom } from '@/atoms/chatAtoms';
-import { getChatProduct } from '@/api/chatAPI';
+import { getChatProduct, getChatProductDescription } from '@/api/chatAPI';
 import { useCloset } from '@/hooks/useCloset';
 
 interface ClothModalProps {
@@ -20,6 +20,8 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
   const [activeCloth, setActiveCloth] = useAtom(activeClothAtom);
   const [isOpen, setIsOpen] = useState(false);
   const setPanel = useSetAtom(panelAtom);
+  const [productDescription, setProductDescription] = useState('');
+  const [isLoadingDescription, setIsLoadingDescription] = useState(false);
 
   // 스토리지 훅 사용
   const { closet, addClothToCloset } = useCloset();
@@ -60,6 +62,8 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
         // 모달을 닫을 때
         setActiveCloth(null);
         setIsOpen(false);
+        setProductDescription('');
+        setIsLoadingDescription(false);
       }
     },
     [product, cloth, setActiveCloth],
@@ -144,7 +148,34 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
                       <ShoppingBag className="w-5 h-5 mr-2" />
                       옷장에 추가하기
                     </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full h-12 text-lg"
+                      onClick={async () => {
+                        if (!activeCloth || activeCloth.id === 'user') return;
+                        setIsLoadingDescription(true);
+                        const res = await getChatProductDescription(activeCloth.id);
+                        setProductDescription(
+                          res.status === 'success' ? (typeof res.data === 'string' ? res.data : '') : '',
+                        );
+                        setIsLoadingDescription(false);
+                      }}
+                    >
+                      상품 설명 보기
+                    </Button>
                   </div>
+                  {isLoadingDescription && (
+                    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center gap-3">
+                      <Loader2 className="w-5 h-5 animate-spin text-gray-500" />
+                      <span className="text-sm text-gray-600 dark:text-gray-300">설명을 불러오는 중...</span>
+                    </div>
+                  )}
+                  {productDescription.length > 0 && (
+                    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                      <h3 className="text-xl font-semibold mb-2">상품 설명</h3>
+                      <p className="text-sm leading-6 whitespace-pre-wrap">{productDescription}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

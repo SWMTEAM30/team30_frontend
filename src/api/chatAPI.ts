@@ -90,6 +90,20 @@ export const getChatProduct = async (product: Product): Promise<APIResponse<Clos
   };
 };
 
+export const getChatProductDescription = async (productId: string): Promise<APIResponse<string>> => {
+  const response = await requestAPI<APIProductDescription>(`/api/chat/products/${productId}/description`, 'GET');
+  if (response.status === 'fail') {
+    console.error(new Error(response.message));
+    return response;
+  }
+
+  return {
+    status: response.status,
+    message: response.message,
+    data: response.data,
+  };
+};
+
 // POST
 export const postChatSend = async (roomId: string | null, message: Message) => {
   return requestAPI<number>(`/api/chat/send${roomId ? `?roomId=${roomId}` : ''}`, 'POST', {
