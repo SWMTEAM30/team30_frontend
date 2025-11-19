@@ -10,6 +10,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { tempMessageAtom } from '@/atoms/chatAtoms';
 import { userAtom } from '@/atoms/authAtoms';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { useEnterKeySubmit } from '@/hooks/useEnterKeySubmit';
 
 export default function NextChat() {
   const [inputValue, setInputValue] = useState('');
@@ -29,8 +30,8 @@ export default function NextChat() {
     { text: '데이트할 때 입을 옷', message: '데이트할 때 입을 옷을 추천해주세요' },
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!inputValue.trim()) return;
     await createChatRoom(inputValue);
   };
@@ -77,12 +78,10 @@ export default function NextChat() {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    }
-  };
+  const handleKeyDown = useEnterKeySubmit({
+    inputValue,
+    onSubmit: () => handleSubmit(),
+  });
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">

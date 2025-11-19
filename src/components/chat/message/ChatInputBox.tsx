@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { ChangeEvent, useCallback, useRef, useEffect, useState, KeyboardEvent } from 'react';
+import { ChangeEvent, useCallback, useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
@@ -16,6 +16,7 @@ import {
 } from '@/atoms/chatAtoms';
 import { postChatUpload } from '@/api/chatAPI';
 import { useChatStream } from '@/hooks/useChatStream';
+import { useEnterKeySubmit } from '@/hooks/useEnterKeySubmit';
 
 export default function ChatInputBox() {
   const roomId = useAtomValue(roomIdAtom);
@@ -63,6 +64,11 @@ export default function ChatInputBox() {
     mutate({ inputValue, products: inputProduct });
   }, [mutate, inputValue, inputProduct]);
 
+  const handleKeyDown = useEnterKeySubmit({
+    inputValue,
+    onSubmit: handleSendMessage,
+  });
+
   return (
     <div
       className="
@@ -81,28 +87,7 @@ export default function ChatInputBox() {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="패션에 대해 마음대로 물어보세요!"
-        onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
-          const isEmpty = !inputValue.trim();
-          const isComposing = e.nativeEvent.isComposing;
-
-          if (isComposing) {
-            return;
-          }
-
-          const isEnter = e.key === 'Enter' && !e.shiftKey;
-          const ignoreOnEnter = isEnter && isEmpty;
-          const submitOnEnter = isEnter && !isEmpty;
-
-          if (ignoreOnEnter) {
-            e.preventDefault();
-            return;
-          }
-
-          if (submitOnEnter) {
-            e.preventDefault();
-            handleSendMessage();
-          }
-        }}
+        onKeyDown={handleKeyDown}
         className="
         bg-white dark:bg-slate-800
           flex-1 resize-none
