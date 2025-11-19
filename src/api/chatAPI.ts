@@ -90,8 +90,9 @@ export const getChatProduct = async (product: Product): Promise<APIResponse<Clos
   };
 };
 
-export const getChatProductDescription = async (productId: string): Promise<APIResponse<string>> => {
-  const response = await requestAPI<APIProductDescription>(`/api/chat/products/${productId}/description`, 'GET');
+export const getChatProductDescription = async (productId: string, question: string): Promise<APIResponse<string>> => {
+  const url = `/api/chat/products/${productId}/description?user_input=${question}`;
+  const response = await requestAPI<APIProductDescription>(url, 'GET');
   if (response.status === 'fail') {
     console.error(new Error(response.message));
     return response;

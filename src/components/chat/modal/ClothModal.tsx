@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, KeyboardEvent } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { ExternalLink, ShoppingBag, Loader2 } from 'lucide-react';
 import { useAtom, useSetAtom } from 'jotai';
 import { activeClothAtom, panelAtom } from '@/atoms/chatAtoms';
@@ -22,6 +23,8 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
   const setPanel = useSetAtom(panelAtom);
   const [productDescription, setProductDescription] = useState('');
   const [isLoadingDescription, setIsLoadingDescription] = useState(false);
+  const [showQuestionInput, setShowQuestionInput] = useState(false);
+  const [questionInput, setQuestionInput] = useState('');
 
   // 스토리지 훅 사용
   const { closet, addClothToCloset } = useCloset();
@@ -64,6 +67,8 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
         setIsOpen(false);
         setProductDescription('');
         setIsLoadingDescription(false);
+        setShowQuestionInput(false);
+        setQuestionInput('');
       }
     },
     [product, cloth, setActiveCloth],
@@ -81,6 +86,16 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
     setPanel('closet');
     setIsOpen(false);
   }, [activeCloth, closet, addClothToCloset, setPanel]);
+
+  const handleGetProductDescription = useCallback(async () => {
+    if (!activeCloth || activeCloth.id === 'user' || !questionInput.trim()) return;
+    setIsLoadingDescription(true);
+    const res = await getChatProductDescription(activeCloth.id, questionInput.trim());
+    setProductDescription(
+      res.status === 'success' ? (typeof res.data === 'string' ? res.data : '') : '',
+    );
+    setIsLoadingDescription(false);
+  }, [activeCloth, questionInput]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -151,18 +166,57 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
                     <Button
                       variant="outline"
                       className="w-full h-12 text-lg"
-                      onClick={async () => {
+                      onClick={() => {
                         if (!activeCloth || activeCloth.id === 'user') return;
-                        setIsLoadingDescription(true);
-                        const res = await getChatProductDescription(activeCloth.id);
-                        setProductDescription(
-                          res.status === 'success' ? (typeof res.data === 'string' ? res.data : '') : '',
-                        );
-                        setIsLoadingDescription(false);
+                        setShowQuestionInput(!showQuestionInput);
+                        if (showQuestionInput) {
+                          setQuestionInput('');
+                        }
                       }}
                     >
                       상품 설명 보기
                     </Button>
+                    {showQuestionInput && (
+                      <div className="mt-3 space-y-2">
+                        <Textarea
+                          value={questionInput}
+                          onChange={(e) => setQuestionInput(e.target.value)}
+                          placeholder="상품에 대해 궁금한 점에 대해 물어보세요!"
+                          onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
+                            const isEmpty = !questionInput.trim();
+                            const isComposing = e.nativeEvent.isComposing;
+
+                            if (isComposing) {
+                              return;
+                            }
+
+                            const isEnter = e.key === 'Enter' && !e.shiftKey;
+                            const submitOnEnter = isEnter && !isEmpty;
+
+                            if (submitOnEnter) {
+                              e.preventDefault();
+                              handleGetProductDescription();
+                            }
+                          }}
+                          className="w-full min-h-[80px] resize-none"
+                          rows={3}
+                        />
+                        <Button
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                          onClick={handleGetProductDescription}
+                          disabled={!questionInput.trim() || isLoadingDescription}
+                        >
+                          {isLoadingDescription ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              설명을 불러오는 중...
+                            </>
+                          ) : (
+                            '질문하기'
+                          )}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                   {isLoadingDescription && (
                     <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center gap-3">
