@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState, KeyboardEvent } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { activeClothAtom, panelAtom } from '@/atoms/chatAtoms';
 import { getChatProduct, getChatProductDescription } from '@/api/chatAPI';
 import { useCloset } from '@/hooks/useCloset';
+import { useEnterKeySubmit } from '@/hooks/useEnterKeySubmit';
 
 interface ClothModalProps {
   product?: Product;
@@ -97,6 +98,11 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
     setIsLoadingDescription(false);
   }, [activeCloth, questionInput]);
 
+  const handleQuestionKeyDown = useEnterKeySubmit({
+    inputValue: questionInput,
+    onSubmit: handleGetProductDescription,
+  });
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -182,22 +188,7 @@ export default function ClothModal({ product, cloth, children }: ClothModalProps
                           value={questionInput}
                           onChange={(e) => setQuestionInput(e.target.value)}
                           placeholder="상품에 대해 궁금한 점에 대해 물어보세요!"
-                          onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
-                            const isEmpty = !questionInput.trim();
-                            const isComposing = e.nativeEvent.isComposing;
-
-                            if (isComposing) {
-                              return;
-                            }
-
-                            const isEnter = e.key === 'Enter' && !e.shiftKey;
-                            const submitOnEnter = isEnter && !isEmpty;
-
-                            if (submitOnEnter) {
-                              e.preventDefault();
-                              handleGetProductDescription();
-                            }
-                          }}
+                          onKeyDown={handleQuestionKeyDown}
                           className="w-full min-h-[80px] resize-none"
                           rows={3}
                         />
