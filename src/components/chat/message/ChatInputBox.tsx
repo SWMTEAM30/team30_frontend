@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Plus, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { ChangeEvent, useCallback, useRef, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useRef, useEffect, useState, KeyboardEvent } from 'react';
 import Image from 'next/image';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
@@ -81,9 +81,25 @@ export default function ChatInputBox() {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="패션에 대해 마음대로 물어보세요!"
-        onKeyDown={(event) => {
-          if (event.key == 'Enter' && !event.shiftKey && inputValue.trim() != '') {
-            event.preventDefault();
+        onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
+          const isEmpty = !inputValue.trim();
+          const isComposing = e.nativeEvent.isComposing;
+
+          if (isComposing) {
+            return;
+          }
+
+          const isEnter = e.key === 'Enter' && !e.shiftKey;
+          const ignoreOnEnter = isEnter && isEmpty;
+          const submitOnEnter = isEnter && !isEmpty;
+
+          if (ignoreOnEnter) {
+            e.preventDefault();
+            return;
+          }
+
+          if (submitOnEnter) {
+            e.preventDefault();
             handleSendMessage();
           }
         }}
